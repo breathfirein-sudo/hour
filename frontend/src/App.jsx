@@ -4305,55 +4305,60 @@ function App() {
                 </div>
 
                 {/* Manual Account Open Panel */}
-                <div style={{ background: inspectedClient.isUnlocked ? 'rgba(255, 255, 255, 0.02)' : 'rgba(16, 185, 129, 0.05)', padding: '16px', borderRadius: '12px', border: '1px solid ' + (inspectedClient.isUnlocked ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.2)'), display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
-                  <div>
-                    <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Account Status</span>
-                    <strong style={{ color: inspectedClient.isUnlocked ? '#10b981' : '#ef4444', fontSize: '13px', textTransform: 'uppercase' }}>{inspectedClient.isUnlocked ? 'OPEN' : 'LOCKED'}</strong>
-                  </div>
-                  <button
-                    onClick={async () => {
-                      if (inspectedClient.isUnlocked) return;
-                      if (!window.confirm("Are you sure you want to manually open this account without referrals or fees?")) return;
-                      try {
-                        const res = await fetch(`${VITE_BACKEND_URL}/api/admin/users/unlock`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', '') })
-                        });
-                        if (!res.ok) throw new Error('Unlock failed');
-                        const updated = clients.map(c => {
-                          if (c.id === inspectedClient.id) {
-                            return { ...c, isUnlocked: true };
+                {(() => {
+                  const accountIsOpen = inspectedClient.isUnlocked || (inspectedClient.referralCount >= 4);
+                  return (
+                    <div style={{ background: accountIsOpen ? 'rgba(255, 255, 255, 0.02)' : 'rgba(16, 185, 129, 0.05)', padding: '16px', borderRadius: '12px', border: '1px solid ' + (accountIsOpen ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.2)'), display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+                      <div>
+                        <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Account Status</span>
+                        <strong style={{ color: accountIsOpen ? '#10b981' : '#ef4444', fontSize: '13px', textTransform: 'uppercase' }}>{accountIsOpen ? 'OPEN' : 'LOCKED'}</strong>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          if (accountIsOpen) return;
+                          if (!window.confirm("Are you sure you want to manually open this account without referrals or fees?")) return;
+                          try {
+                            const res = await fetch(`${VITE_BACKEND_URL}/api/admin/users/unlock`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', '') })
+                            });
+                            if (!res.ok) throw new Error('Unlock failed');
+                            const updated = clients.map(c => {
+                              if (c.id === inspectedClient.id) {
+                                return { ...c, isUnlocked: true };
+                              }
+                              return c;
+                            });
+                            setClients(updated);
+                            localStorage.setItem('vb_clients', JSON.stringify(updated));
+                            setInspectedClient(prev => ({ ...prev, isUnlocked: true }));
+                            alert("Account successfully unlocked!");
+                          } catch (e) {
+                            alert('Failed to unlock account.');
                           }
-                          return c;
-                        });
-                        setClients(updated);
-                        localStorage.setItem('vb_clients', JSON.stringify(updated));
-                        setInspectedClient(prev => ({ ...prev, isUnlocked: true }));
-                        alert("Account successfully unlocked!");
-                      } catch (e) {
-                        alert('Failed to unlock account.');
-                      }
-                    }}
-                    disabled={inspectedClient.isUnlocked}
-                    style={{ 
-                      background: inspectedClient.isUnlocked ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.1)', 
-                      color: inspectedClient.isUnlocked ? '#9c93a8' : '#10b981', 
-                      border: '1px solid ' + (inspectedClient.isUnlocked ? 'transparent' : 'rgba(16, 185, 129, 0.3)'), 
-                      padding: '8px 16px', 
-                      borderRadius: '8px', 
-                      fontSize: '12px', 
-                      fontWeight: 700, 
-                      cursor: inspectedClient.isUnlocked ? 'not-allowed' : 'pointer', 
-                      transition: 'all 0.2s',
-                      opacity: inspectedClient.isUnlocked ? 0.6 : 1
-                    }}
-                    onMouseEnter={e => { if(!inspectedClient.isUnlocked) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'; }}
-                    onMouseLeave={e => { if(!inspectedClient.isUnlocked) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'; }}
-                  >
-                    Direct Account Open
-                  </button>
-                </div>
+                        }}
+                        disabled={accountIsOpen}
+                        style={{ 
+                          background: accountIsOpen ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.1)', 
+                          color: accountIsOpen ? '#9c93a8' : '#10b981', 
+                          border: '1px solid ' + (accountIsOpen ? 'transparent' : 'rgba(16, 185, 129, 0.3)'), 
+                          padding: '8px 16px', 
+                          borderRadius: '8px', 
+                          fontSize: '12px', 
+                          fontWeight: 700, 
+                          cursor: accountIsOpen ? 'not-allowed' : 'pointer', 
+                          transition: 'all 0.2s',
+                          opacity: accountIsOpen ? 0.6 : 1
+                        }}
+                        onMouseEnter={e => { if(!accountIsOpen) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'; }}
+                        onMouseLeave={e => { if(!accountIsOpen) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'; }}
+                      >
+                        Direct Account Open
+                      </button>
+                    </div>
+                  );
+                })()}
 
                 {/* Inspected Customer Wallet & Assets Grid */}
                 <div>
