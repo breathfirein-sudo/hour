@@ -1,0 +1,18 @@
+import { io } from 'socket.io-client';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000' : 'https://hour-60kr.onrender.com');
+
+const socket = io(backendUrl, {
+  autoConnect: false,
+  transports: ['websocket', 'polling'],
+});
+
+// Dynamically assign auth token on every connect
+const originalConnect = socket.connect.bind(socket);
+socket.connect = function () {
+  const token = localStorage.getItem('vb_jwt_token') || localStorage.getItem('vb_exec_token') || localStorage.getItem('vb_token') || 'dummy-token-for-dev';
+  this.auth = { token };
+  return originalConnect();
+};
+
+export default socket;
