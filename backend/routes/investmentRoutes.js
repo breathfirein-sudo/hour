@@ -83,6 +83,18 @@ router.delete('/:id', async (req, res) => {
 
     const now = new Date().getTime();
     const start = new Date(investment.startTime).getTime();
+    
+    // Enforce 7-day lock period
+    const lockPeriod = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+    if (now - start < lockPeriod) {
+      const remainingTime = lockPeriod - (now - start);
+      const remainingDays = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
+      return res.status(400).json({ 
+        success: false, 
+        message: `Investment is locked for 7 days. Remaining time: ${remainingDays} day${remainingDays > 1 ? 's' : ''}.` 
+      });
+    }
+
     const elapsedSeconds = Math.max(0, (now - start) / 1000);
     
     // Logic: 1% of investment per day (1% divided by 86400 seconds)

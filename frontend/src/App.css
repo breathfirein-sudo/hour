@@ -4563,6 +4563,36 @@
   grid-template-columns: 1fr auto;
   gap: 20px;
   align-items: center;
+  padding: 20px 24px;
+  transition: background 0.2s ease;
+}
+.investment-row-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.investment-amount-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.investment-meta-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.investment-date {
+  color: #8b8098;
+  font-size: 10px;
+  margin-top: 2px;
+  margin-left: 2px;
+}
+.investment-row-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
 }
 .flip-clock-wrapper {
   transform: scale(0.85);
@@ -4643,21 +4673,35 @@
     grid-template-columns: 1fr;
     justify-items: center;
     gap: 16px;
+    padding: 16px !important;
   }
-  .investment-details-row > div:first-child {
-    align-items: center;
+  .investment-row-left {
+    align-items: center !important;
+    text-align: center;
   }
-
+  .investment-amount-container {
+    justify-content: center !important;
+  }
+  .investment-meta-container {
+    justify-content: center !important;
+  }
+  .investment-date {
+    text-align: center !important;
+    margin-left: 0 !important;
+  }
   .investment-row-right {
     flex-direction: column;
     align-items: center !important;
     gap: 16px !important;
+    justify-content: center !important;
+    width: 100%;
   }
-
   .flip-clock-wrapper {
-    transform: none !important;
+    transform: scale(0.6) !important;
+    transform-origin: center center !important;
     width: 100%;
     display: flex;
     justify-content: center;
+    margin: -10px 0 !important;
   }
 }

@@ -27,6 +27,7 @@ import {
   Download,
   Check,
   Lock,
+  Unlock,
   RefreshCw,
   CreditCard,
   Gem,
@@ -86,6 +87,144 @@ import {
   PORTAL_TRADE_ASSETS,
   pickRandomPortalAsset,
 } from './metals';
+
+const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
+  const [timeLeft, setTimeLeft] = useState('');
+  const [isLocked, setIsLocked] = useState(true);
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const start = new Date(inv.startTime).getTime();
+      const now = Date.now();
+      const lockPeriod = 7 * 24 * 60 * 60 * 1000; // 7 days
+      const elapsed = now - start;
+      const remaining = lockPeriod - elapsed;
+
+      if (remaining <= 0) {
+        setIsLocked(false);
+        setTimeLeft('');
+      } else {
+        setIsLocked(true);
+        // Format remaining time nicely: "6d 23h 59m 59s"
+        const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
+        const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+        const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+        const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+        
+        let timeStr = '';
+        if (days > 0) timeStr += `${days}d `;
+        if (hours > 0 || days > 0) timeStr += `${hours}h `;
+        if (minutes > 0 || hours > 0 || days > 0) timeStr += `${minutes}m `;
+        timeStr += `${seconds}s`;
+        
+        setTimeLeft(timeStr);
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, [inv.startTime]);
+
+  return (
+    <div className="investment-details-row" style={{
+      borderBottom: index < totalLength - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none'
+    }}>
+      <div className="investment-row-left">
+        <div className="investment-amount-container">
+          <div style={{ background: 'rgba(217, 175, 86, 0.1)', padding: '4px', borderRadius: '6px' }}>
+            <Wallet size={14} style={{ color: '#d9af56' }} />
+          </div>
+          <span style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        </div>
+        
+        <div className="investment-meta-container">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span className="live-dot-small"></span>
+            <span style={{ color: '#d9af56', fontSize: '11px', fontWeight: '600' }}>Active Investment</span>
+          </div>
+          
+          {isLocked ? (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '4px', 
+              background: 'rgba(239, 68, 68, 0.1)', 
+              color: '#f87171', 
+              padding: '2px 8px', 
+              borderRadius: '4px', 
+              fontSize: '11px', 
+              fontWeight: '600' 
+            }}>
+              <Lock size={10} /> Locked ({timeLeft})
+            </div>
+          ) : (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '4px', 
+              background: 'rgba(16, 185, 129, 0.1)', 
+              color: '#34d399', 
+              padding: '2px 8px', 
+              borderRadius: '4px', 
+              fontSize: '11px', 
+              fontWeight: '600' 
+            }}>
+              <Unlock size={10} /> Unlocked
+            </div>
+          )}
+        </div>
+
+        <div className="investment-date">
+          {new Date(inv.startTime).toLocaleString('en-IN', {
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true
+          })}
+        </div>
+      </div>
+      
+      <div className="investment-row-right">
+        <div className="flip-clock-wrapper">
+          <FlipClock amount={inv.amount} startTime={inv.startTime} />
+        </div>
+        <button 
+          onClick={() => {
+            if (isLocked) {
+              alert(`This investment is locked for 7 days. Remaining time: ${timeLeft}`);
+              return;
+            }
+            onWithdraw(inv.id);
+          }}
+          disabled={isLocked}
+          style={{ 
+            background: isLocked ? 'rgba(255,255,255,0.05)' : 'rgba(217,175,86,0.1)', 
+            color: isLocked ? '#6b7280' : '#d9af56', 
+            border: isLocked ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(217,175,86,0.3)', 
+            padding: '8px 16px', 
+            borderRadius: '8px', 
+            fontSize: '12px', 
+            fontWeight: 'bold', 
+            cursor: isLocked ? 'not-allowed' : 'pointer',
+            transition: 'all 0.2s',
+            whiteSpace: 'nowrap'
+          }}
+          onMouseOver={(e) => {
+            if (!isLocked) {
+              e.currentTarget.style.background = 'rgba(217,175,86,0.2)';
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!isLocked) {
+              e.currentTarget.style.background = 'rgba(217,175,86,0.1)';
+            }
+          }}
+        >
+          {isLocked ? 'Locked' : 'Withdraw'}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 // Initial rates based on the screenshot
 const INITIAL_RATES = {
@@ -8399,8 +8538,11 @@ function App() {
                   <h2 style={{ fontSize: '15px', fontWeight: 'bold', color: '#e2e8f0', margin: 0, letterSpacing: '0.5px' }}>Investment Opportunities</h2>
                 </div>
                 
-                <p className="premium-animated-text investment-title-mobile" style={{ whiteSpace: 'normal', wordWrap: 'break-word', display: 'block', width: '100%', maxWidth: '100%', textAlign: 'center' }}>
+                <p className="premium-animated-text investment-title-mobile" style={{ whiteSpace: 'normal', wordWrap: 'break-word', display: 'block', width: '100%', maxWidth: '100%', textAlign: 'center', marginBottom: '4px' }}>
                   Build Your Business While Sleeping
+                </p>
+                <p style={{ color: '#8b8098', fontSize: '13px', textAlign: 'center', marginTop: '0', marginBottom: '20px', fontWeight: '500' }}>
+                  Invest and earn 1% daily interest. Withdrawals are locked for 7 days.
                 </p>
                 
                 <div className="investment-dashboard-bar" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
@@ -8451,54 +8593,13 @@ function App() {
                   
                   <div style={{ background: 'rgba(18, 12, 28, 0.7)', borderRadius: '0 0 12px 12px', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', flexDirection: 'column' }}>
                     {investments.map((inv, index) => (
-                      <div key={inv.id} className="investment-details-row" style={{
-                        padding: '20px 24px',
-                        borderBottom: index < investments.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                        transition: 'background 0.2s ease'
-                      }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ background: 'rgba(217, 175, 86, 0.1)', padding: '4px', borderRadius: '6px' }}>
-                              <Wallet size={14} style={{ color: '#d9af56' }} />
-                            </div>
-                            <span style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span className="live-dot-small"></span>
-                            <span style={{ color: '#d9af56', fontSize: '11px', fontWeight: '600' }}>Active Investment</span>
-                          </div>
-                          <div style={{ color: '#8b8098', fontSize: '10px', marginTop: '2px', marginLeft: '2px' }}>
-                            {new Date(inv.startTime).toLocaleString('en-IN', {
-                              day: '2-digit', month: 'short', year: 'numeric',
-                              hour: '2-digit', minute: '2-digit', hour12: true
-                            })}
-                          </div>
-                        </div>
-                        <div className="investment-row-right" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '20px' }}>
-                          <div className="flip-clock-wrapper" style={{ transformOrigin: 'right center' }}>
-                            <FlipClock amount={inv.amount} startTime={inv.startTime} />
-                          </div>
-                          <button 
-                            onClick={() => handleWithdrawInvestment(inv.id)}
-                            style={{ 
-                              background: 'rgba(217,175,86,0.1)', 
-                              color: '#d9af56', 
-                              border: '1px solid rgba(217,175,86,0.3)', 
-                              padding: '8px 16px', 
-                              borderRadius: '8px', 
-                              fontSize: '12px', 
-                              fontWeight: 'bold', 
-                              cursor: 'pointer',
-                              transition: 'all 0.2s',
-                              whiteSpace: 'nowrap'
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(217,175,86,0.2)'}
-                            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(217,175,86,0.1)'}
-                          >
-                            Withdraw
-                          </button>
-                        </div>
-                      </div>
+                      <InvestmentRow
+                        key={inv.id}
+                        inv={inv}
+                        index={index}
+                        totalLength={investments.length}
+                        onWithdraw={handleWithdrawInvestment}
+                      />
                     ))}
                   </div>
                 </div>
