@@ -1,39 +1,110 @@
 import React, { useState, useEffect } from 'react';
 
 const FlipClock = ({ amount, startTime }) => {
-  const [currentValue, setCurrentValue] = useState(amount);
+  const [currentValue, setCurrentValue] = useState(0);
 
   useEffect(() => {
-    // If there's no amount, just return
-    if (!amount) return;
+    if (!amount || !startTime) return;
 
-    // Simple mock logic to make the value increase slightly over time
-    // to simulate a live counter
+    const calculateCurrentValue = () => {
+      const start = new Date(startTime).getTime();
+      const now = Date.now();
+      const elapsedSeconds = Math.max(0, (now - start) / 1000);
+      
+      // Logic: 1% of investment per day (1% divided by 86400 seconds)
+      const dailyEarnings = amount * (1 / 100);
+      const earningsPerSecond = dailyEarnings / 86400;
+      return elapsedSeconds * earningsPerSecond;
+    };
+
+    setCurrentValue(calculateCurrentValue());
+
+    // Update very fast to create a continuous rolling effect for the micro-decimals
     const interval = setInterval(() => {
-      setCurrentValue(prev => {
-        const newValue = parseFloat(prev) + 0.01;
-        return Number(newValue.toFixed(2));
-      });
-    }, 1000);
+      setCurrentValue(calculateCurrentValue());
+    }, 50);
 
     return () => clearInterval(interval);
   }, [amount, startTime]);
+
+  // Format to 18 decimal places to match the exact length in the screenshot
+  const formattedValue = (currentValue || 0).toFixed(18);
+  const chars = formattedValue.split('');
 
   return (
     <div style={{
       display: 'inline-flex',
       alignItems: 'center',
-      background: '#1a1a2e',
-      padding: '4px 8px',
-      borderRadius: '6px',
-      border: '1px solid rgba(217,175,86,0.3)',
-      color: '#d9af56',
       fontFamily: 'monospace',
-      fontSize: '14px',
-      fontWeight: 'bold',
-      boxShadow: '0 0 10px rgba(217,175,86,0.1)'
+      color: '#ffffff'
     }}>
-      ₹ {currentValue?.toFixed(2) || '0.00'}
+      <span style={{ 
+        marginRight: '8px', 
+        fontSize: '28px', 
+        fontWeight: 'bold',
+        lineHeight: 1
+      }}>
+        ₹
+      </span>
+      
+      {chars.map((char, index) => {
+        if (char === '.') {
+          return (
+            <span 
+              key={`dot-${index}`} 
+              style={{ 
+                margin: '0 4px', 
+                fontSize: '28px',
+                fontWeight: 'bold',
+                alignSelf: 'flex-end',
+                lineHeight: 1,
+                position: 'relative',
+                top: '4px' // align visually to the bottom of the numbers
+              }}
+            >
+              .
+            </span>
+          );
+        }
+
+        return (
+          <div 
+            key={`${index}`}
+            style={{ 
+              position: 'relative', 
+              width: '24px', 
+              height: '34px', 
+              display: 'inline-flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              backgroundColor: '#161616', // Darker box to match the screenshot
+              borderRadius: '4px',
+              margin: '0 1px', // tightly packed
+              boxShadow: '0 2px 4px rgba(0,0,0,0.6)',
+              overflow: 'hidden',
+              fontSize: '22px',
+              fontWeight: 'bold'
+            }}
+          >
+            {/* Horizontal Split Line */}
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: 0,
+              right: 0,
+              height: '2px',
+              marginTop: '-1px',
+              backgroundColor: '#050505',
+              zIndex: 10
+            }} />
+            
+            {/* The digit itself */}
+            <span style={{ position: 'relative', zIndex: 5, letterSpacing: '0' }}>
+              {char}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 };

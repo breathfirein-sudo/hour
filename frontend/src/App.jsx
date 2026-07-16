@@ -587,8 +587,8 @@ function App() {
 
   const handleInvestFromWallet = async () => {
     const amt = parseFloat(investInputValue);
-    if (isNaN(amt) || amt <= 0) {
-      alert('Please enter a valid amount to invest.');
+    if (isNaN(amt) || amt < 100) {
+      alert('Minimum investment amount is ₹100.');
       return;
     }
     if (walletBalance < amt) {
