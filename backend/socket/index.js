@@ -23,7 +23,10 @@ const {
 const setupSocket = (io) => {
 
   // Global background worker to resolve expired trades
+  let isResolvingTrades = false;
   setInterval(async () => {
+    if (isResolvingTrades) return;
+    isResolvingTrades = true;
     try {
       // 1. Resolve standard paper trades
       const { rows: expiredTrades } = await db.query(
@@ -69,32 +72,45 @@ const setupSocket = (io) => {
           }
           
           const walletRefund = returnedAmount;
+          let balanceAfter = 0.00;
 
-          await db.query('BEGIN');
+          const client = await db.connect();
           try {
-            const userRes = await db.query(
+            await client.query('BEGIN');
+            // Ensure trade is still OPEN and lock row on this dedicated client connection
+            const lockCheck = await client.query(
+              "SELECT status FROM trades WHERE id = $1 FOR UPDATE",
+              [trade.id]
+            );
+            if (lockCheck.rows.length === 0 || lockCheck.rows[0].status !== 'OPEN') {
+              await client.query('ROLLBACK');
+              client.release();
+              continue;
+            }
+
+            const userRes = await client.query(
               'SELECT id FROM "User" WHERE email = $1',
               [trade.user_email.toLowerCase()]
             );
             
-            let balanceAfter = 0.00;
+            balanceAfter = 0.00;
             if (userRes.rows.length > 0) {
               const userId = userRes.rows[0].id;
-              const walletRes = await db.query(
+              const walletRes = await client.query(
                 'SELECT balance FROM "Wallet" WHERE "userId" = $1',
                 [userId]
               );
               const currentBalance = parseFloat(walletRes.rows[0].balance || 0);
-              balanceAfter = currentBalance + walletRefund;
+              balanceAfter = parseFloat(trade.wallet_balance_before || 0) + walletRefund;
 
-              // Update user wallet balance
-              await db.query(
-                'UPDATE "Wallet" SET balance = balance + $1 WHERE "userId" = $2',
-                [walletRefund, userId]
+              // Update user wallet balance to exactly balanceAfter
+              await client.query(
+                'UPDATE "Wallet" SET balance = $1 WHERE "userId" = $2',
+                [balanceAfter, userId]
               );
 
               // Update trade record with closed price, pnl, returned_amount, profit_loss_amount, wallet_balance_after
-              await db.query(
+              await client.query(
                 `UPDATE trades 
                  SET status = $1, 
                      close_price = $2, 
@@ -107,14 +123,14 @@ const setupSocket = (io) => {
               );
 
               // Record settlement transaction audit log
-              await db.query(
+              await client.query(
                 `INSERT INTO "Transaction" ("userId", "type", "asset", "amount", "fee", "gst", "details", "createdAt") 
                  VALUES ($1, $2, $3, $4, $5, 0.00, $6, CURRENT_TIMESTAMP)`,
                 [userId, 'TRADE_SETTLE', trade.symbol, walletRefund, appFee, `Standard Paper Trade settlement credit: ${newStatus}`]
               );
             } else {
               // Fallback update without user id (should not normally happen)
-              await db.query(
+              await client.query(
                 `UPDATE trades 
                  SET status = $1, 
                      close_price = $2, 
@@ -125,55 +141,65 @@ const setupSocket = (io) => {
                 [newStatus, currentPrice, netPnl, returnedAmount, profitLossAmount, trade.id]
               );
             }
-            await db.query('COMMIT');
-
-            // Broadcast to all clients
-            io.emit('trade_resolved', { 
-              ...trade, 
-              status: newStatus, 
-              close_price: currentPrice, 
-              pnl: netPnl, 
-              returned_amount: returnedAmount,
-              profit_loss_amount: profitLossAmount,
-              wallet_balance_after: balanceAfter,
-              balance_refund: walletRefund 
-            });
+            await client.query('COMMIT');
           } catch (txErr) {
-            await db.query('ROLLBACK');
+            await client.query('ROLLBACK');
             console.error('Error resolving standard trade:', txErr.message);
+            client.release();
+            continue;
           }
+          client.release();
+
+          console.log(`[Socket] Emitting trade_resolved for trade ID: ${trade.id} | Status: ${newStatus}`);
+          // Broadcast to all clients strictly after COMMIT and connection release
+          io.emit('trade_resolved', { 
+            ...trade, 
+            status: newStatus, 
+            close_price: currentPrice, 
+            pnl: netPnl, 
+            returned_amount: returnedAmount, 
+            profit_loss_amount: profitLossAmount, 
+            wallet_balance_after: balanceAfter, 
+            balance_refund: walletRefund 
+          });
         } else {
           // If candles are empty or failed, resolve as REJECTED to prevent infinite loop
-          await db.query('BEGIN');
+          let balanceAfter = 0.00;
+          let netPnl = 0.00;
+          let returnedAmount = investment;
+          let profitLossAmount = 0.00;
+          let walletRefund = returnedAmount;
+          
+          const client = await db.connect();
           try {
-            const tradeStake = parseFloat(trade.trade_stake || 10.00);
-            const appFee = parseFloat(trade.application_fee || 1.00);
-            const returnedAmount = investment;
-            const profitLossAmount = 0.00;
-            const netPnl = 0.00;
-            const walletRefund = returnedAmount;
+            await client.query('BEGIN');
+            const lockCheck = await client.query(
+              "SELECT status FROM trades WHERE id = $1 FOR UPDATE",
+              [trade.id]
+            );
+            if (lockCheck.rows.length === 0 || lockCheck.rows[0].status !== 'OPEN') {
+              await client.query('ROLLBACK');
+              client.release();
+              continue;
+            }
 
-            const userRes = await db.query(
+            const appFee = parseFloat(trade.application_fee || 1.00);
+
+            const userRes = await client.query(
               'SELECT id FROM "User" WHERE email = $1',
               [trade.user_email.toLowerCase()]
             );
             
-            let balanceAfter = 0.00;
             if (userRes.rows.length > 0) {
               const userId = userRes.rows[0].id;
-              const walletRes = await db.query(
-                'SELECT balance FROM "Wallet" WHERE "userId" = $1',
-                [userId]
-              );
-              const currentBalance = parseFloat(walletRes.rows[0].balance || 0);
-              balanceAfter = currentBalance + walletRefund;
+              balanceAfter = parseFloat(trade.wallet_balance_before || 0) + walletRefund;
 
-              await db.query(
-                'UPDATE "Wallet" SET balance = balance + $1 WHERE "userId" = $2',
-                [walletRefund, userId]
+              await client.query(
+                'UPDATE "Wallet" SET balance = $1 WHERE "userId" = $2',
+                [balanceAfter, userId]
               );
 
-              await db.query(
+              await client.query(
                 `UPDATE trades 
                  SET status = 'REJECTED', 
                      close_price = price, 
@@ -185,13 +211,13 @@ const setupSocket = (io) => {
                 [netPnl, returnedAmount, profitLossAmount, balanceAfter, trade.id]
               );
 
-              await db.query(
+              await client.query(
                 `INSERT INTO "Transaction" ("userId", "type", "asset", "amount", "fee", "gst", "details", "createdAt") 
                  VALUES ($1, $2, $3, $4, $5, 0.00, $6, CURRENT_TIMESTAMP)`,
                 [userId, 'TRADE_SETTLE', trade.symbol, walletRefund, appFee, `Standard Paper Trade settlement credit (Fallback Rejected)`]
               );
             } else {
-              await db.query(
+              await client.query(
                 `UPDATE trades 
                  SET status = 'REJECTED', 
                      close_price = price, 
@@ -202,22 +228,26 @@ const setupSocket = (io) => {
                 [netPnl, returnedAmount, profitLossAmount, trade.id]
               );
             }
-            await db.query('COMMIT');
-            
-            io.emit('trade_resolved', { 
-              ...trade, 
-              status: 'REJECTED', 
-              close_price: trade.price, 
-              pnl: netPnl, 
-              returned_amount: returnedAmount,
-              profit_loss_amount: profitLossAmount,
-              wallet_balance_after: balanceAfter,
-              balance_refund: walletRefund 
-            });
+            await client.query('COMMIT');
           } catch (txErr) {
-            await db.query('ROLLBACK');
+            await client.query('ROLLBACK');
             console.error('Error resolving failed standard trade:', txErr.message);
+            client.release();
+            continue;
           }
+          client.release();
+
+          console.log(`[Socket] Emitting trade_resolved (REJECTED) for trade ID: ${trade.id}`);
+          io.emit('trade_resolved', { 
+            ...trade, 
+            status: 'REJECTED', 
+            close_price: trade.price, 
+            pnl: netPnl, 
+            returned_amount: returnedAmount, 
+            profit_loss_amount: profitLossAmount, 
+            wallet_balance_after: balanceAfter, 
+            balance_refund: walletRefund 
+          });
         }
       }
 
@@ -251,9 +281,21 @@ const setupSocket = (io) => {
             }
           }
 
-          await db.query('BEGIN');
+          let refundAmount = 0;
+          const client = await db.connect();
           try {
-            await db.query(
+            await client.query('BEGIN');
+            const lockCheck = await client.query(
+              "SELECT status FROM contest_trades WHERE id = $1 FOR UPDATE",
+              [trade.id]
+            );
+            if (lockCheck.rows.length === 0 || lockCheck.rows[0].status !== 'OPEN') {
+              await client.query('ROLLBACK');
+              client.release();
+              continue;
+            }
+
+            await client.query(
               "UPDATE contest_trades SET status = $1, close_price = $2, pnl = $3 WHERE id = $4",
               [newStatus, currentPrice, pnl, trade.id]
             );
@@ -262,7 +304,7 @@ const setupSocket = (io) => {
             const isLoss = newStatus === 'LOST';
             
             // 100 rupee logic: Only 11 was deducted.
-            let refundAmount = 0;
+            refundAmount = 0;
             if (isWin) {
               refundAmount = 20; // 10 risk + 10 profit
             } else if (isLoss) {
@@ -279,7 +321,7 @@ const setupSocket = (io) => {
               });
             }
 
-            await db.query(
+            await client.query(
               `UPDATE contest_participants 
                SET balance = balance + $1,
                    total_trades = total_trades + 1,
@@ -295,53 +337,74 @@ const setupSocket = (io) => {
               ]
             );
 
-            await db.query('COMMIT');
-
-            io.emit('contest_trade_resolved', {
-              ...trade,
-              status: newStatus,
-              close_price: currentPrice,
-              pnl,
-              balance_refund: refundAmount
-            });
+            await client.query('COMMIT');
           } catch (txErr) {
-            await db.query('ROLLBACK');
+            await client.query('ROLLBACK');
             console.error('Error executing contest trade resolution transaction:', txErr.message);
+            client.release();
+            continue;
           }
+          client.release();
+
+          console.log(`[Socket] Emitting contest_trade_resolved for trade ID: ${trade.id} | Status: ${newStatus}`);
+          io.emit('contest_trade_resolved', {
+            ...trade,
+            status: newStatus,
+            close_price: currentPrice,
+            pnl,
+            balance_refund: refundAmount
+          });
         } else {
           // Resolve failed contest trade as TIE and refund risk amount to balance
-          await db.query('BEGIN');
+          const entryAmount = parseFloat(trade.entry_amount || 0);
+          const client = await db.connect();
           try {
-            await db.query(
+            await client.query('BEGIN');
+            const lockCheck = await client.query(
+              "SELECT status FROM contest_trades WHERE id = $1 FOR UPDATE",
+              [trade.id]
+            );
+            if (lockCheck.rows.length === 0 || lockCheck.rows[0].status !== 'OPEN') {
+              await client.query('ROLLBACK');
+              client.release();
+              continue;
+            }
+
+            await client.query(
               "UPDATE contest_trades SET status = 'TIE', close_price = price, pnl = 0.00 WHERE id = $1",
               [trade.id]
             );
-            const entryAmount = parseFloat(trade.entry_amount);
-            await db.query(
+            await client.query(
               `UPDATE contest_participants 
                SET balance = balance + $1,
                    total_trades = total_trades + 1
                WHERE email = $2`,
               [entryAmount, trade.user_email]
             );
-            await db.query('COMMIT');
-            
-            io.emit('contest_trade_resolved', {
-              ...trade,
-              status: 'TIE',
-              close_price: trade.price,
-              pnl: 0,
-              balance_refund: entryAmount
-            });
+            await client.query('COMMIT');
           } catch (txErr) {
-            await db.query('ROLLBACK');
+            await client.query('ROLLBACK');
             console.error('Error resolving failed contest trade:', txErr.message);
+            client.release();
+            continue;
           }
+          client.release();
+
+          console.log(`[Socket] Emitting contest_trade_resolved (TIE) for trade ID: ${trade.id}`);
+          io.emit('contest_trade_resolved', {
+            ...trade,
+            status: 'TIE',
+            close_price: trade.price,
+            pnl: 0,
+            balance_refund: entryAmount
+          });
         }
       }
 
     } catch (err) {
       console.error('Error resolving trades:', err.message);
+    } finally {
+      isResolvingTrades = false;
     }
   }, 2000); // Check every 2 seconds
 

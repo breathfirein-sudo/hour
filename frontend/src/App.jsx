@@ -21,6 +21,7 @@ import {
   Shield,
   Activity,
   Briefcase,
+  Coins,
   ArrowUpRight,
   ArrowDownLeft,
   ArrowDownRight,
@@ -86,6 +87,7 @@ import {
   getMetalLabel,
   PORTAL_TRADE_ASSETS,
   pickRandomPortalAsset,
+  metals,
 } from './metals';
 
 const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
@@ -658,6 +660,8 @@ function App() {
   // --- Dashboard Navigation Tab ---
   const [dashTab, setDashTab] = useState(() => localStorage.getItem('vb_dashTab') || 'portfolio'); // 'portfolio', 'trade', 'wallet', 'profile'
   useEffect(() => { localStorage.setItem('vb_dashTab', dashTab); }, [dashTab]);
+  const [aboutInitialMetalId, setAboutInitialMetalId] = useState(null);
+  const [aboutInitialAction, setAboutInitialAction] = useState('buy');
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(() => localStorage.getItem('vb_disclaimer_accepted') === 'true');
   const [copiedReferralLink, setCopiedReferralLink] = useState(false);
   const [copiedInspectedReferralLink, setCopiedInspectedReferralLink] = useState(false);
@@ -1116,8 +1120,8 @@ function App() {
       alert("Minimum withdrawal amount is ₹500");
       return;
     }
-    if (withdrawableBalance < val) {
-      alert(`Insufficient withdrawable balance. Your withdrawable balance is ₹${withdrawableBalance.toFixed(2)}.`);
+    if (walletBalance < val) {
+      alert(`Insufficient wallet balance. Your available balance is ₹${walletBalance.toFixed(2)}.`);
       return;
     }
     if (!bankName || !accountHolderName || !accountNumber || !ifscCode) {
@@ -1179,7 +1183,7 @@ function App() {
     }
   };
   
-  const withdrawableBalance = Math.max(0, walletBalance - (successfulReferralsCount * 10));
+  const withdrawableBalance = Number(walletBalance || 0);
 
   // --- Real-time Transaction Log Ledger ---
   const [transactions, setTransactions] = useState([]);
@@ -2075,12 +2079,17 @@ function App() {
           const merged = data.clients.map(dbClient => {
             const existingClient = prevClients.find(c => c.email.toLowerCase() === dbClient.email.toLowerCase());
             if (existingClient) {
+              const localMetalTx = (existingClient.transactions || []).filter(t => t.type === 'buy' || t.type === 'sell');
+              const backendTx = dbClient.transactions !== undefined ? dbClient.transactions : [];
+              const mergedTx = [...localMetalTx, ...backendTx].sort((a, b) => new Date(b.date) - new Date(a.date));
+              
               return {
                 ...existingClient,
                 ...dbClient,
+                holdings: existingClient.holdings || dbClient.holdings,
                 referralCount: dbClient.referralCount !== undefined ? dbClient.referralCount : (existingClient.referralCount || 0),
                 walletBalance: dbClient.walletBalance !== undefined ? dbClient.walletBalance : (existingClient.walletBalance || 0),
-                transactions: dbClient.transactions !== undefined ? dbClient.transactions : (existingClient.transactions || [])
+                transactions: mergedTx
               };
             }
             return dbClient;
@@ -2405,27 +2414,34 @@ function App() {
                 status: 'Completed',
                 date: new Date(t.createdAt).toISOString().slice(0, 19).replace('T', ' ')
               }));
-              setTransactions(mappedTx);
+              setTransactions(prevTx => [
+                ...prevTx.filter(t => t.type === 'buy' || t.type === 'sell'),
+                ...mappedTx
+              ].sort((a, b) => new Date(b.date) - new Date(a.date)));
             }
             // Update localStorage with the correct backend values
             setClients(prev => {
               const updated = prev.map(c => {
                 if (c.email.toLowerCase() === user.email.toLowerCase()) {
+                  const localMetalTx = (c.transactions || []).filter(t => t.type === 'buy' || t.type === 'sell');
+                  const backendTx = data.transactions !== undefined ? data.transactions.map(t => ({
+                    id: 'TX-' + t.id,
+                    type: t.type?.toLowerCase() === 'deposit' ? 'deposit' : 
+                          t.type?.toLowerCase() === 'referral' ? 'referral' : 
+                          t.type?.toLowerCase() === 'refund' ? 'refund' : 'withdrawal',
+                    asset: t.asset || 'wallet',
+                    amount: t.amount,
+                    details: t.details,
+                    status: 'Completed',
+                    date: new Date(t.createdAt).toISOString().slice(0, 19).replace('T', ' ')
+                  })) : [];
+                  const mergedTx = [...localMetalTx, ...backendTx].sort((a, b) => new Date(b.date) - new Date(a.date));
+                  
                   return {
                     ...c,
                     walletBalance: data.walletBalance !== undefined ? data.walletBalance : c.walletBalance,
                     referralCount: data.referralCount !== undefined ? data.referralCount : c.referralCount,
-                    transactions: data.transactions !== undefined ? data.transactions.map(t => ({
-                      id: 'TX-' + t.id,
-                      type: t.type?.toLowerCase() === 'deposit' ? 'deposit' : 
-                            t.type?.toLowerCase() === 'referral' ? 'referral' : 
-                            t.type?.toLowerCase() === 'refund' ? 'refund' : 'withdrawal',
-                      asset: t.asset || 'wallet',
-                      amount: t.amount,
-                      details: t.details,
-                      status: 'Completed',
-                      date: new Date(t.createdAt).toISOString().slice(0, 19).replace('T', ' ')
-                    })) : c.transactions
+                    transactions: mergedTx
                   };
                 }
                 return c;
@@ -2675,8 +2691,9 @@ function App() {
 
     const pricePerGram = rates[activeAsset].price;
     const subtotal = finalRupees;
-    const gstAmount = subtotal * 0.18;
-    const totalPayable = subtotal + gstAmount;
+    const isBuy = activeAction === 'buy' || activeAction === 'sip';
+    const gstAmount = isBuy ? subtotal * 0.18 : 0;
+    const totalPayable = isBuy ? subtotal + gstAmount : subtotal;
 
     setModalType(type);
     setModalData({
@@ -2701,8 +2718,8 @@ function App() {
       if (action === 'buy') {
         const gst = finalRupees * 0.18;
         const totalCost = finalRupees + gst;
-        if (withdrawableBalance < totalCost) {
-          alert(`Insufficient withdrawable balance. Referral rewards cannot be used for buying elements. You need ₹${totalCost.toFixed(2)} but only have ₹${withdrawableBalance.toFixed(2)} withdrawable balance. Please add funds.`);
+        if (walletBalance < totalCost) {
+          alert(`Insufficient wallet balance. You need ₹${totalCost.toFixed(2)} but only have ₹${walletBalance.toFixed(2)}. Please add funds.`);
           setShowModal(false);
           setDashTab('wallet');
           setView('dashboard');
@@ -3544,18 +3561,41 @@ function App() {
       systemReserves.silver * rates.silver.price +
       systemReserves.wallet;
 
-    const clientGoldVal = (inspectedClient.holdings?.gold || 0) * rates.gold.price;
-    const clientSilverVal = (inspectedClient.holdings?.silver || 0) * rates.silver.price;
-    const clientPlatinumVal = (inspectedClient.holdings?.platinum || 0) * rates.platinum.price;
-    const clientIronVal = (inspectedClient.holdings?.iron || 0) * rates.iron.price;
-    const clientCash = inspectedClient.walletBalance || 0;
-    const clientTotalVal = clientGoldVal + clientSilverVal + clientPlatinumVal + clientIronVal + clientCash;
+    let clientTotalMetalVal = 0;
+    const clientMetalValues = {};
+    metals.forEach((m) => {
+      const weight = inspectedClient.holdings?.[m.assetId] || 0;
+      const price = rates[m.assetId]?.price || 0;
+      const value = weight * price;
+      clientMetalValues[m.assetId] = value;
+      clientTotalMetalVal += value;
+    });
 
-    const goldPct = clientTotalVal > 0 ? (clientGoldVal / clientTotalVal) * 100 : 0;
-    const silverPct = clientTotalVal > 0 ? (clientSilverVal / clientTotalVal) * 100 : 0;
-    const platinumPct = clientTotalVal > 0 ? (clientPlatinumVal / clientTotalVal) * 100 : 0;
-    const ironPct = clientTotalVal > 0 ? (clientIronVal / clientTotalVal) * 100 : 0;
-    const cashPct = clientTotalVal > 0 ? (clientCash / clientTotalVal) * 100 : 0;
+    const clientCash = inspectedClient.walletBalance || 0;
+    const clientTotalVal = clientTotalMetalVal + clientCash;
+
+    const clientAllocations = [];
+    if (clientCash > 0) {
+      clientAllocations.push({
+        id: 'cash',
+        name: 'Cash',
+        colorClass: 'cash',
+        value: clientCash,
+        pct: clientTotalVal > 0 ? (clientCash / clientTotalVal) * 100 : 0
+      });
+    }
+    metals.forEach((m) => {
+      const val = clientMetalValues[m.assetId] || 0;
+      if (val > 0) {
+        clientAllocations.push({
+          id: m.assetId,
+          name: m.name,
+          colorClass: m.group,
+          value: val,
+          pct: clientTotalVal > 0 ? (val / clientTotalVal) * 100 : 0
+        });
+      }
+    });
 
     return (
       <div id="root" className="dashboard-page-view admin-dashboard animate-fade-in" style={{ background: '#0e041b', color: '#ffffff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -4509,30 +4549,56 @@ function App() {
                       <strong style={{ fontSize: '15px', color: '#ffffff' }}>₹{inspectedClient.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
                     </div>
 
-                    <div style={{ background: 'rgba(217,175,86,0.06)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(217,175,86,0.15)' }}>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>🥇 Gold Holdings</span>
-                      <strong style={{ fontSize: '15px', color: '#d9af56' }}>{(inspectedClient.holdings?.gold || 0).toFixed(4)} g</strong>
-                      <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block' }}>₹{clientGoldVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                    </div>
+                    {metals.map((metal) => {
+                      const weight = inspectedClient.holdings?.[metal.assetId] || 0;
+                      const price = rates[metal.assetId]?.price || 0;
+                      const value = weight * price;
+                      
+                      // Only show if weight > 0 (bought metals)
+                      if (weight <= 0) return null;
 
-                    <div style={{ background: 'rgba(192,192,192,0.06)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(192,192,192,0.15)' }}>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>🥈 Silver Holdings</span>
-                      <strong style={{ fontSize: '15px', color: '#c0c0c0' }}>{(inspectedClient.holdings?.silver || 0).toFixed(4)} g</strong>
-                      <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block' }}>₹{clientSilverVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                    </div>
+                      let bgColor = 'rgba(100,100,100,0.06)';
+                      let borderColor = 'rgba(100,100,100,0.15)';
+                      let textColor = '#9ca3af';
 
-                    <div style={{ background: 'rgba(229,228,226,0.06)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(229,228,226,0.15)' }}>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>💎 Platinum Holdings</span>
-                      <strong style={{ fontSize: '15px', color: '#e5e4e2' }}>{(inspectedClient.holdings?.platinum || 0).toFixed(4)} g</strong>
-                      <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block' }}>₹{clientPlatinumVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                    </div>
+                      if (metal.group === 'gold') {
+                        bgColor = 'rgba(217,175,86,0.06)';
+                        borderColor = 'rgba(217,175,86,0.15)';
+                        textColor = '#d9af56';
+                      } else if (metal.group === 'silver') {
+                        bgColor = 'rgba(192,192,192,0.06)';
+                        borderColor = 'rgba(192,192,192,0.15)';
+                        textColor = '#c0c0c0';
+                      } else if (metal.group === 'bronze') {
+                        bgColor = 'rgba(245,158,11,0.06)';
+                        borderColor = 'rgba(245,158,11,0.15)';
+                        textColor = '#f59e0b';
+                      } else if (metal.group === 'blue') {
+                        bgColor = 'rgba(59,130,246,0.06)';
+                        borderColor = 'rgba(59,130,246,0.15)';
+                        textColor = '#3b82f6';
+                      } else if (metal.group === 'cyan') {
+                        bgColor = 'rgba(6,182,212,0.06)';
+                        borderColor = 'rgba(6,182,212,0.15)';
+                        textColor = '#06b6d4';
+                      } else if (metal.group === 'green') {
+                        bgColor = 'rgba(16,185,129,0.06)';
+                        borderColor = 'rgba(16,185,129,0.15)';
+                        textColor = '#10b981';
+                      } else if (metal.group === 'liquid') {
+                        bgColor = 'rgba(167,139,250,0.06)';
+                        borderColor = 'rgba(167,139,250,0.15)';
+                        textColor = '#a78bfa';
+                      }
 
-                    <div style={{ background: 'rgba(136,136,136,0.06)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(136,136,136,0.15)' }}>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>⚙️ Iron Holdings</span>
-                      <strong style={{ fontSize: '15px', color: '#888888' }}>{(inspectedClient.holdings?.iron || 0).toFixed(4)} g</strong>
-                      <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block' }}>₹{clientIronVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                    </div>
-
+                      return (
+                        <div key={metal.assetId} style={{ background: bgColor, padding: '12px', borderRadius: '10px', border: `1px solid ${borderColor}` }}>
+                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>{metal.name} Holdings</span>
+                          <strong style={{ fontSize: '15px', color: textColor }}>{weight.toFixed(4)} g</strong>
+                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block' }}>₹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -4545,20 +4611,47 @@ function App() {
                   
                   {/* Progress bar allocations */}
                   <div style={{ display: 'flex', height: '14px', borderRadius: '7px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)', margin: '10px 0' }}>
-                    {goldPct > 0 && <div style={{ width: `${goldPct}%`, background: '#d9af56', transition: 'width 0.4s' }} title={`Gold: ${goldPct.toFixed(1)}%`}></div>}
-                    {silverPct > 0 && <div style={{ width: `${silverPct}%`, background: '#c0c0c0', transition: 'width 0.4s' }} title={`Silver: ${silverPct.toFixed(1)}%`}></div>}
-                    {platinumPct > 0 && <div style={{ width: `${platinumPct}%`, background: '#e5e4e2', transition: 'width 0.4s' }} title={`Platinum: ${platinumPct.toFixed(1)}%`}></div>}
-                    {ironPct > 0 && <div style={{ width: `${ironPct}%`, background: '#888888', transition: 'width 0.4s' }} title={`Iron: ${ironPct.toFixed(1)}%`}></div>}
-                    {cashPct > 0 && <div style={{ width: `${cashPct}%`, background: '#10b981', transition: 'width 0.4s' }} title={`Cash: ${cashPct.toFixed(1)}%`}></div>}
+                    {clientAllocations.map(alloc => (
+                      alloc.value > 0 && (
+                        <div 
+                          key={alloc.id} 
+                          style={{ 
+                            width: `${alloc.pct}%`, 
+                            background: alloc.id === 'cash' ? '#10b981' :
+                                        alloc.colorClass === 'gold' ? '#d9af56' :
+                                        alloc.colorClass === 'silver' ? '#c0c0c0' :
+                                        alloc.colorClass === 'bronze' ? '#b45309' :
+                                        alloc.colorClass === 'blue' ? '#3b82f6' :
+                                        alloc.colorClass === 'cyan' ? '#06b6d4' :
+                                        alloc.colorClass === 'green' ? '#10b981' :
+                                        alloc.colorClass === 'liquid' ? '#a78bfa' : '#4b5563', 
+                            transition: 'width 0.4s' 
+                          }} 
+                          title={`${alloc.name}: ${alloc.pct.toFixed(1)}%`}
+                        ></div>
+                      )
+                    ))}
                   </div>
 
                   {/* Allocation Legends */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '10px', color: '#9c93a8', marginTop: '8px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#d9af56' }}></span> Gold ({goldPct.toFixed(0)}%)</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#c0c0c0' }}></span> Silver ({silverPct.toFixed(0)}%)</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e5e4e2' }}></span> Platinum ({platinumPct.toFixed(0)}%)</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#888888' }}></span> Iron ({ironPct.toFixed(0)}%)</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span> Cash ({cashPct.toFixed(0)}%)</span>
+                    {clientAllocations.map(alloc => {
+                      const color = alloc.id === 'cash' ? '#10b981' :
+                                    alloc.colorClass === 'gold' ? '#d9af56' :
+                                    alloc.colorClass === 'silver' ? '#c0c0c0' :
+                                    alloc.colorClass === 'bronze' ? '#b45309' :
+                                    alloc.colorClass === 'blue' ? '#3b82f6' :
+                                    alloc.colorClass === 'cyan' ? '#06b6d4' :
+                                    alloc.colorClass === 'green' ? '#10b981' :
+                                    alloc.colorClass === 'liquid' ? '#a78bfa' : '#4b5563';
+                      
+                      return (
+                        <span key={alloc.id} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }}></span> 
+                          {alloc.name} ({alloc.pct.toFixed(0)}%)
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -8275,11 +8368,42 @@ function App() {
           </div>
       );
     }
-    const goldVal = (holdings?.gold || 0) * rates.gold.price;
-    const silverVal = (holdings?.silver || 0) * rates.silver.price;
-    const referralEarnings = successfulReferralsCount * 10;
-    const addedCash = Math.max(0, walletBalance - referralEarnings);
-    const totalValuation = goldVal + silverVal + addedCash;
+    let totalValuationOfMetals = 0;
+    const metalValues = {};
+    metals.forEach((m) => {
+      const weight = holdings?.[m.assetId] || 0;
+      const price = rates[m.assetId]?.price || 0;
+      const value = weight * price;
+      metalValues[m.assetId] = value;
+      totalValuationOfMetals += value;
+    });
+
+    const goldVal = metalValues.gold || 0;
+    const silverVal = metalValues.silver || 0;
+    const totalValuation = totalValuationOfMetals + walletBalance;
+
+    const activeAllocations = [];
+    if (walletBalance > 0) {
+      activeAllocations.push({
+        id: 'cash',
+        name: 'Cash',
+        colorClass: 'cash',
+        value: walletBalance,
+        pct: totalValuation > 0 ? (walletBalance / totalValuation) * 100 : 0
+      });
+    }
+    metals.forEach((m) => {
+      const val = metalValues[m.assetId] || 0;
+      if (val > 0) {
+        activeAllocations.push({
+          id: m.assetId,
+          name: m.name,
+          colorClass: m.group,
+          value: val,
+          pct: totalValuation > 0 ? (val / totalValuation) * 100 : 0
+        });
+      }
+    });
 
     return (
       <div id="root" className="dashboard-page-view animate-fade-in">
@@ -8428,8 +8552,9 @@ function App() {
                     </span>
                     <span>All-Time Vault Growth</span>
                   </div>
-                  <div className="cash-indicator">
-                    <Wallet size={12} /> Available Cash: ₹{addedCash.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <div className="cash-indicator" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', flexWrap: 'wrap', gap: '8px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '12px', marginTop: '12px' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Wallet size={13} style={{ color: '#10b981' }} /> Available Cash: <strong style={{ color: '#fff', marginLeft: '2px' }}>₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Coins size={13} style={{ color: '#d9af56' }} /> Metal Holdings: <strong style={{ color: '#d9af56', marginLeft: '2px' }}>₹{totalValuationOfMetals.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
                   </div>
                 </div>
 
@@ -8438,14 +8563,26 @@ function App() {
                   <h3>Asset Allocation</h3>
                   <div className="allocation-details-row">
                     <div className="alloc-bar-container">
-                      <div className="alloc-segment gold" style={{ width: `${(goldVal / totalValuation) * 100}%` }} title="Gold"></div>
-                      <div className="alloc-segment silver" style={{ width: `${(silverVal / totalValuation) * 100}%` }} title="Silver"></div>
-                      <div className="alloc-segment cash" style={{ width: `${(addedCash / totalValuation) * 100}%` }} title="Cash"></div>
+                      {activeAllocations.map(alloc => (
+                        alloc.value > 0 && (
+                          <div 
+                            key={alloc.id} 
+                            className={`alloc-segment ${alloc.colorClass}`} 
+                            style={{ width: `${alloc.pct}%` }} 
+                            title={alloc.name}
+                          ></div>
+                        )
+                      ))}
                     </div>
                     <div className="alloc-legend-grid">
-                      <div className="legend-item"><span className="dot gold"></span> Gold: {((goldVal / totalValuation) * 100).toFixed(1)}%</div>
-                      <div className="legend-item"><span className="dot silver"></span> Silver: {((silverVal / totalValuation) * 100).toFixed(1)}%</div>
-                      <div className="legend-item"><span className="dot cash"></span> Cash: {((addedCash / totalValuation) * 100).toFixed(1)}%</div>
+                      {activeAllocations.map(alloc => (
+                        alloc.value > 0 && (
+                          <div key={alloc.id} className="legend-item">
+                            <span className={`dot ${alloc.colorClass}`}></span> 
+                            {alloc.name}: {alloc.pct.toFixed(1)}%
+                          </div>
+                        )
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -8454,36 +8591,52 @@ function App() {
               {/* Holdings Grid */}
               <h3 className="section-title">Your Digital Meta Vaults</h3>
               <div className="holdings-grid">
-                {/* Gold Card */}
-                <div className="holding-card gold">
-                  <div className="card-top">
-                    <h4>Gold Vault</h4>
-                    <span className="symbol-label">AU</span>
-                  </div>
-                  <div className="holding-weight">{(holdings?.gold || 0).toFixed(4)} <span className="grams-lbl">g</span></div>
-                  <div className="holding-value">₹{goldVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  <div className="holding-action-row">
-                    <span className="live-pricing-indicator">₹{rates.gold.price.toFixed(2)}/g</span>
-                    <button className="btn-card-action" onClick={() => { setActiveAsset('gold'); setDashTab('trade'); }}>Trade</button>
-                  </div>
-                </div>
+                {metals.map((metal) => {
+                  const weight = holdings?.[metal.assetId] || 0;
+                  const value = metalValues?.[metal.assetId] || 0;
+                  const price = rates[metal.assetId]?.price || 0;
 
-                {/* Silver Card */}
-                <div className="holding-card silver">
-                  <div className="card-top">
-                    <h4>Silver Vault</h4>
-                    <span className="symbol-label">AG</span>
+                  // Only show metals if the user owns a positive weight
+                  if (weight <= 0) return null;
+
+                  return (
+                    <div key={metal.assetId} className={`holding-card ${metal.group}`}>
+                      <div className="card-top">
+                        <h4>{metal.name} Vault</h4>
+                        <span className="symbol-label">{metal.symbol.toUpperCase()}</span>
+                      </div>
+                      <div className="holding-weight">
+                        {weight.toFixed(4)} <span className="grams-lbl">g</span>
+                      </div>
+                      <div className="holding-value">
+                        ₹{value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      <div className="holding-action-row">
+                        <span className="live-pricing-indicator">₹{price.toFixed(2)}/g</span>
+                        <button 
+                          className="btn-card-action" 
+                          onClick={() => {
+                            if (PORTAL_TRADE_ASSETS.includes(metal.assetId)) {
+                              setActiveAsset(metal.assetId);
+                              setDashTab('trade');
+                            } else {
+                              setAboutInitialMetalId(metal.assetId);
+                              setAboutInitialAction('sell');
+                              setView('about');
+                            }
+                          }}
+                        >
+                          Trade
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+                {Object.values(holdings).every(w => w <= 0) && (
+                  <div style={{ gridColumn: 'span 4', textAlign: 'center', padding: '40px', color: '#9c93a8', background: 'rgba(255,255,255,0.01)', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.08)', width: '100%' }}>
+                    <p style={{ margin: 0, fontSize: '14px' }}>No strategic metal vaults unlocked yet. Go to the <strong>Explore Elements</strong> tab to authorize your first purchase!</p>
                   </div>
-                  <div className="holding-weight">{(holdings?.silver || 0).toFixed(4)} <span className="grams-lbl">g</span></div>
-                  <div className="holding-value">₹{silverVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  <div className="holding-action-row">
-                    <span className="live-pricing-indicator">₹{rates.silver.price.toFixed(2)}/g</span>
-                    <button className="btn-card-action" onClick={() => { setActiveAsset('silver'); setDashTab('trade'); }}>Trade</button>
-                  </div>
-                </div>
-
-
-
+                )}
               </div>
 
               <div className="activity-ledger-section">
@@ -8509,15 +8662,21 @@ function App() {
                         <tr key={tx.id}>
                           <td className="tx-id-col">{tx.id}</td>
                           <td>
-                            <span className={`tx-type-tag ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>
-                              {tx.type === 'deposit' ? <ArrowDownLeft size={12} /> : tx.type === 'buy' ? <Plus size={12} /> : <Minus size={12} />}
-                              {tx.type === 'refund' ? 'rejected' : tx.type}
-                            </span>
-                          </td>
+                             <span className={`tx-type-tag ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>
+                               {tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'referral' ? (
+                                 <ArrowDownLeft size={12} />
+                               ) : tx.type === 'sell' ? (
+                                 <Plus size={12} />
+                               ) : (
+                                 <Minus size={12} />
+                               )}
+                               {tx.type === 'refund' ? 'rejected' : tx.type}
+                             </span>
+                           </td>
                           <td>{getAssetLabel(tx.asset)}</td>
                           <td>{tx.weight > 0 ? `${tx.weight.toFixed(4)} g` : '-'}</td>
                           <td className={`tx-amt-col ${tx.type}`}>
-                            {tx.type === 'buy' ? '-' : '+'}{'\u20b9'}{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            {(tx.type === 'buy' || tx.type === 'withdrawal') ? '-' : '+'}{'\u20b9'}{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                           </td>
                           <td className="tx-date-col">{tx.date}</td>
                           <td><span className="status-badge success">{tx.status}</span></td>
@@ -8694,12 +8853,6 @@ function App() {
                     </div>
                     <div className="cc-balance-lbl">Total Wallet Balance</div>
                     <div className="cc-balance-val">{'₹'}{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                    {successfulReferralsCount > 0 && (
-                      <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginTop: '-6px', marginBottom: '6px', display: 'flex', gap: '12px' }}>
-                        <span>Deposited: <span style={{ color: '#10b981', fontWeight: 700 }}>₹{Math.max(0, walletBalance - successfulReferralsCount * 10).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span></span>
-                        <span>Referral Bonus: <span style={{ color: '#d9af56', fontWeight: 700 }}>₹{(Math.min(walletBalance, successfulReferralsCount * 10)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span></span>
-                      </div>
-                    )}
                     <div className="card-bottom-row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                       <span>Withdrawable: ₹{withdrawableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       <span>STATUS: SECURED</span>
@@ -8751,16 +8904,24 @@ function App() {
                 <div className="complete-vault-ledger">
                   <h3>Full Transaction History</h3>
                   <div className="full-ledger-scrollable">
-                    {transactions.filter(tx => ['deposit', 'withdrawal', 'refund'].includes(tx.type)).map((tx) => (
+                    {transactions.filter(tx => ['deposit', 'withdrawal', 'refund', 'buy', 'sell', 'referral'].includes(tx.type)).map((tx) => (
                       <React.Fragment key={tx.id}>
                       <div className="ledger-card-item">
                         <div className="ledger-item-left">
                           <div className={`ledger-type-circle ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>
-                            {tx.type === 'deposit' || tx.type === 'refund' ? <ArrowDownLeft size={16} /> : tx.type === 'withdrawal' ? <ArrowUpRight size={16} /> : <ArrowRightLeft size={16} />}
+                            {tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'referral' ? (
+                              <ArrowDownLeft size={16} />
+                            ) : tx.type === 'withdrawal' ? (
+                              <ArrowUpRight size={16} />
+                            ) : tx.type === 'buy' ? (
+                              <Minus size={16} />
+                            ) : (
+                              <Plus size={16} />
+                            )}
                           </div>
                           <div>
                             <div className="ledger-item-title">
-                              {tx.type === 'deposit' ? 'Added Funds' : tx.type === 'refund' ? 'Rejected' : tx.type === 'withdrawal' ? 'Withdrew Cash' : tx.type === 'buy' ? `Purchased ${getAssetLabel(tx.asset)}` : `Sold ${getAssetLabel(tx.asset)}`}
+                              {tx.type === 'deposit' ? 'Added Funds' : tx.type === 'refund' ? 'Rejected' : tx.type === 'withdrawal' ? 'Withdrew Cash' : tx.type === 'buy' ? `Purchased ${getAssetLabel(tx.asset)}` : tx.type === 'referral' ? 'Referral Reward' : `Sold ${getAssetLabel(tx.asset)}`}
                             </div>
                             <div className="ledger-item-date">{tx.date} {'\u2022'} ID: {tx.id}</div>
                           </div>
@@ -8777,7 +8938,7 @@ function App() {
                       )}
                       </React.Fragment>
                     ))}
-                    {transactions.filter(tx => ['deposit', 'withdrawal', 'refund'].includes(tx.type)).length === 0 && (
+                    {transactions.filter(tx => ['deposit', 'withdrawal', 'refund', 'buy', 'sell', 'referral'].includes(tx.type)).length === 0 && (
                       <div style={{ textAlign: 'center', padding: '30px 0', color: 'rgba(255,255,255,0.3)', fontSize: '13px' }}>No transactions yet.</div>
                     )}
                   </div>
@@ -9489,11 +9650,13 @@ function App() {
                     <div className="modal-detail-row"><span className="modal-detail-label">Weight</span><span className="modal-detail-val">{modalData.weight} Grams</span></div>
                     <div className="modal-detail-row"><span className="modal-detail-label">Live rate per gram</span><span className="modal-detail-val">{'\u20b9'}{modalData.rate?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                     <div className="modal-detail-row"><span className="modal-detail-label">Subtotal</span><span className="modal-detail-val">{'\u20b9'}{modalData.subtotal?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                    {modalData.action === 'buy' && (
+                    {modalData.action === 'buy' ? (
                       <div className="modal-detail-row"><span className="modal-detail-label">GST tax (18.0%)</span><span className="modal-detail-val">{'\u20b9'}{modalData.gst?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                    ) : (
+                      <div className="modal-detail-row"><span className="modal-detail-label" style={{ color: '#10b981' }}>GST tax (0% - Selling)</span><span className="modal-detail-val" style={{ color: '#10b981' }}>{'\u20b9'}0.00</span></div>
                     )}
                     <div className="modal-detail-total">
-                      <span style={{ color: '#fff' }}>{modalData.action === 'buy' ? 'Total payable amount' : 'You receive'}</span>
+                      <span style={{ color: '#fff' }}>{modalData.action === 'buy' ? 'Total payable amount' : 'You receive (No GST)'}</span>
                       <span style={{ color: '#d9af56' }}>{'\u20b9'}{modalData.total?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <button type="button" className="btn-modal-confirm" onClick={confirmTransaction}>{modalType === 'sip' ? 'Confirm & Start SIP' : 'Authorize Order'}</button>
@@ -10064,7 +10227,22 @@ function App() {
             )}
           </div>
         </header>
-        <AboutUs rates={rates} holdings={holdings} walletBalance={walletBalance} isLoggedIn={!!user} onRequireAuth={() => { setView('auth'); setAuthRole('client'); }} onTradeRequest={handleAboutTradeRequest} onExplore={() => { setDashTab('trade'); setView('dashboard'); }} />
+        <AboutUs 
+          rates={rates} 
+          holdings={holdings} 
+          walletBalance={walletBalance} 
+          withdrawableBalance={withdrawableBalance} 
+          isLoggedIn={!!user} 
+          onRequireAuth={() => { setView('auth'); setAuthRole('client'); }} 
+          onTradeRequest={handleAboutTradeRequest} 
+          onExplore={() => { setDashTab('trade'); setView('dashboard'); }} 
+          initialSelectedMetalId={aboutInitialMetalId}
+          initialActionType={aboutInitialAction}
+          onClearInitialTrading={() => {
+            setAboutInitialMetalId(null);
+            setAboutInitialAction('buy');
+          }}
+        />
         {showWithdrawModal && (
           <div className="modal-overlay">
             <div className="modal-content" style={{ maxWidth: '440px', border: '1px solid rgba(217, 175, 86, 0.2)', background: 'linear-gradient(135deg, #18092a 0%, #0d0418 100%)', boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)' }}>
@@ -10234,11 +10412,18 @@ function App() {
                 ) : (
                   <>
                     <div className="modal-detail-row"><span className="modal-detail-label">Asset</span><span className="modal-detail-val gold">{getAssetLabel(modalData.asset)}</span></div>
-                    <div className="modal-detail-row"><span className="modal-detail-label">Action</span><span className="modal-detail-val">{modalData.action}</span></div>
+                    <div className="modal-detail-row"><span className="modal-detail-label">Action</span><span className="modal-detail-val" style={{ textTransform: 'uppercase' }}>{modalData.action}</span></div>
                     <div className="modal-detail-row"><span className="modal-detail-label">Weight</span><span className="modal-detail-val">{modalData.weight} g</span></div>
+                    <div className="modal-detail-row"><span className="modal-detail-label">Live rate per gram</span><span className="modal-detail-val">{'\u20b9'}{modalData.rate?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                    <div className="modal-detail-row"><span className="modal-detail-label">Subtotal</span><span className="modal-detail-val">{'\u20b9'}{modalData.subtotal?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                    {modalData.action === 'buy' ? (
+                      <div className="modal-detail-row"><span className="modal-detail-label">GST tax (18.0%)</span><span className="modal-detail-val">{'\u20b9'}{modalData.gst?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                    ) : (
+                      <div className="modal-detail-row"><span className="modal-detail-label" style={{ color: '#10b981' }}>GST tax (0% - Selling)</span><span className="modal-detail-val" style={{ color: '#10b981' }}>{'\u20b9'}0.00</span></div>
+                    )}
                     <div className="modal-detail-total">
-                      <span style={{ color: '#fff' }}>Total</span>
-                      <span style={{ color: '#d9af56' }}>{'\u20b9'}{modalData.total?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                      <span style={{ color: '#fff' }}>{modalData.action === 'buy' ? 'Total payable amount' : 'You receive (No GST)'}</span>
+                      <span style={{ color: '#d9af56' }}>{'\u20b9'}{modalData.total?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <button type="button" className="btn-modal-confirm" onClick={confirmTransaction}>Authorize {modalData.action === 'buy' ? 'Buy' : 'Sell'}</button>
                   </>

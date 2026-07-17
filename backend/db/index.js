@@ -57,4 +57,5 @@ pool.query(`
 
 module.exports = {
   query: (text, params) => pool.query(text, params),
+  connect: () => pool.connect(),
 };

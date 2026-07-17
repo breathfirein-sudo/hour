@@ -125,12 +125,12 @@ const TradePopup = ({ trade, onClose }) => {
             <span style={{ color: '#ffffff', fontWeight: 'bold' }}>₹{returned.toFixed(2)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#9c93a8' }}>Wallet Before:</span>
+            <span style={{ color: '#9c93a8' }}>Wallet After Cut:</span>
             <span style={{ color: '#ffffff' }}>₹{parseFloat(trade.wallet_balance_before || 0).toFixed(2)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#9c93a8' }}>Wallet After:</span>
-            <span style={{ color: '#ffffff' }}>₹{parseFloat(trade.wallet_balance_after || 0).toFixed(2)}</span>
+            <span style={{ color: '#ffffff' }}>₹{(parseFloat(trade.wallet_balance_before || 0) + parseFloat(trade.returned_amount || 0)).toFixed(2)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
             <span style={{ color: '#9c93a8', fontWeight: 600 }}>Net P&L:</span>

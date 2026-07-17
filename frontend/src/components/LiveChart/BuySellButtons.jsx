@@ -89,7 +89,11 @@ const BuySellButtons = ({
         }, headers);
         
         if (setWalletBalance) {
-          setWalletBalance(prev => parseFloat((prev - amt).toFixed(2)));
+          if (res.data && res.data.wallet_balance_before !== undefined) {
+            setWalletBalance(parseFloat(res.data.wallet_balance_before));
+          } else {
+            setWalletBalance(prev => parseFloat((prev - amt).toFixed(2)));
+          }
         }
 
         if (onTradeExecuted) {

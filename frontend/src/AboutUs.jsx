@@ -214,7 +214,19 @@ const METAL_METADATA = {
   }
 };
 
-const AboutUs = ({ rates = {}, holdings = {}, walletBalance = 0, isLoggedIn, onRequireAuth, onTradeRequest, onExplore }) => {
+const AboutUs = ({ 
+  rates = {}, 
+  holdings = {}, 
+  walletBalance = 0, 
+  withdrawableBalance = 0,
+  isLoggedIn, 
+  onRequireAuth, 
+  onTradeRequest, 
+  onExplore,
+  initialSelectedMetalId,
+  initialActionType,
+  onClearInitialTrading
+}) => {
   const [selectedMetal, setSelectedMetal] = useState(null);
   const [activeAction, setActiveAction] = useState('buy');
   const [rupees, setRupees] = useState('');
@@ -222,6 +234,19 @@ const AboutUs = ({ rates = {}, holdings = {}, walletBalance = 0, isLoggedIn, onR
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortBy, setSortBy] = useState('atomic');
+
+  React.useEffect(() => {
+    if (initialSelectedMetalId) {
+      const metal = metals.find(m => m.assetId === initialSelectedMetalId);
+      if (metal) {
+        setSelectedMetal(metal);
+        setActiveAction(initialActionType || 'buy');
+        setRupees('');
+        setGrams('');
+      }
+      onClearInitialTrading?.();
+    }
+  }, [initialSelectedMetalId, initialActionType]);
 
   const handleCardClick = (metal) => {
     setSelectedMetal(metal);
@@ -272,8 +297,9 @@ const AboutUs = ({ rates = {}, holdings = {}, walletBalance = 0, isLoggedIn, onR
 
     const rate = getPricePerGram(selectedMetal);
     const subtotal = finalRupees;
-    const gst = subtotal * 0.18;
-    const total = subtotal + gst;
+    const isBuy = actionType === 'buy' || actionType === 'sip';
+    const gst = isBuy ? subtotal * 0.18 : 0;
+    const total = isBuy ? subtotal + gst : subtotal;
 
     onTradeRequest?.({
       asset: selectedMetal.assetId,
@@ -567,7 +593,6 @@ const AboutUs = ({ rates = {}, holdings = {}, walletBalance = 0, isLoggedIn, onR
                   <span>Live Market Rate</span>
                 </div>
               </div>
-
               <div className="wallet-holdings-bar">
                 <div className="balance-item">
                   <span className="lbl">Wallet Cash</span>
@@ -656,12 +681,21 @@ const AboutUs = ({ rates = {}, holdings = {}, walletBalance = 0, isLoggedIn, onR
                     ₹{(parseFloat(rupees) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="cost-row">
-                  <span className="cost-lbl">GST (18%)</span>
-                  <span className="cost-val">
-                    ₹{((parseFloat(rupees) || 0) * 0.18).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
-                </div>
+                {activeAction === 'buy' ? (
+                  <div className="cost-row">
+                    <span className="cost-lbl">GST (18%)</span>
+                    <span className="cost-val">
+                      ₹{((parseFloat(rupees) || 0) * 0.18).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="cost-row">
+                    <span className="cost-lbl" style={{ color: '#10b981' }}>GST (0% - Selling)</span>
+                    <span className="cost-val" style={{ color: '#10b981' }}>
+                      ₹0.00
+                    </span>
+                  </div>
+                )}
                 <div className="cost-row total">
                   <span className="cost-lbl">{activeAction === 'buy' ? 'Total Cost' : 'Estimated Return'}</span>
                   <span className="cost-val">

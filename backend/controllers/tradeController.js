@@ -45,37 +45,41 @@ const buyTrade = async (req, res) => {
     const appFee = amt * 0.01;
     const qty = tradeStake / parseFloat(price);
     const balanceBefore = parseFloat(user.wallet.balance);
+    const balanceAfterCut = balanceBefore - amt;
 
-    await db.query('BEGIN');
+    const client = await db.connect();
     try {
+      await client.query('BEGIN');
       // 1. Deduct exactly investmentAmount from user's Wallet balance
-      await db.query(
+      await client.query(
         'UPDATE "Wallet" SET balance = balance - $1 WHERE "userId" = $2',
         [amt, user.id]
       );
 
-      // 2. Insert standard trade with details including wallet_balance_before
-      const result = await db.query(
+      // 2. Insert standard trade with details including wallet_balance_before (after cutting)
+      const result = await client.query(
         `INSERT INTO trades (
           symbol, price, quantity, type, status, expiry_time, user_email, 
           investment_amount, pnl, trade_stake, application_fee, returned_amount, profit_loss_amount, user_id,
           wallet_balance_before, wallet_balance_after
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0.00, $9, $10, 0.00, 0.00, $11, $12, 0.00) RETURNING *`,
-        [symbol, price, qty, 'BUY', 'OPEN', expiryTime, email, amt, tradeStake, appFee, user.id, balanceBefore]
+        [symbol, price, qty, 'BUY', 'OPEN', expiryTime, email, amt, tradeStake, appFee, user.id, balanceAfterCut]
       );
 
       // 3. Record wallet transaction log
-      await db.query(
+      await client.query(
         `INSERT INTO "Transaction" ("userId", "type", "asset", "amount", "fee", "gst", "details", "createdAt") 
          VALUES ($1, $2, $3, $4, $5, 0.00, $6, CURRENT_TIMESTAMP)`,
         [user.id, 'TRADE_PLACE', symbol, -amt, appFee, `Standard Paper Trade BUY placement of ${symbol}`]
       );
 
-      await db.query('COMMIT');
+      await client.query('COMMIT');
       res.status(201).json(result.rows[0]);
     } catch (txErr) {
-      await db.query('ROLLBACK');
+      await client.query('ROLLBACK');
       throw txErr;
+    } finally {
+      client.release();
     }
   } catch (error) {
     console.error('Error executing buy trade:', error);
@@ -114,37 +118,41 @@ const sellTrade = async (req, res) => {
     const appFee = amt * 0.01;
     const qty = tradeStake / parseFloat(price);
     const balanceBefore = parseFloat(user.wallet.balance);
+    const balanceAfterCut = balanceBefore - amt;
 
-    await db.query('BEGIN');
+    const client = await db.connect();
     try {
+      await client.query('BEGIN');
       // 1. Deduct exactly investmentAmount from user's Wallet balance
-      await db.query(
+      await client.query(
         'UPDATE "Wallet" SET balance = balance - $1 WHERE "userId" = $2',
         [amt, user.id]
       );
 
-      // 2. Insert standard trade with details including wallet_balance_before
-      const result = await db.query(
+      // 2. Insert standard trade with details including wallet_balance_before (after cutting)
+      const result = await client.query(
         `INSERT INTO trades (
           symbol, price, quantity, type, status, expiry_time, user_email, 
           investment_amount, pnl, trade_stake, application_fee, returned_amount, profit_loss_amount, user_id,
           wallet_balance_before, wallet_balance_after
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0.00, $9, $10, 0.00, 0.00, $11, $12, 0.00) RETURNING *`,
-        [symbol, price, qty, 'SELL', 'OPEN', expiryTime, email, amt, tradeStake, appFee, user.id, balanceBefore]
+        [symbol, price, qty, 'SELL', 'OPEN', expiryTime, email, amt, tradeStake, appFee, user.id, balanceAfterCut]
       );
 
       // 3. Record wallet transaction log
-      await db.query(
+      await client.query(
         `INSERT INTO "Transaction" ("userId", "type", "asset", "amount", "fee", "gst", "details", "createdAt") 
          VALUES ($1, $2, $3, $4, $5, 0.00, $6, CURRENT_TIMESTAMP)`,
         [user.id, 'TRADE_PLACE', symbol, -amt, appFee, `Standard Paper Trade SELL placement of ${symbol}`]
       );
 
-      await db.query('COMMIT');
+      await client.query('COMMIT');
       res.status(201).json(result.rows[0]);
     } catch (txErr) {
-      await db.query('ROLLBACK');
+      await client.query('ROLLBACK');
       throw txErr;
+    } finally {
+      client.release();
     }
   } catch (error) {
     console.error('Error executing sell trade:', error);

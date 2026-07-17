@@ -135,38 +135,46 @@ exports.placeTrade = async (req, res) => {
     const ms = getExpiryMs(interval);
     const expiryTime = new Date(Date.now() + ms).toISOString();
 
-    // 3. Deduct balance in transaction
-    await db.query('BEGIN');
+    // 3. Deduct balance in transaction on a checked-out client
+    const client = await db.connect();
+    try {
+      await client.query('BEGIN');
 
-    // Deduct 11 from the user's contest balance
-    await db.query(
-      'UPDATE contest_participants SET balance = balance - $1 WHERE email = $2',
-      [riskAmount, email]
-    );
+      // Deduct 11 from the user's contest balance
+      await client.query(
+        'UPDATE contest_participants SET balance = balance - $1 WHERE email = $2',
+        [riskAmount, email]
+      );
 
-    // Add 1 to the superadmin's main Wallet
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-    await prisma.user.update({
-      where: { email: 'sandeepkumar.pikili@vrpigroup.co.in' },
-      data: {
-        wallet: {
-          update: {
-            balance: { increment: adminFee }
+      // Add 1 to the superadmin's main Wallet
+      const { PrismaClient } = require('@prisma/client');
+      const prisma = new PrismaClient();
+      await prisma.user.update({
+        where: { email: 'sandeepkumar.pikili@vrpigroup.co.in' },
+        data: {
+          wallet: {
+            update: {
+              balance: { increment: adminFee }
+            }
           }
         }
-      }
-    });
+      });
 
-    const { rows: inserted } = await db.query(
-      `INSERT INTO contest_trades (user_email, symbol, price, quantity, type, status, entry_amount, expiry_time) 
-       VALUES ($1, $2, $3, $4, $5, 'OPEN', $6, $7) RETURNING *`,
-      [email, symbol, price, quantity, type.toUpperCase(), amt, expiryTime]
-    );
+      const { rows: inserted } = await client.query(
+        `INSERT INTO contest_trades (user_email, symbol, price, quantity, type, status, entry_amount, expiry_time) 
+         VALUES ($1, $2, $3, $4, $5, 'OPEN', $6, $7) RETURNING *`,
+        [email, symbol, price, quantity, type.toUpperCase(), amt, expiryTime]
+      );
 
-    await db.query('COMMIT');
+      await client.query('COMMIT');
 
-    res.status(201).json({ success: true, message: 'Contest trade placed successfully', trade: inserted[0] });
+      res.status(201).json({ success: true, message: 'Contest trade placed successfully', trade: inserted[0] });
+    } catch (txErr) {
+      await client.query('ROLLBACK');
+      throw txErr;
+    } finally {
+      client.release();
+    }
   } catch (error) {
     await db.query('ROLLBACK');
     console.error('Error placing contest trade:', error);
@@ -256,23 +264,30 @@ exports.adminResetParticipant = async (req, res) => {
   }
 
   try {
-    await db.query('BEGIN');
-    
-    // Delete trades
-    await db.query('DELETE FROM contest_trades WHERE user_email = $1', [email.toLowerCase()]);
-    
-    // Reset stats
-    await db.query(
-      `UPDATE contest_participants 
-       SET balance = 11000.00, total_trades = 0, profit_trades = 0, loss_trades = 0, success_rate = 0.00 
-       WHERE email = $1`,
-      [email.toLowerCase()]
-    );
-    
-    await db.query('COMMIT');
-    res.status(200).json({ success: true, message: 'Participant progress reset successfully' });
+    const client = await db.connect();
+    try {
+      await client.query('BEGIN');
+      
+      // Delete trades
+      await client.query('DELETE FROM contest_trades WHERE user_email = $1', [email.toLowerCase()]);
+      
+      // Reset stats
+      await client.query(
+        `UPDATE contest_participants 
+         SET balance = 11000.00, total_trades = 0, profit_trades = 0, loss_trades = 0, success_rate = 0.00 
+         WHERE email = $1`,
+        [email.toLowerCase()]
+      );
+      
+      await client.query('COMMIT');
+      res.status(200).json({ success: true, message: 'Participant progress reset successfully' });
+    } catch (txErr) {
+      await client.query('ROLLBACK');
+      throw txErr;
+    } finally {
+      client.release();
+    }
   } catch (error) {
-    await db.query('ROLLBACK');
     console.error('Admin reset participant error:', error);
     res.status(500).json({ success: false, error: 'Reset failed' });
   }

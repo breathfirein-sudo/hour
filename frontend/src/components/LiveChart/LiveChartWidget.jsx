@@ -37,10 +37,22 @@ const LiveChartWidget = ({ user, withdrawableBalance = 0, walletBalance = 0, set
   const lastCandleTimeRef = useRef(null);
   const widgetRef = useRef(null);
 
+  const symbolRef = useRef(symbol);
+  const userRef = useRef(user);
+
+  useEffect(() => {
+    symbolRef.current = symbol;
+  }, [symbol]);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
   const fetchUserData = async () => {
-    if (!user) return;
+    const currentUser = userRef.current || user;
+    if (!currentUser) return;
     try {
-      const token = await getAuthToken(user);
+      const token = await getAuthToken(currentUser);
       const headers = { headers: { Authorization: `Bearer ${token}` } };
 
       // 1. Fetch standard trades
@@ -59,6 +71,18 @@ const LiveChartWidget = ({ user, withdrawableBalance = 0, walletBalance = 0, set
           setContestTrades(contestRes.data.trades || []);
         }
       }
+
+      // 3. Always sync authoritative Wallet Balance from database
+      if (setWalletBalance && !isContest) {
+        try {
+          const validateRes = await axios.post(`${API_URL}/auth/validate`, { email: currentUser.email });
+          if (validateRes.data && validateRes.data.valid && validateRes.data.walletBalance !== undefined) {
+            setWalletBalance(parseFloat(validateRes.data.walletBalance));
+          }
+        } catch (vErr) {
+          console.error("Error validating wallet balance:", vErr);
+        }
+      }
     } catch (err) {
       console.error("Error fetching user trading data:", err);
     }
@@ -67,17 +91,6 @@ const LiveChartWidget = ({ user, withdrawableBalance = 0, walletBalance = 0, set
   useEffect(() => {
     fetchUserData();
   }, [user, symbol]);
-
-  const symbolRef = useRef(symbol);
-  const userRef = useRef(user);
-
-  useEffect(() => {
-    symbolRef.current = symbol;
-  }, [symbol]);
-
-  useEffect(() => {
-    userRef.current = user;
-  }, [user]);
 
   // 1. Setup Socket connection and persistent event listeners once on mount
   useEffect(() => {
@@ -111,8 +124,20 @@ const LiveChartWidget = ({ user, withdrawableBalance = 0, walletBalance = 0, set
           chartRef.current.removePriceLine(trade.id);
         }
         setResolvedTrade(trade);
-        fetchUserData();
-        if (setWalletBalance && trade.balance_refund !== undefined) {
+        setStandardTrades(prev => prev.map(t => String(t.id) === String(trade.id) ? { 
+          ...t, 
+          ...trade, 
+          status: trade.status, 
+          close_price: trade.close_price, 
+          pnl: trade.pnl, 
+          returned_amount: trade.returned_amount, 
+          profit_loss_amount: trade.profit_loss_amount,
+          wallet_balance_after: trade.wallet_balance_after
+        } : t));
+        setTimeout(() => { fetchUserData(); }, 500);
+        if (setWalletBalance && trade.wallet_balance_after !== undefined) {
+          setWalletBalance(parseFloat(trade.wallet_balance_after));
+        } else if (setWalletBalance && trade.balance_refund !== undefined) {
           setWalletBalance(prev => parseFloat((prev + parseFloat(trade.balance_refund)).toFixed(2)));
         }
       }
@@ -126,7 +151,14 @@ const LiveChartWidget = ({ user, withdrawableBalance = 0, walletBalance = 0, set
           chartRef.current.removePriceLine(trade.id);
         }
         setResolvedTrade(trade);
-        fetchUserData();
+        setContestTrades(prev => prev.map(t => String(t.id) === String(trade.id) ? { 
+          ...t, 
+          ...trade,
+          status: trade.status,
+          close_price: trade.close_price,
+          pnl: trade.pnl
+        } : t));
+        setTimeout(() => { fetchUserData(); }, 500);
       }
     });
 
@@ -187,6 +219,11 @@ const LiveChartWidget = ({ user, withdrawableBalance = 0, walletBalance = 0, set
   const handleTradeExecuted = (trade) => {
     if (chartRef.current) {
       chartRef.current.addPriceLine(trade.id, trade.price, trade.type);
+    }
+    if (isContest) {
+      setContestTrades(prev => [trade, ...prev]);
+    } else {
+      setStandardTrades(prev => [trade, ...prev]);
     }
     fetchUserData();
   };
@@ -486,8 +523,8 @@ const LiveChartWidget = ({ user, withdrawableBalance = 0, walletBalance = 0, set
                           <div>Payout: <span style={{ color: '#ffffff', fontWeight: 600 }}>
                             {t.status === 'OPEN' ? 'Pending' : `₹${parseFloat(t.returned_amount || 0).toFixed(2)}`}
                           </span></div>
-                          <div>Bal Before: <span style={{ color: '#ffffff' }}>₹{parseFloat(t.wallet_balance_before || 0).toFixed(2)}</span></div>
-                          <div>Bal After: <span style={{ color: '#ffffff' }}>{t.status === 'OPEN' ? 'Pending' : `₹${parseFloat(t.wallet_balance_after || 0).toFixed(2)}`}</span></div>
+                          <div>Bal After Cut: <span style={{ color: '#ffffff' }}>₹{parseFloat(t.wallet_balance_before || 0).toFixed(2)}</span></div>
+                          <div>Bal After: <span style={{ color: '#ffffff' }}>{t.status === 'OPEN' ? 'Pending' : `₹${(parseFloat(t.wallet_balance_before || 0) + parseFloat(t.returned_amount || 0)).toFixed(2)}`}</span></div>
                         </div>
                       )}
 
