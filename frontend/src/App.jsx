@@ -95,6 +95,7 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
   const [isLocked, setIsLocked] = useState(true);
 
   useEffect(() => {
+    let autoWithdrawTriggered = false;
     const calculateTimeLeft = () => {
       const start = new Date(inv.startTime).getTime();
       const now = Date.now();
@@ -105,6 +106,10 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
       if (remaining <= 0) {
         setIsLocked(false);
         setTimeLeft('');
+        if (!autoWithdrawTriggered && onWithdraw) {
+          autoWithdrawTriggered = true;
+          onWithdraw(inv.id);
+        }
       } else {
         setIsLocked(true);
         // Format remaining time nicely: "6d 23h 59m 59s"
@@ -126,7 +131,7 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
     calculateTimeLeft();
     const timer = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(timer);
-  }, [inv.startTime]);
+  }, [inv.startTime, inv.id, onWithdraw]);
 
   return (
     <div className="investment-details-row" style={{
@@ -172,7 +177,7 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
               fontSize: '11px', 
               fontWeight: '600' 
             }}>
-              <Unlock size={10} /> Unlocked
+              <Unlock size={10} /> Unlocked (Auto-Withdrawing)
             </div>
           )}
         </div>
@@ -221,7 +226,7 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
             }
           }}
         >
-          {isLocked ? 'Locked' : 'Withdraw'}
+          {isLocked ? 'Locked' : 'Auto Withdrawing...'}
         </button>
       </div>
     </div>
@@ -697,6 +702,9 @@ function App() {
             .then(data => {
               if (data.success) {
                 setInvestments(data.investments);
+                if (data.wallet && typeof data.wallet.balance === 'number') {
+                  setWalletBalance(data.wallet.balance);
+                }
               }
             })
             .catch(err => console.error("Failed to fetch investments:", err));
@@ -724,14 +732,38 @@ function App() {
     }
   }, [user, walletBalance]);
 
-  const [investInputValue, setInvestInputValue] = useState('');
+  // Polling investment data when on the investment tab to sync auto-withdrawn investments
+  useEffect(() => {
+    if (dashTab === 'investment' && user && user.uid && user.uid.startsWith('db-user-')) {
+      const userId = user.uid.replace('db-user-', '');
+      const fetchLatestInvestments = () => {
+        fetch(`${VITE_BACKEND_URL}/api/investments/${userId}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              setInvestments(data.investments);
+              if (data.wallet && typeof data.wallet.balance === 'number') {
+                setWalletBalance(data.wallet.balance);
+              }
+            }
+          })
+          .catch(err => console.error("Error polling investments:", err));
+      };
+
+      fetchLatestInvestments();
+      const interval = setInterval(fetchLatestInvestments, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [dashTab, user]);
+
+  const [investInputValue, setInvestInputValue] = useState('1000');
 
   const totalInvestedAmount = investments.reduce((sum, inv) => sum + inv.amount, 0);
 
   const handleInvestFromWallet = async () => {
     const amt = parseFloat(investInputValue);
-    if (isNaN(amt) || amt < 100) {
-      alert('Minimum investment amount is ₹100.');
+    if (isNaN(amt) || amt !== 1000) {
+      alert('Investment amount must be exactly ₹1,000.\nRules: ₹1,000 per week, Max ₹4,000 per month.');
       return;
     }
     if (walletBalance < amt) {
@@ -749,13 +781,17 @@ function App() {
         });
         const data = await res.json();
         if (!data.success) {
-          alert('Failed to invest: ' + data.message);
+          alert(data.message || 'Failed to invest.');
           return;
         }
-        setWalletBalance(prev => prev - amt);
-        setInvestments(prev => [...prev, data.investment]);
-        setInvestInputValue('');
-        alert(`Successfully invested ₹${amt.toLocaleString('en-IN')} from your wallet!`);
+        if (data.wallet && typeof data.wallet.balance === 'number') {
+          setWalletBalance(data.wallet.balance);
+        } else {
+          setWalletBalance(prev => prev - amt);
+        }
+        setInvestments(prev => [data.investment, ...prev]);
+        setInvestInputValue('1000');
+        alert(`Successfully invested ₹${amt.toLocaleString('en-IN')} from your wallet!\n\nIt will be locked for 7 days (earning 1% daily interest) and will automatically withdraw to your wallet balance after 7 days.`);
       } catch (err) {
         console.error("Failed to invest:", err);
         alert('Network error while investing.');
@@ -774,12 +810,14 @@ function App() {
         });
         const data = await res.json();
         if (!data.success) {
-          alert('Failed to withdraw investment: ' + data.message);
+          alert('Cannot withdraw: ' + data.message);
           return;
         }
-        setWalletBalance(data.wallet.balance);
+        if (data.wallet && typeof data.wallet.balance === 'number') {
+          setWalletBalance(data.wallet.balance);
+        }
         setInvestments(prev => prev.filter(i => i.id !== id));
-        alert(`Successfully withdrew your investment and earnings to your wallet!`);
+        alert(`Investment auto-withdrawn to your wallet successfully!`);
       } catch (err) {
         console.error("Failed to withdraw:", err);
         alert('Network error while withdrawing.');
@@ -8700,9 +8738,12 @@ function App() {
                 <p className="premium-animated-text investment-title-mobile" style={{ whiteSpace: 'normal', wordWrap: 'break-word', display: 'block', width: '100%', maxWidth: '100%', textAlign: 'center', marginBottom: '4px' }}>
                   Build Your Business While Sleeping
                 </p>
-                <p style={{ color: '#8b8098', fontSize: '13px', textAlign: 'center', marginTop: '0', marginBottom: '20px', fontWeight: '500' }}>
-                  Invest and earn 1% daily interest. Withdrawals are locked for 7 days.
+                <p style={{ color: '#8b8098', fontSize: '13px', textAlign: 'center', marginTop: '0', marginBottom: '10px', fontWeight: '500' }}>
+                  Invest ₹1,000 & earn 1% daily interest. Withdrawals are automatically processed to your wallet after the 7-day lock period.
                 </p>
+                <div style={{ color: '#d9af56', fontSize: '12px', textAlign: 'center', marginBottom: '20px', background: 'rgba(217, 175, 86, 0.08)', padding: '6px 16px', borderRadius: '20px', border: '1px solid rgba(217, 175, 86, 0.2)', fontWeight: '600' }}>
+                  ⚡ Weekly Limit: ₹1,000 &nbsp;|&nbsp; 🗓️ Monthly Limit: ₹4,000 &nbsp;|&nbsp; 🔒 7-Day Lock with Auto-Withdrawal
+                </div>
                 
                 <div className="investment-dashboard-bar" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
                   {/* Column 1 */}
@@ -8719,12 +8760,12 @@ function App() {
 
                   {/* Column 2 */}
                   <div className="dashboard-bar-section">
-                    <span className="dashboard-bar-label">Invest Amount</span>
+                    <span className="dashboard-bar-label">Invest Amount (Fixed ₹1,000)</span>
                     <div className="invest-input-row" style={{ flexWrap: 'wrap', justifyContent: 'center', width: '100%', boxSizing: 'border-box' }}>
                       <input 
                         type="text" 
                         className="invest-input" 
-                        placeholder="₹ Enter Amount" 
+                        placeholder="₹ 1000" 
                         value={investInputValue}
                         onChange={(e) => setInvestInputValue(e.target.value)}
                         style={{ maxWidth: '100%', boxSizing: 'border-box', flex: '1 1 120px' }}
