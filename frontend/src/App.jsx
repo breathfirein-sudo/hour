@@ -4746,12 +4746,12 @@ function App() {
                         <input 
                           type="text" 
                           readOnly 
-                          value={`https://invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`} 
+                          value={`https://www.invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`} 
                           style={{ width: '100%', background: 'transparent', border: 'none', color: '#ffffff', fontSize: '11px', outline: 'none', padding: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         />
                         <button 
                           onClick={() => {
-                            const link = `https://invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`;
+                            const link = `https://www.invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`;
                             navigator.clipboard.writeText(link);
                             setCopiedInspectedReferralLink(true);
                             setTimeout(() => setCopiedInspectedReferralLink(false), 2000);

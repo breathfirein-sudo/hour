@@ -31,7 +31,7 @@ const getOrCreateAdminReferrer = async () => {
 };
 
 const JWT_SECRET = process.env.JWT_SECRET || 'replace-with-your-secret';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://invest-hour.com';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://www.invest-hour.com';
 
 // In-memory store for OTPs (registration) and reset tokens
 const otpStore = new Map();
@@ -427,9 +427,20 @@ exports.forgotPassword = async (req, res) => {
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }
+    const cleanEmail = email.trim().toLowerCase();
+    let user = await prisma.user.findUnique({
+      where: { email: cleanEmail }
     });
+    let isExec = false;
+
+    if (!user) {
+      user = await prisma.supportExecutive.findFirst({
+        where: { email: { equals: cleanEmail, mode: 'insensitive' } }
+      });
+      if (user) {
+        isExec = true;
+      }
+    }
 
     if (!user) {
       return res.status(400).json({ success: false, error: 'Email is not registered' });
@@ -439,12 +450,19 @@ exports.forgotPassword = async (req, res) => {
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
-    await prisma.user.update({
-      where: { email: email.toLowerCase() },
-      data: { resetToken: token, resetTokenExpiry: expiresAt }
-    });
+    if (isExec) {
+      await prisma.supportExecutive.update({
+        where: { id: user.id },
+        data: { resetToken: token, resetTokenExpiry: expiresAt }
+      });
+    } else {
+      await prisma.user.update({
+        where: { email: cleanEmail },
+        data: { resetToken: token, resetTokenExpiry: expiresAt }
+      });
+    }
 
-    const resetLink = `https://invest-hour.com/?token=${token}`;
+    const resetLink = `https://www.invest-hour.com/?token=${token}`;
 
     const mailOptions = {
       from: getFromEmail(),
@@ -499,32 +517,60 @@ exports.resetPassword = async (req, res) => {
   }
 
   try {
-    const user = await prisma.user.findFirst({
+    let user = await prisma.user.findFirst({
       where: { resetToken: token }
     });
+    let isExec = false;
+
+    if (!user) {
+      user = await prisma.supportExecutive.findFirst({
+        where: { resetToken: token }
+      });
+      if (user) {
+        isExec = true;
+      }
+    }
 
     if (!user || !user.resetTokenExpiry) {
       return res.status(400).json({ success: false, error: 'Invalid or expired reset link' });
     }
 
     if (new Date() > user.resetTokenExpiry) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { resetToken: null, resetTokenExpiry: null }
-      });
+      if (isExec) {
+        await prisma.supportExecutive.update({
+          where: { id: user.id },
+          data: { resetToken: null, resetTokenExpiry: null }
+        });
+      } else {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { resetToken: null, resetTokenExpiry: null }
+        });
+      }
       return res.status(400).json({ success: false, error: 'Reset link has expired. Please request a new one.' });
     }
 
     // Hash new password and update
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { 
-        password: hashedPassword,
-        resetToken: null,
-        resetTokenExpiry: null
-      }
-    });
+    if (isExec) {
+      await prisma.supportExecutive.update({
+        where: { id: user.id },
+        data: { 
+          password: hashedPassword,
+          resetToken: null,
+          resetTokenExpiry: null
+        }
+      });
+    } else {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { 
+          password: hashedPassword,
+          resetToken: null,
+          resetTokenExpiry: null
+        }
+      });
+    }
 
     console.log(`[Reset Password] Successfully reset password for ${user.email}`);
     res.status(200).json({ success: true, message: 'Password has been reset successfully', email: user.email });

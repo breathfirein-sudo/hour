@@ -534,7 +534,7 @@ router.put('/support-executives/:id', async (req, res) => {
       data: {
         name: name !== undefined ? name : existing.name,
         phone: phone !== undefined ? phone : existing.phone,
-        email: email !== undefined ? email : existing.email,
+        email: email !== undefined ? email.trim().toLowerCase() : existing.email,
         role: role !== undefined ? role : existing.role,
         salary: salary !== undefined ? parseFloat(salary) : existing.salary,
         status: status !== undefined ? status : existing.status,
