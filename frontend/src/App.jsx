@@ -233,12 +233,12 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
   );
 };
 
-// Initial rates based on the screenshot
+// Initial rates based on live market pricing
 const INITIAL_RATES = {
-  silver: { price: 267.21, change: -2.04, pct: -0.76 },
-  platinum: { price: 7358.14, change: 12.45, pct: 0.17 },
-  iron: { price: 52.10, change: -0.58, pct: -1.10 },
-  gold: { price: 6143.57, change: 48.96, pct: 0.80 }
+  gold: { price: 13468.00, change: -93.57, pct: -0.69 },
+  silver: { price: 198.00, change: -1.51, pct: -0.76 },
+  platinum: { price: 5290.00, change: -23.32, pct: -0.44 },
+  iron: { price: 114.48, change: -0.80, pct: -0.69 }
 };
 
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000' : 'https://hour-60kr.onrender.com');
@@ -2314,33 +2314,37 @@ function App() {
   const [priceFlash, setPriceFlash] = useState(false);
   const prevPriceRef = useRef(INITIAL_RATES.iron.price);
 
-  // --- Live Rates Simulation Effect ---
+  // --- Real-Time Live Metal Rates Sync Effect ---
   useEffect(() => {
-    const interval = setInterval(() => {
+    // 1. Fetch live market rates baseline via REST API on load
+    fetch(`${VITE_BACKEND_URL}/api/metals/live-rates`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && data.rates) {
+          setRates(prev => ({ ...prev, ...data.rates }));
+        }
+      })
+      .catch(err => console.warn('Failed to fetch live rates:', err));
+
+    // 2. Subscribe to real-time live price ticks via Socket.io
+    const handleLiveRates = (incomingRates) => {
+      if (!incomingRates) return;
       setRates(prev => {
-        const next = { ...prev };
-        const randomAsset = pickRandomPortalAsset(next);
-        const percentChange = (Math.random() * 0.16 - 0.08) / 100;
-        const oldPrice = next[randomAsset].price;
-        const priceDiff = oldPrice * percentChange;
-
-        next[randomAsset] = {
-          price: parseFloat((oldPrice + priceDiff).toFixed(2)),
-          change: parseFloat((next[randomAsset].change + priceDiff).toFixed(2)),
-          pct: parseFloat((((next[randomAsset].change + priceDiff) / (oldPrice - next[randomAsset].change)) * 100).toFixed(2))
-        };
-
-        // If the active asset changed, trigger a flash effect
-        if (randomAsset === activeAsset) {
+        const next = { ...prev, ...incomingRates };
+        // Trigger price flash visual effect when active asset ticks
+        if (incomingRates[activeAsset] && incomingRates[activeAsset].price !== prev[activeAsset]?.price) {
           setPriceFlash(true);
           setTimeout(() => setPriceFlash(false), 800);
         }
-
         return next;
       });
-    }, 4000);
+    };
 
-    return () => clearInterval(interval);
+    socket.on('live_metal_rates', handleLiveRates);
+
+    return () => {
+      socket.off('live_metal_rates', handleLiveRates);
+    };
   }, [activeAsset]);
 
   // --- Super Admin & Client Shared Sync Handlers ---

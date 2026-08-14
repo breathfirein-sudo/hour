@@ -1,5 +1,6 @@
 const { getFinnhubCandles } = require('../services/finnhub');
 const { getOrStartTracker, getCurrentPrice } = require('../services/livePriceTracker');
+const { getLiveMetalRates } = require('../services/metalPriceService');
 const db = require('../db');
 const { PrismaClient } = require('@prisma/client');
 const globalPrisma = new PrismaClient();
@@ -410,6 +411,14 @@ const setupSocket = (io) => {
 
   io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
+    
+    // Emit initial live metal rates to newly connected client
+    socket.emit('live_metal_rates', getLiveMetalRates());
+
+    socket.on('get_live_rates', () => {
+      socket.emit('live_metal_rates', getLiveMetalRates());
+    });
+
     let currentTimer = null;
     let activeSymbol = 'TSLA';
     let activeInterval = '1m';

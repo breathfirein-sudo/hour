@@ -35,9 +35,20 @@ app.use((req, res, next) => {
   next();
 });
 
+const { getLiveMetalRates, startMetalPriceEngine } = require('./services/metalPriceService');
+
 // Health check endpoint (keeps Render from cold-starting)
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: Date.now() });
+});
+
+// Live Metal & Element Rates endpoint
+app.get('/api/metals/live-rates', (req, res) => {
+  res.json({
+    success: true,
+    timestamp: Date.now(),
+    rates: getLiveMetalRates()
+  });
 });
 
 // Mount API routes
@@ -61,6 +72,7 @@ const io = new Server(server, {
 });
 app.set('io', io);
 setupSocket(io);
+startMetalPriceEngine(io);
 
 // Global error handling middleware (always returns JSON)
 app.use((err, req, res, next) => {
