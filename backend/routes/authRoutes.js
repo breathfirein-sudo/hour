@@ -72,6 +72,94 @@ router.post('/validate', async (req, res) => {
   }
 });
 
+router.post('/metal-trade', async (req, res) => {
+  try {
+    const { email, userId, asset, action, amount, weight, gst, details } = req.body;
+    
+    let user = null;
+    if (email) {
+      user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+        include: { wallet: true }
+      });
+    } else if (userId) {
+      user = await prisma.user.findUnique({
+        where: { id: parseInt(userId) },
+        include: { wallet: true }
+      });
+    }
+
+    if (!user || !user.wallet) {
+      return res.status(404).json({ success: false, error: 'User wallet not found' });
+    }
+
+    const tradeAmt = parseFloat(amount);
+    if (isNaN(tradeAmt) || tradeAmt <= 0) {
+      return res.status(400).json({ success: false, error: 'Invalid trade amount' });
+    }
+
+    if (action === 'buy') {
+      if (user.wallet.balance < tradeAmt) {
+        return res.status(400).json({ success: false, error: 'Insufficient wallet balance' });
+      }
+
+      const [, updatedWallet] = await prisma.$transaction([
+        prisma.transaction.create({
+          data: {
+            userId: user.id,
+            type: 'METAL_BUY',
+            asset: asset || 'METAL',
+            amount: -tradeAmt,
+            fee: 0,
+            gst: parseFloat(gst) || 0,
+            details: details || `Purchased ${parseFloat(weight || 0).toFixed(4)}g of ${asset}`
+          }
+        }),
+        prisma.wallet.update({
+          where: { userId: user.id },
+          data: { balance: { decrement: tradeAmt } }
+        })
+      ]);
+
+      return res.json({
+        success: true,
+        message: 'Metal purchase debited successfully',
+        newBalance: updatedWallet.balance
+      });
+    } else if (action === 'sell') {
+      const [, updatedWallet] = await prisma.$transaction([
+        prisma.transaction.create({
+          data: {
+            userId: user.id,
+            type: 'METAL_SELL',
+            asset: asset || 'METAL',
+            amount: tradeAmt,
+            fee: 0,
+            gst: 0,
+            details: details || `Sold ${parseFloat(weight || 0).toFixed(4)}g of ${asset}`
+          }
+        }),
+        prisma.wallet.update({
+          where: { userId: user.id },
+          data: { balance: { increment: tradeAmt } }
+        })
+      ]);
+
+      return res.json({
+        success: true,
+        message: 'Metal sale credited successfully',
+        newBalance: updatedWallet.balance
+      });
+    } else {
+      return res.status(400).json({ success: false, error: 'Invalid trade action' });
+    }
+  } catch (error) {
+    console.error('Error executing metal trade:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
 router.post('/kyc/upload', async (req, res) => {
   try {
     const { email, kycDocument, kycDocName, kycDocType, kycUploadedAt } = req.body;

@@ -370,6 +370,13 @@ const AboutUs = ({
 
   const selectedHolding = holdings[selectedMetal?.assetId] || 0;
   const selectedHoldingValue = selectedHolding * getPricePerGram(selectedMetal);
+  const selectedMetalPrice = getPricePerGram(selectedMetal);
+  const selectedMetalChangePct = selectedMetal ? getMetalChangePct(selectedMetal) : 0;
+  const selectedPrevPrice = selectedMetalPrice > 0 ? selectedMetalPrice / (1 + (selectedMetalChangePct / 100)) : 0;
+  const selectedCostBasis = selectedHolding * selectedPrevPrice;
+  const selectedPnlAmount = selectedHoldingValue - selectedCostBasis;
+  const selectedPnlPct = selectedCostBasis > 0 ? (selectedPnlAmount / selectedCostBasis) * 100 : selectedMetalChangePct;
+  const isSelectedProfit = selectedPnlAmount >= 0;
 
   return (
     <div className="about-us-exact-container">
@@ -602,9 +609,14 @@ const AboutUs = ({
                 </div>
                 <div className="balance-item" style={{ textAlign: 'right' }}>
                   <span className="lbl">Your Holding</span>
-                  <span className="val" style={{ color: '#d9af56' }}>
+                  <span className="val" style={{ color: selectedHolding > 0 ? (isSelectedProfit ? '#10b981' : '#ef4444') : '#d9af56' }}>
                     {selectedHolding.toFixed(4)} g (₹{selectedHoldingValue.toLocaleString('en-IN', { maximumFractionDigits: 0 })})
                   </span>
+                  {selectedHolding > 0 && (
+                    <span style={{ fontSize: '11px', color: isSelectedProfit ? '#10b981' : '#ef4444', fontWeight: '700', display: 'block', marginTop: '2px' }}>
+                      Live P&L: {isSelectedProfit ? '+' : ''}₹{Math.abs(selectedPnlAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isSelectedProfit ? '+' : ''}{selectedPnlPct.toFixed(2)}%)
+                    </span>
+                  )}
                 </div>
               </div>
 

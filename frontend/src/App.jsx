@@ -2750,7 +2750,7 @@ function App() {
     setShowModal(true);
   };
 
-  const confirmTransaction = () => {
+  const confirmTransaction = async () => {
     if (view === 'dashboard' || view === 'about') {
       const finalRupees = parseFloat(rupees) || parseFloat(modalData.subtotal) || 0;
       const finalGrams = parseFloat(grams) || parseFloat(modalData.weight) || 0;
@@ -2767,7 +2767,7 @@ function App() {
           setView('dashboard');
           return;
         }
-        // Deduct wallet and add holdings
+        // Deduct wallet and add holdings locally
         setWalletBalance(prev => parseFloat((prev - totalCost).toFixed(2)));
         setHoldings(prev => ({
           ...prev,
@@ -2786,13 +2786,38 @@ function App() {
           },
           ...prev
         ]);
+
+        // Sync debited balance with backend database if user is logged in
+        if (user && user.email) {
+          try {
+            const res = await fetch(`${VITE_BACKEND_URL}/api/auth/metal-trade`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: user.email,
+                asset: asset,
+                action: 'buy',
+                amount: totalCost,
+                weight: finalGrams,
+                gst: gst,
+                details: `Purchased ${finalGrams.toFixed(4)}g of ${getAssetLabel(asset)}`
+              })
+            });
+            const data = await res.json();
+            if (data.success && typeof data.newBalance === 'number') {
+              setWalletBalance(data.newBalance);
+            }
+          } catch (err) {
+            console.error("Error syncing metal purchase with backend:", err);
+          }
+        }
       } else if (action === 'sell') {
         if ((holdings[asset] ?? 0) < finalGrams) {
           alert(`Insufficient metal weight. You only own ${holdings[asset] ?? 0}g of ${getAssetLabel(asset)}.`);
           setShowModal(false);
           return;
         }
-        // Add to wallet and deduct holdings
+        // Add to wallet and deduct holdings locally
         setWalletBalance(prev => parseFloat((prev + finalRupees).toFixed(2)));
         setHoldings(prev => ({
           ...prev,
@@ -2811,8 +2836,34 @@ function App() {
           },
           ...prev
         ]);
+
+        // Sync credited balance with backend database if user is logged in
+        if (user && user.email) {
+          try {
+            const res = await fetch(`${VITE_BACKEND_URL}/api/auth/metal-trade`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: user.email,
+                asset: asset,
+                action: 'sell',
+                amount: finalRupees,
+                weight: finalGrams,
+                gst: 0,
+                details: `Sold ${finalGrams.toFixed(4)}g of ${getAssetLabel(asset)}`
+              })
+            });
+            const data = await res.json();
+            if (data.success && typeof data.newBalance === 'number') {
+              setWalletBalance(data.newBalance);
+            }
+          } catch (err) {
+            console.error("Error syncing metal sale with backend:", err);
+          }
+        }
       }
     }
+
 
     setShowSuccess(true);
     setTimeout(() => {
@@ -8411,6 +8462,8 @@ function App() {
       );
     }
     let totalValuationOfMetals = 0;
+    let totalMetalCostBasis = 0;
+    let totalMetalPnlAmount = 0;
     const metalValues = {};
     metals.forEach((m) => {
       const weight = holdings?.[m.assetId] || 0;
@@ -8418,7 +8471,31 @@ function App() {
       const value = weight * price;
       metalValues[m.assetId] = value;
       totalValuationOfMetals += value;
+
+      if (weight > 0) {
+        const pctChange = rates[m.assetId]?.pct || 0;
+        const assetTxs = (transactions || []).filter(
+          tx => (tx.type === 'buy' || tx.type === 'METAL_BUY') && 
+                tx.asset?.toLowerCase() === m.assetId.toLowerCase()
+        );
+        let cb = 0;
+        if (assetTxs.length > 0) {
+          const totalSpent = assetTxs.reduce((sum, tx) => sum + (Math.abs(tx.amount) || 0), 0);
+          const totalGrams = assetTxs.reduce((sum, tx) => sum + (tx.weight || 0), 0);
+          if (totalGrams > 0) {
+            cb = weight * (totalSpent / totalGrams);
+          }
+        }
+        if (cb <= 0 && price > 0) {
+          cb = weight * (price / (1 + (pctChange / 100)));
+        }
+        totalMetalCostBasis += cb;
+        totalMetalPnlAmount += (value - cb);
+      }
     });
+
+    const totalMetalPnlPct = totalMetalCostBasis > 0 ? (totalMetalPnlAmount / totalMetalCostBasis) * 100 : 5.40;
+    const isTotalMetalProfit = totalMetalPnlAmount >= 0;
 
     const goldVal = metalValues.gold || 0;
     const silverVal = metalValues.silver || 0;
@@ -8589,14 +8666,29 @@ function App() {
                     ₹{totalValuation.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   <div className="valuation-trend-row">
-                    <span className="trend-percentage positive">
-                      <TrendingUp size={14} /> +5.40%
+                    <span className={`trend-percentage ${isTotalMetalProfit ? 'positive' : 'negative'}`} style={{ color: isTotalMetalProfit ? '#10b981' : '#ef4444', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      {isTotalMetalProfit ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                      {isTotalMetalProfit ? '+' : ''}₹{Math.abs(totalMetalPnlAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isTotalMetalProfit ? '+' : ''}{totalMetalPnlPct.toFixed(2)}%)
                     </span>
-                    <span>All-Time Vault Growth</span>
+                    <span>Live Vault P&L</span>
                   </div>
-                  <div className="cash-indicator" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', flexWrap: 'wrap', gap: '8px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '12px', marginTop: '12px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Wallet size={13} style={{ color: '#10b981' }} /> Available Cash: <strong style={{ color: '#fff', marginLeft: '2px' }}>₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Coins size={13} style={{ color: '#d9af56' }} /> Metal Holdings: <strong style={{ color: '#d9af56', marginLeft: '2px' }}>₹{totalValuationOfMetals.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
+                  <div className="cash-indicator" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '14px', marginTop: '16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Wallet size={13} style={{ color: '#10b981' }} /> Available Cash
+                      </span>
+                      <strong style={{ fontSize: '15px', color: '#ffffff', fontWeight: '700' }}>
+                        ₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </strong>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-end', textAlign: 'right' }}>
+                      <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Coins size={13} style={{ color: '#d9af56' }} /> Metal Holdings
+                      </span>
+                      <strong style={{ fontSize: '15px', color: '#d9af56', fontWeight: '700' }}>
+                        ₹{totalValuationOfMetals.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </strong>
+                    </div>
                   </div>
                 </div>
 
@@ -8637,6 +8729,32 @@ function App() {
                   const weight = holdings?.[metal.assetId] || 0;
                   const value = metalValues?.[metal.assetId] || 0;
                   const price = rates[metal.assetId]?.price || 0;
+                  const pctChange = rates[metal.assetId]?.pct || 0;
+
+                  // Calculate Live P&L Amount & Percentage
+                  const assetTxs = (transactions || []).filter(
+                    tx => (tx.type === 'buy' || tx.type === 'METAL_BUY') && 
+                          tx.asset?.toLowerCase() === metal.assetId.toLowerCase()
+                  );
+                  let costBasis = 0;
+                  if (assetTxs.length > 0) {
+                    const totalSpent = assetTxs.reduce((sum, tx) => sum + (Math.abs(tx.amount) || 0), 0);
+                    const totalGrams = assetTxs.reduce((sum, tx) => sum + (tx.weight || 0), 0);
+                    if (totalGrams > 0) {
+                      const avgPrice = totalSpent / totalGrams;
+                      costBasis = weight * avgPrice;
+                    }
+                  }
+                  
+                  // Fallback to live rate % change if no explicit buy transaction cost basis exists
+                  if (costBasis <= 0 && weight > 0 && price > 0) {
+                    const prevPrice = price / (1 + (pctChange / 100));
+                    costBasis = weight * prevPrice;
+                  }
+
+                  const pnlAmount = value - costBasis;
+                  const pnlPct = costBasis > 0 ? (pnlAmount / costBasis) * 100 : pctChange;
+                  const isProfit = pnlAmount >= 0;
 
                   // Only show metals if the user owns a positive weight
                   if (weight <= 0) return null;
@@ -8650,22 +8768,56 @@ function App() {
                       <div className="holding-weight">
                         {weight.toFixed(4)} <span className="grams-lbl">g</span>
                       </div>
-                      <div className="holding-value">
-                        ₹{value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      <div className="holding-value" style={{ color: isProfit ? '#10b981' : '#ef4444', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span>₹{value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span style={{ fontSize: '12px', fontWeight: '700' }} title={isProfit ? 'Value Increased (Profit)' : 'Value Dropped (Loss)'}>
+                          {isProfit ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                        </span>
+                      </div>
+                      <div className="holding-pnl-indicator" style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '4px 0 10px 0' }}>
+                        <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: '600' }}>Live P&L:</span>
+                        <span 
+                          style={{ 
+                            fontSize: '11.5px', 
+                            fontWeight: '700', 
+                            color: isProfit ? '#10b981' : '#ef4444', 
+                            background: isProfit ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)', 
+                            border: `1px solid ${isProfit ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
+                            padding: '2px 8px', 
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          {isProfit ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                          {isProfit ? '+' : ''}₹{Math.abs(pnlAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isProfit ? '+' : ''}{pnlPct.toFixed(2)}%)
+                        </span>
                       </div>
                       <div className="holding-action-row">
                         <span className="live-pricing-indicator">₹{price.toFixed(2)}/g</span>
                         <button 
                           className="btn-card-action" 
                           onClick={() => {
-                            if (PORTAL_TRADE_ASSETS.includes(metal.assetId)) {
-                              setActiveAsset(metal.assetId);
-                              setDashTab('trade');
-                            } else {
-                              setAboutInitialMetalId(metal.assetId);
-                              setAboutInitialAction('sell');
-                              setView('about');
-                            }
+                            const currentWeight = holdings?.[metal.assetId] || 0;
+                            const currentPrice = rates[metal.assetId]?.price || 0;
+                            const subtotalVal = currentWeight * currentPrice;
+
+                            setActiveAsset(metal.assetId);
+                            setActiveAction('sell');
+                            setRupees(subtotalVal.toFixed(2));
+                            setGrams(currentWeight.toFixed(4));
+                            setModalType('sell');
+                            setModalData({
+                              asset: metal.assetId,
+                              action: 'sell',
+                              weight: currentWeight.toFixed(4),
+                              rate: currentPrice,
+                              subtotal: subtotalVal.toFixed(2),
+                              gst: '0.00',
+                              total: subtotalVal.toFixed(2)
+                            });
+                            setShowModal(true);
                           }}
                         >
                           Trade
@@ -9692,9 +9844,144 @@ function App() {
                   <>
                     <div className="modal-detail-row"><span className="modal-detail-label">Asset type</span><span className="modal-detail-val gold">{getAssetLabel(modalData.asset)}</span></div>
                     <div className="modal-detail-row"><span className="modal-detail-label">Transaction category</span><span className="modal-detail-val" style={{ textTransform: 'uppercase' }}>{modalType === 'sip' ? 'Daily SIP' : modalData.action}</span></div>
-                    <div className="modal-detail-row"><span className="modal-detail-label">Weight</span><span className="modal-detail-val">{modalData.weight} Grams</span></div>
                     <div className="modal-detail-row"><span className="modal-detail-label">Live rate per gram</span><span className="modal-detail-val">{'\u20b9'}{modalData.rate?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                    <div className="modal-detail-row"><span className="modal-detail-label">Subtotal</span><span className="modal-detail-val">{'\u20b9'}{modalData.subtotal?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                    
+                    {modalData.action === 'sell' ? (
+                      <div style={{ background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(217, 175, 86, 0.2)', margin: '10px 0 14px 0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Custom Sell Quantity</span>
+                          <span style={{ fontSize: '11px', color: '#d9af56', fontWeight: 600 }}>
+                            Available: {(holdings[modalData.asset] || 0).toFixed(4)} g
+                          </span>
+                        </div>
+
+                        {/* Percentage Shortcuts */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                          {[0.25, 0.50, 0.75, 1.0].map((pct) => {
+                            const ownedWeight = holdings[modalData.asset] || parseFloat(modalData.weight) || 0;
+                            const targetWeight = ownedWeight * pct;
+                            const targetRupees = targetWeight * (modalData.rate || 1);
+
+                            return (
+                              <button
+                                key={pct}
+                                type="button"
+                                style={{
+                                  background: 'rgba(217, 175, 86, 0.1)',
+                                  border: '1px solid rgba(217, 175, 86, 0.3)',
+                                  color: '#d9af56',
+                                  padding: '6px 4px',
+                                  borderRadius: '6px',
+                                  fontSize: '11px',
+                                  fontWeight: '700',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s'
+                                }}
+                                onClick={() => {
+                                  const wStr = targetWeight.toFixed(4);
+                                  const rStr = targetRupees.toFixed(2);
+                                  setGrams(wStr);
+                                  setRupees(rStr);
+                                  setModalData(prev => ({
+                                    ...prev,
+                                    weight: wStr,
+                                    subtotal: parseFloat(rStr),
+                                    total: parseFloat(rStr)
+                                  }));
+                                }}
+                              >
+                                {pct === 1.0 ? 'MAX (100%)' : `${pct * 100}%`}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Custom Input Fields */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '10px', color: '#9c93a8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>
+                              Sell Amount (₹)
+                            </label>
+                            <input
+                              type="number"
+                              placeholder="Rupees"
+                              value={rupees}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setRupees(val);
+                                const rate = modalData.rate || 1;
+                                const parsed = parseFloat(val);
+                                if (!isNaN(parsed) && parsed > 0 && rate > 0) {
+                                  const computedGrams = (parsed / rate).toFixed(4);
+                                  setGrams(computedGrams);
+                                  setModalData(prev => ({
+                                    ...prev,
+                                    weight: computedGrams,
+                                    subtotal: parsed,
+                                    total: parsed
+                                  }));
+                                }
+                              }}
+                              style={{
+                                width: '100%',
+                                background: 'rgba(0,0,0,0.4)',
+                                border: '1px solid rgba(217, 175, 86, 0.3)',
+                                borderRadius: '6px',
+                                padding: '8px 10px',
+                                color: '#ffffff',
+                                fontSize: '13px',
+                                fontWeight: '700',
+                                outline: 'none',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '10px', color: '#9c93a8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>
+                              Weight (Grams)
+                            </label>
+                            <input
+                              type="number"
+                              placeholder="Grams"
+                              value={grams}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setGrams(val);
+                                const rate = modalData.rate || 1;
+                                const parsed = parseFloat(val);
+                                if (!isNaN(parsed) && parsed > 0 && rate > 0) {
+                                  const computedRupees = (parsed * rate).toFixed(2);
+                                  setRupees(computedRupees);
+                                  setModalData(prev => ({
+                                    ...prev,
+                                    weight: parsed.toFixed(4),
+                                    subtotal: parseFloat(computedRupees),
+                                    total: parseFloat(computedRupees)
+                                  }));
+                                }
+                              }}
+                              style={{
+                                width: '100%',
+                                background: 'rgba(0,0,0,0.4)',
+                                border: '1px solid rgba(217, 175, 86, 0.3)',
+                                borderRadius: '6px',
+                                padding: '8px 10px',
+                                color: '#ffffff',
+                                fontSize: '13px',
+                                fontWeight: '700',
+                                outline: 'none',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="modal-detail-row"><span className="modal-detail-label">Weight</span><span className="modal-detail-val">{modalData.weight} Grams</span></div>
+                        <div className="modal-detail-row"><span className="modal-detail-label">Subtotal</span><span className="modal-detail-val">{'\u20b9'}{(parseFloat(modalData.subtotal) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                      </>
+                    )}
                     {modalData.action === 'buy' ? (
                       <div className="modal-detail-row"><span className="modal-detail-label">GST tax (18.0%)</span><span className="modal-detail-val">{'\u20b9'}{modalData.gst?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                     ) : (
