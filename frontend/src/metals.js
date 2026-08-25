@@ -58,6 +58,80 @@ export function createInitialHoldings(seed = {}) {
   return holdings;
 }
 
+export function smartParseTransaction(t) {
+  if (!t) return null;
+  const tType = (t.type || '').toLowerCase();
+  const details = (t.details || '').toLowerCase();
+
+  let normType = 'withdrawal';
+  if (tType === 'deposit' || details.includes('deposit')) {
+    normType = 'deposit';
+  } else if (tType === 'referral' || details.includes('referral')) {
+    normType = 'referral';
+  } else if (tType === 'refund' || details.includes('rejected')) {
+    normType = 'refund';
+  } else if (tType === 'metal_buy' || tType === 'buy' || details.includes('purchase') || details.includes('bought')) {
+    normType = 'buy';
+  } else if (tType === 'metal_sell' || tType === 'sell' || details.includes('sold')) {
+    normType = 'sell';
+  }
+
+  // Detect asset type if missing or default
+  let asset = (t.asset || '').toLowerCase();
+  if (!asset || asset === 'wallet' || asset === 'metal') {
+    const metalMatch = metals.find(m => 
+      details.includes(m.name.toLowerCase()) || details.includes(m.assetId.toLowerCase())
+    );
+    if (metalMatch) {
+      asset = metalMatch.assetId;
+    }
+  }
+
+  // Extract weight from details or t.weight
+  let weightVal = parseFloat(t.weight) || 0;
+  if (weightVal <= 0 && t.details) {
+    const match = t.details.match(/([0-9.]+)\s*g/i);
+    if (match) {
+      weightVal = parseFloat(match[1]) || 0;
+    }
+  }
+
+  return {
+    id: typeof t.id === 'string' && t.id.startsWith('TX-') ? t.id : 'TX-' + (t.id || Math.floor(1000 + Math.random() * 9000)),
+    type: normType,
+    asset: asset || 'wallet',
+    amount: Math.abs(parseFloat(t.amount) || 0),
+    weight: weightVal,
+    details: t.details || '',
+    status: t.status || 'Completed',
+    date: t.date || (t.createdAt ? new Date(t.createdAt).toISOString().slice(0, 19).replace('T', ' ') : new Date().toISOString().slice(0, 19).replace('T', ' '))
+  };
+}
+
+export function calculateHoldingsFromTransactions(txList = [], initialSeed = {}) {
+  const holdings = createInitialHoldings(initialSeed);
+
+  txList.forEach(rawTx => {
+    const tx = smartParseTransaction(rawTx);
+    if (!tx) return;
+    const type = tx.type;
+    const asset = tx.asset;
+    const w = tx.weight;
+
+    if (asset && holdings[asset] !== undefined && w > 0) {
+      if (type === 'buy') {
+        holdings[asset] = parseFloat(((holdings[asset] || 0) + w).toFixed(4));
+      } else if (type === 'sell') {
+        let rem = (holdings[asset] || 0) - w;
+        if (rem <= 0.00009) rem = 0;
+        holdings[asset] = parseFloat(rem.toFixed(4));
+      }
+    }
+  });
+
+  return holdings;
+}
+
 export function getMetalByAssetId(assetId) {
   return metals.find((m) => m.assetId === assetId);
 }

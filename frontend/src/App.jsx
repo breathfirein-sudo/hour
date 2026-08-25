@@ -84,6 +84,8 @@ import LiveChartWidget from './components/LiveChart/LiveChartWidget';
 import {
   createAllMetalRates,
   createInitialHoldings,
+  calculateHoldingsFromTransactions,
+  smartParseTransaction,
   getMetalLabel,
   PORTAL_TRADE_ASSETS,
   pickRandomPortalAsset,
@@ -2450,45 +2452,28 @@ function App() {
               setLockedBankDetails(null);
             }
             if (data.transactions !== undefined) {
-              const mappedTx = data.transactions.map(t => ({
-                id: 'TX-' + t.id,
-                type: t.type?.toLowerCase() === 'deposit' ? 'deposit' : 
-                      t.type?.toLowerCase() === 'referral' ? 'referral' : 
-                      t.type?.toLowerCase() === 'refund' ? 'refund' : 'withdrawal',
-                asset: t.asset || 'wallet',
-                amount: t.amount,
-                details: t.details,
-                status: 'Completed',
-                date: new Date(t.createdAt).toISOString().slice(0, 19).replace('T', ' ')
-              }));
-              setTransactions(prevTx => [
-                ...prevTx.filter(t => t.type === 'buy' || t.type === 'sell'),
-                ...mappedTx
-              ].sort((a, b) => new Date(b.date) - new Date(a.date)));
+              const mappedTx = data.transactions
+                .map(t => smartParseTransaction(t))
+                .filter(Boolean);
+
+              setTransactions(mappedTx.sort((a, b) => new Date(b.date) - new Date(a.date)));
+
+              // Automatically reconcile holdings from authoritative transaction ledger
+              const reconciledHoldings = calculateHoldingsFromTransactions(mappedTx);
+              setHoldings(reconciledHoldings);
+              if (user && user.email) {
+                localStorage.setItem(`vb_holdings_${user.email.toLowerCase()}`, JSON.stringify(reconciledHoldings));
+              }
             }
             // Update localStorage with the correct backend values
             setClients(prev => {
               const updated = prev.map(c => {
                 if (c.email.toLowerCase() === user.email.toLowerCase()) {
-                  const localMetalTx = (c.transactions || []).filter(t => t.type === 'buy' || t.type === 'sell');
-                  const backendTx = data.transactions !== undefined ? data.transactions.map(t => ({
-                    id: 'TX-' + t.id,
-                    type: t.type?.toLowerCase() === 'deposit' ? 'deposit' : 
-                          t.type?.toLowerCase() === 'referral' ? 'referral' : 
-                          t.type?.toLowerCase() === 'refund' ? 'refund' : 'withdrawal',
-                    asset: t.asset || 'wallet',
-                    amount: t.amount,
-                    details: t.details,
-                    status: 'Completed',
-                    date: new Date(t.createdAt).toISOString().slice(0, 19).replace('T', ' ')
-                  })) : [];
-                  const mergedTx = [...localMetalTx, ...backendTx].sort((a, b) => new Date(b.date) - new Date(a.date));
-                  
                   return {
                     ...c,
                     walletBalance: data.walletBalance !== undefined ? data.walletBalance : c.walletBalance,
                     referralCount: data.referralCount !== undefined ? data.referralCount : c.referralCount,
-                    transactions: mergedTx
+                    holdings: calculateHoldingsFromTransactions(transactions)
                   };
                 }
                 return c;
@@ -2757,8 +2742,8 @@ function App() {
 
   const confirmTransaction = async () => {
     if (view === 'dashboard' || view === 'about') {
-      const finalRupees = parseFloat(rupees) || parseFloat(modalData.subtotal) || 0;
-      const finalGrams = parseFloat(grams) || parseFloat(modalData.weight) || 0;
+      const finalRupees = parseFloat(modalData.subtotal) || parseFloat(rupees) || 0;
+      const finalGrams = parseFloat(modalData.weight) || parseFloat(grams) || 0;
       const asset = modalData.asset;
       const action = modalData.action;
 
@@ -2785,10 +2770,11 @@ function App() {
           }
           return updated;
         });
+        const tempTxId = `TX-${Math.floor(1000 + Math.random() * 9000)}`;
         // Add transaction to ledger
         setTransactions(prev => [
           {
-            id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+            id: tempTxId,
             type: 'buy',
             asset: asset,
             amount: totalCost,
@@ -2816,8 +2802,26 @@ function App() {
               })
             });
             const data = await res.json();
-            if (data.success && typeof data.newBalance === 'number') {
-              setWalletBalance(data.newBalance);
+            if (data.success) {
+              if (typeof data.newBalance === 'number') {
+                setWalletBalance(data.newBalance);
+              }
+              if (data.transaction) {
+                const dbTx = {
+                  id: 'TX-' + data.transaction.id,
+                  type: 'buy',
+                  asset: asset,
+                  amount: Math.abs(data.transaction.amount),
+                  weight: finalGrams,
+                  details: data.transaction.details,
+                  status: 'Completed',
+                  date: new Date(data.transaction.createdAt).toISOString().slice(0, 19).replace('T', ' ')
+                };
+                setTransactions(prev => [
+                  dbTx,
+                  ...prev.filter(t => t.id !== tempTxId)
+                ]);
+              }
             }
           } catch (err) {
             console.error("Error syncing metal purchase with backend:", err);
@@ -2843,10 +2847,12 @@ function App() {
           }
           return updated;
         });
+
+        const tempTxId = `TX-${Math.floor(1000 + Math.random() * 9000)}`;
         // Add transaction to ledger
         setTransactions(prev => [
           {
-            id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+            id: tempTxId,
             type: 'sell',
             asset: asset,
             amount: finalRupees,
@@ -2874,8 +2880,26 @@ function App() {
               })
             });
             const data = await res.json();
-            if (data.success && typeof data.newBalance === 'number') {
-              setWalletBalance(data.newBalance);
+            if (data.success) {
+              if (typeof data.newBalance === 'number') {
+                setWalletBalance(data.newBalance);
+              }
+              if (data.transaction) {
+                const dbTx = {
+                  id: 'TX-' + data.transaction.id,
+                  type: 'sell',
+                  asset: asset,
+                  amount: Math.abs(data.transaction.amount),
+                  weight: finalGrams,
+                  details: data.transaction.details,
+                  status: 'Completed',
+                  date: new Date(data.transaction.createdAt).toISOString().slice(0, 19).replace('T', ' ')
+                };
+                setTransactions(prev => [
+                  dbTx,
+                  ...prev.filter(t => t.id !== tempTxId)
+                ]);
+              }
             }
           } catch (err) {
             console.error("Error syncing metal sale with backend:", err);

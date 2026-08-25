@@ -103,7 +103,7 @@ router.post('/metal-trade', async (req, res) => {
         return res.status(400).json({ success: false, error: 'Insufficient wallet balance' });
       }
 
-      const [, updatedWallet] = await prisma.$transaction([
+      const [newTx, updatedWallet] = await prisma.$transaction([
         prisma.transaction.create({
           data: {
             userId: user.id,
@@ -124,10 +124,11 @@ router.post('/metal-trade', async (req, res) => {
       return res.json({
         success: true,
         message: 'Metal purchase debited successfully',
-        newBalance: updatedWallet.balance
+        newBalance: updatedWallet.balance,
+        transaction: newTx
       });
     } else if (action === 'sell') {
-      const [, updatedWallet] = await prisma.$transaction([
+      const [newTx, updatedWallet] = await prisma.$transaction([
         prisma.transaction.create({
           data: {
             userId: user.id,
@@ -148,7 +149,8 @@ router.post('/metal-trade', async (req, res) => {
       return res.json({
         success: true,
         message: 'Metal sale credited successfully',
-        newBalance: updatedWallet.balance
+        newBalance: updatedWallet.balance,
+        transaction: newTx
       });
     } else {
       return res.status(400).json({ success: false, error: 'Invalid trade action' });
