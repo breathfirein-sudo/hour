@@ -715,13 +715,18 @@ function App() {
         try {
           const savedWallet = localStorage.getItem(`vb_walletBalance_${userKey}`);
           setWalletBalance(savedWallet ? parseFloat(savedWallet) : 0);
+          const savedHoldings = localStorage.getItem(`vb_holdings_${userKey}`);
+          if (savedHoldings) {
+            setHoldings(createInitialHoldings(JSON.parse(savedHoldings)));
+          }
         } catch (e) {
           setWalletBalance(0);
         }
         lastLoadedUserRef.current = userKey;
       } else {
-        // User is the same, so this is a state change (walletBalance changed). Save to localStorage.
+        // User is the same, so this is a state change (walletBalance or holdings changed). Save to localStorage.
         localStorage.setItem(`vb_walletBalance_${userKey}`, walletBalance.toString());
+        localStorage.setItem(`vb_holdings_${userKey}`, JSON.stringify(holdings));
       }
     } else {
       if (lastLoadedUserRef.current !== null) {
@@ -730,7 +735,7 @@ function App() {
         lastLoadedUserRef.current = null;
       }
     }
-  }, [user, walletBalance]);
+  }, [user, walletBalance, holdings]);
 
   // Polling investment data when on the investment tab to sync auto-withdrawn investments
   useEffect(() => {
@@ -2769,10 +2774,17 @@ function App() {
         }
         // Deduct wallet and add holdings locally
         setWalletBalance(prev => parseFloat((prev - totalCost).toFixed(2)));
-        setHoldings(prev => ({
-          ...prev,
-          [asset]: parseFloat(((prev[asset] ?? 0) + finalGrams).toFixed(4))
-        }));
+        setHoldings(prev => {
+          const nextWeight = (prev[asset] ?? 0) + finalGrams;
+          const updated = {
+            ...prev,
+            [asset]: parseFloat(nextWeight.toFixed(4))
+          };
+          if (user && user.email) {
+            localStorage.setItem(`vb_holdings_${user.email.toLowerCase()}`, JSON.stringify(updated));
+          }
+          return updated;
+        });
         // Add transaction to ledger
         setTransactions(prev => [
           {
@@ -2819,10 +2831,18 @@ function App() {
         }
         // Add to wallet and deduct holdings locally
         setWalletBalance(prev => parseFloat((prev + finalRupees).toFixed(2)));
-        setHoldings(prev => ({
-          ...prev,
-          [asset]: parseFloat(((prev[asset] ?? 0) - finalGrams).toFixed(4))
-        }));
+        setHoldings(prev => {
+          let remWeight = (prev[asset] ?? 0) - finalGrams;
+          if (remWeight <= 0.00009) remWeight = 0;
+          const updated = {
+            ...prev,
+            [asset]: parseFloat(remWeight.toFixed(4))
+          };
+          if (user && user.email) {
+            localStorage.setItem(`vb_holdings_${user.email.toLowerCase()}`, JSON.stringify(updated));
+          }
+          return updated;
+        });
         // Add transaction to ledger
         setTransactions(prev => [
           {
@@ -8726,7 +8746,8 @@ function App() {
               <h3 className="section-title">Your Digital Meta Vaults</h3>
               <div className="holdings-grid">
                 {metals.map((metal) => {
-                  const weight = holdings?.[metal.assetId] || 0;
+                  const rawWeight = holdings?.[metal.assetId] || 0;
+                  const weight = rawWeight <= 0.00009 ? 0 : rawWeight;
                   const value = metalValues?.[metal.assetId] || 0;
                   const price = rates[metal.assetId]?.price || 0;
                   const pctChange = rates[metal.assetId]?.pct || 0;
@@ -8826,7 +8847,7 @@ function App() {
                     </div>
                   );
                 })}
-                {Object.values(holdings).every(w => w <= 0) && (
+                {Object.values(holdings).every(w => (w || 0) <= 0.00009) && (
                   <div style={{ gridColumn: 'span 4', textAlign: 'center', padding: '40px', color: '#9c93a8', background: 'rgba(255,255,255,0.01)', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.08)', width: '100%' }}>
                     <p style={{ margin: 0, fontSize: '14px' }}>No strategic metal vaults unlocked yet. Go to the <strong>Explore Elements</strong> tab to authorize your first purchase!</p>
                   </div>
