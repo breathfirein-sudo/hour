@@ -763,14 +763,14 @@ function App() {
     }
   }, [dashTab, user]);
 
-  const [investInputValue, setInvestInputValue] = useState('1000');
+  const [investInputValue, setInvestInputValue] = useState('');
 
   const totalInvestedAmount = investments.reduce((sum, inv) => sum + inv.amount, 0);
 
   const handleInvestFromWallet = async () => {
     const amt = parseFloat(investInputValue);
-    if (isNaN(amt) || amt !== 1000) {
-      alert('Investment amount must be exactly ₹1,000.\nRules: ₹1,000 per week, Max ₹4,000 per month.');
+    if (isNaN(amt) || amt <= 0) {
+      alert('Please enter a valid investment amount.');
       return;
     }
     if (walletBalance < amt) {
@@ -797,7 +797,7 @@ function App() {
           setWalletBalance(prev => prev - amt);
         }
         setInvestments(prev => [data.investment, ...prev]);
-        setInvestInputValue('1000');
+        setInvestInputValue('');
         alert(`Successfully invested ₹${amt.toLocaleString('en-IN')} from your wallet!\n\nIt will be locked for 7 days (earning 1% daily interest) and will automatically withdraw to your wallet balance after 7 days.`);
       } catch (err) {
         console.error("Failed to invest:", err);
@@ -8940,10 +8940,10 @@ function App() {
                   Build Your Business While Sleeping
                 </p>
                 <p style={{ color: '#8b8098', fontSize: '13px', textAlign: 'center', marginTop: '0', marginBottom: '10px', fontWeight: '500' }}>
-                  Invest ₹1,000 & earn 1% daily interest. Withdrawals are automatically processed to your wallet after the 7-day lock period.
+                  Invest & earn 1% daily interest. Withdrawals are automatically processed to your wallet after the 7-day lock period.
                 </p>
                 <div style={{ color: '#d9af56', fontSize: '12px', textAlign: 'center', marginBottom: '20px', background: 'rgba(217, 175, 86, 0.08)', padding: '6px 16px', borderRadius: '20px', border: '1px solid rgba(217, 175, 86, 0.2)', fontWeight: '600' }}>
-                  ⚡ Weekly Limit: ₹1,000 &nbsp;|&nbsp; 🗓️ Monthly Limit: ₹4,000 &nbsp;|&nbsp; 🔒 7-Day Lock with Auto-Withdrawal
+                  ⚡ Unlimited Investments &nbsp;|&nbsp; 📈 1% Daily Return &nbsp;|&nbsp; 🔒 7-Day Lock with Auto-Withdrawal
                 </div>
                 
                 <div className="investment-dashboard-bar" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
@@ -8961,12 +8961,14 @@ function App() {
 
                   {/* Column 2 */}
                   <div className="dashboard-bar-section">
-                    <span className="dashboard-bar-label">Invest Amount (Fixed ₹1,000)</span>
+                    <span className="dashboard-bar-label">Invest Amount</span>
                     <div className="invest-input-row" style={{ flexWrap: 'wrap', justifyContent: 'center', width: '100%', boxSizing: 'border-box' }}>
                       <input 
-                        type="text" 
+                        type="number" 
+                        min="1"
+                        step="any"
                         className="invest-input" 
-                        placeholder="₹ 1000" 
+                        placeholder="Enter amount (₹)" 
                         value={investInputValue}
                         onChange={(e) => setInvestInputValue(e.target.value)}
                         style={{ maxWidth: '100%', boxSizing: 'border-box', flex: '1 1 120px' }}

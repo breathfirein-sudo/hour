@@ -112,20 +112,11 @@ router.post('/', async (req, res) => {
     const uid = parseInt(userId);
     const amt = parseFloat(amount);
 
-    if (isNaN(uid) || isNaN(amt)) {
-      return res.status(400).json({ success: false, message: 'Invalid request data' });
+    if (isNaN(uid) || isNaN(amt) || amt <= 0) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid investment amount greater than 0' });
     }
 
-    // Rule 1: Investment amount must be exactly 1000
-    if (amt !== 1000) {
-      return res.status(400).json({ success: false, message: 'Investment amount must be exactly ₹1,000.' });
-    }
-
-    const now = Date.now();
-    const sevenDaysAgo = new Date(now - SEVEN_DAYS_MS);
-    const thirtyDaysAgo = new Date(now - THIRTY_DAYS_MS);
-
-    // First process auto-withdrawals for this user
+    // Process auto-withdrawals for this user first
     await processAutoWithdrawals(uid);
 
     // Check Wallet balance
@@ -138,49 +129,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Insufficient balance in wallet' });
     }
 
-    // Rule 2: Weekly investment limit = ₹1,000
-    // Check total invested in past 7 days
-    const activeWeeklyInvs = await prisma.investment.findMany({
-      where: { userId: uid, startTime: { gte: sevenDaysAgo } }
-    });
-    const activeWeeklySum = activeWeeklyInvs.reduce((sum, inv) => sum + inv.amount, 0);
-
-    const weeklyTx = await prisma.transaction.aggregate({
-      where: { userId: uid, type: 'INVESTMENT', createdAt: { gte: sevenDaysAgo } },
-      _sum: { amount: true }
-    });
-    const txWeeklySum = weeklyTx._sum.amount || 0;
-
-    const totalWeeklyInvested = Math.max(activeWeeklySum, txWeeklySum);
-
-    if (totalWeeklyInvested + amt > 1000) {
-      return res.status(400).json({
-        success: false,
-        message: 'Weekly investment limit reached. You can only invest ₹1,000 per week.'
-      });
-    }
-
-    // Rule 3: Monthly investment limit = ₹4,000
-    // Check total invested in past 30 days
-    const activeMonthlyInvs = await prisma.investment.findMany({
-      where: { userId: uid, startTime: { gte: thirtyDaysAgo } }
-    });
-    const activeMonthlySum = activeMonthlyInvs.reduce((sum, inv) => sum + inv.amount, 0);
-
-    const monthlyTx = await prisma.transaction.aggregate({
-      where: { userId: uid, type: 'INVESTMENT', createdAt: { gte: thirtyDaysAgo } },
-      _sum: { amount: true }
-    });
-    const txMonthlySum = monthlyTx._sum.amount || 0;
-
-    const totalMonthlyInvested = Math.max(activeMonthlySum, txMonthlySum);
-
-    if (totalMonthlyInvested + amt > 4000) {
-      return res.status(400).json({
-        success: false,
-        message: 'Monthly investment limit reached. You can only invest up to ₹4,000 per month.'
-      });
-    }
+    // Unlimited investment: No upper limit, weekly limit, or monthly limit
 
     // Use transaction to execute investment creation
     const result = await prisma.$transaction(async (tx) => {
@@ -202,7 +151,7 @@ router.post('/', async (req, res) => {
           type: 'INVESTMENT',
           asset: 'INVESTMENT',
           amount: amt,
-          details: 'Investment of ₹1,000 created (7-day lock period)'
+          details: `Investment of ₹${amt.toLocaleString('en-IN')} created (7-day lock period)`
         }
       });
 
