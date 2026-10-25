@@ -25,6 +25,12 @@ model User {
   resetTokenExpiry DateTime?
   phone            String?
   uniqueId         String?         @unique
+  isBroker         Boolean         @default(false)
+  brokerStatus     String          @default("None")
+  brokerCommissionRate Float         @default(7.5)
+  brokerEarnings   Float           @default(0)
+  totalBrokerSpent Float           @default(0)
+  totalBrokerClaimed Float         @default(0)
   manualDeposits   ManualDeposit[]
   payments         Payment[]
   positions        Position[]
@@ -32,6 +38,7 @@ model User {
   transactions     Transaction[]
   wallet           Wallet?
   investments      Investment[]
+  brokerRequests   BrokerRequest[]
 }
 
 model Wallet {
@@ -265,3 +272,20 @@ model trades {
   wallet_balance_before Decimal?  @default(0.00) @db.Decimal
   wallet_balance_after  Decimal?  @default(0.00) @db.Decimal
 }
+
+model BrokerRequest {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  customerId      String
+  name            String
+  phone           String
+  email           String
+  subscriptionFee Float    @default(1000)
+  commissionRate  Float    @default(7.5)
+  status          String   @default("Pending")
+  adminNotes      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+}
+

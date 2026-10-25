@@ -31,9 +31,11 @@ import {
   Unlock,
   RefreshCw,
   CreditCard,
+  DollarSign,
   Gem,
   Star,
   Gift,
+  Sparkles,
   Copy,
   Upload,
   FileText,
@@ -73,6 +75,7 @@ import {
   Bell
 } from 'lucide-react';
 import heroGoldOre from './assets/hero_gold_ore.png';
+import becomePartnerBanner from './assets/become_partner_banner.png';
 import './App.css';
 import AboutUs from './AboutUs';
 import FlipClock from './components/FlipClock';
@@ -92,7 +95,7 @@ import {
   metals,
 } from './metals';
 
-const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
+const InvestmentRow = ({ inv, index, totalLength, onWithdraw, isBroker = false, brokerCommissionRate = 7.5 }) => {
   const [timeLeft, setTimeLeft] = useState('');
   const [isLocked, setIsLocked] = useState(true);
 
@@ -147,11 +150,28 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
           <span style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
         </div>
         
-        <div className="investment-meta-container">
+        <div className="investment-meta-container" style={{ flexWrap: 'wrap', gap: '6px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="live-dot-small"></span>
             <span style={{ color: '#d9af56', fontSize: '11px', fontWeight: '600' }}>Active Investment</span>
           </div>
+
+          {isBroker && (
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '4px', 
+              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(217, 175, 86, 0.18))', 
+              color: '#f7df94', 
+              border: '1px solid rgba(217, 175, 86, 0.35)', 
+              padding: '2px 8px', 
+              borderRadius: '4px', 
+              fontSize: '11px', 
+              fontWeight: '700' 
+            }}>
+              👑 Broker ({brokerCommissionRate || 7.5}% on returns)
+            </div>
+          )}
           
           {isLocked ? (
             <div style={{ 
@@ -194,7 +214,12 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
       
       <div className="investment-row-right">
         <div className="flip-clock-wrapper">
-          <FlipClock amount={inv.amount} startTime={inv.startTime} />
+          <FlipClock 
+            amount={inv.amount} 
+            startTime={inv.startTime} 
+            isBroker={isBroker} 
+            brokerCommissionRate={brokerCommissionRate} 
+          />
         </div>
         <button 
           onClick={() => {
@@ -237,10 +262,10 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw }) => {
 
 // Initial rates based on live market pricing
 const INITIAL_RATES = {
-  gold: { price: 13468.00, change: -93.57, pct: -0.69 },
-  silver: { price: 198.00, change: -1.51, pct: -0.76 },
-  platinum: { price: 5290.00, change: -23.32, pct: -0.44 },
-  iron: { price: 114.48, change: -0.80, pct: -0.69 }
+  gold: { price: 14450.00, change: -12.50, pct: -0.09 },
+  silver: { price: 208.50, change: -1.20, pct: -0.57 },
+  platinum: { price: 4850.00, change: -23.32, pct: -0.48 },
+  iron: { price: 0.08, change: 0.00, pct: 0.12 }
 };
 
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000' : 'https://hour-60kr.onrender.com');
@@ -2267,6 +2292,274 @@ function App() {
     }
   };
 
+  const fetchBrokerRequests = async () => {
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/requests`);
+      const data = await res.json();
+      if (data.success) {
+        setBrokerRequests(data.requests || []);
+        setActiveBrokers(data.activeBrokers || []);
+        setCancelledBrokers(data.cancelledBrokers || []);
+        const pending = (data.requests || []).filter(r => r.status === 'Pending').length;
+        setBrokerPendingCount(pending);
+      }
+    } catch (err) {
+      console.error("Error fetching broker requests:", err);
+    }
+  };
+
+  const handleAcceptBrokerRequest = async (requestId, commissionRate) => {
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/accept`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId, commissionRate: parseFloat(commissionRate) || 7.5 })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || 'Broker request approved successfully!');
+        fetchBrokerRequests();
+        fetchAdminClientsData();
+      } else {
+        alert(data.error || 'Failed to approve broker request.');
+      }
+    } catch (err) {
+      console.error("Error accepting broker request:", err);
+      alert('Error approving broker request.');
+    }
+  };
+
+  const handleRejectBrokerRequest = async (requestId) => {
+    if (!window.confirm('Are you sure you want to reject this partnership application?')) return;
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Broker application rejected.');
+        fetchBrokerRequests();
+        fetchAdminClientsData();
+      } else {
+        alert(data.error || 'Failed to reject request.');
+      }
+    } catch (err) {
+      console.error("Error rejecting broker request:", err);
+    }
+  };
+
+  const handleAdjustBrokerCommission = async (userId, commissionRate) => {
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/adjust-commission`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, commissionRate })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || 'Commission rate updated successfully!');
+        fetchBrokerRequests();
+        fetchAdminClientsData();
+      } else {
+        alert(data.error || 'Failed to update commission rate.');
+      }
+    } catch (err) {
+      console.error("Error adjusting broker commission:", err);
+    }
+  };
+
+  const handleDistributeBrokerProfit = async (userId, profitAmount, note) => {
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/distribute-profit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, profitAmount, note })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || 'Profit distributed successfully!');
+        setDistributeModal({ open: false, broker: null, amount: '', note: '' });
+        fetchBrokerRequests();
+        fetchAdminClientsData();
+      } else {
+        alert(data.error || 'Failed to distribute profit.');
+      }
+    } catch (err) {
+      console.error("Error distributing broker profit:", err);
+    }
+  };
+
+  // ADMIN ACTION: Revoke and Cancel a broker's subscription
+  const handleCancelBrokerSubscription = async (userId, userNameOrEmail) => {
+    const reason = window.prompt(
+      `ADMIN PRIVILEGE ACTION:\n\nAre you sure you want to CANCEL & REVOKE the broker partnership subscription for ${userNameOrEmail || `User #${userId}`}?\n\nThis will revoke CUST-B- status, revert the account to standard customer (CUST-), and terminate profit sharing immediately.\n\nEnter reason for cancellation:`,
+      'Administrative policy cancellation'
+    );
+    if (reason === null) return; // User pressed Cancel
+
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/cancel-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, reason })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || 'Broker subscription successfully cancelled.');
+        fetchBrokerRequests();
+        fetchAdminClientsData();
+      } else {
+        alert(data.error || 'Failed to cancel broker subscription.');
+      }
+    } catch (err) {
+      console.error("Error cancelling broker subscription:", err);
+      alert('Error cancelling broker subscription: ' + err.message);
+    }
+  };
+
+  // ADMIN ACTION: Clear an individual broker request from queue
+  const handleClearBrokerRequest = async (requestId, clientIdentifier) => {
+    if (!window.confirm(`Are you sure you want to clear/delete this partnership request for ${clientIdentifier || `Request #${requestId}`}?`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/clear-request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchBrokerRequests();
+      } else {
+        alert(data.error || 'Failed to clear broker request.');
+      }
+    } catch (err) {
+      console.error("Error clearing broker request:", err);
+      alert('Error clearing broker request: ' + err.message);
+    }
+  };
+
+  // ADMIN ACTION: Clear all resolved (or all) broker requests
+  const handleClearAllBrokerRequests = async (statusFilter = 'resolved') => {
+    const promptMsg = statusFilter === 'resolved'
+      ? 'Are you sure you want to clear all processed (Approved / Declined / Cancelled) partnership requests from the queue?'
+      : 'Are you sure you want to clear ALL partnership requests from the queue?';
+    if (!window.confirm(promptMsg)) return;
+
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/clear-all-requests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: statusFilter })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || 'Requests cleared successfully.');
+        fetchBrokerRequests();
+      } else {
+        alert(data.error || 'Failed to clear requests.');
+      }
+    } catch (err) {
+      console.error("Error clearing all broker requests:", err);
+      alert('Error clearing all requests: ' + err.message);
+    }
+  };
+
+  const handleSubmitPartnerRequest = async (e) => {
+    if (e) e.preventDefault();
+    if (!partnerForm.name || !partnerForm.name.trim()) {
+      alert('Please enter your full legal name.');
+      return;
+    }
+    if (!partnerForm.phone || !partnerForm.phone.trim()) {
+      alert('Please enter your mobile phone number.');
+      return;
+    }
+
+    setPartnerSubmitting(true);
+    try {
+      const rawId = clients.find(c => c.email.toLowerCase() === user.email.toLowerCase())?.id || `CUST-${user.id || '8888'}`;
+      const cId = rawId.replace(/^CUST-B-/, 'CUST-');
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user.email,
+          name: partnerForm.name.trim(),
+          phone: partnerForm.phone.trim(),
+          customerId: cId,
+          subscriptionFee: 1000
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBrokerStatus('Pending');
+        setPartnerSubmitted(true);
+      } else {
+        alert(data.error || 'Failed to submit application.');
+      }
+    } catch (err) {
+      console.error("Error submitting partner request:", err);
+      alert('Failed to submit application. Please check your network.');
+    } finally {
+      setPartnerSubmitting(false);
+    }
+  };
+
+  const handleClaimBrokerEarnings = async () => {
+    if (brokerEarnings <= 0) {
+      alert('You have no live broker earnings available to transfer.');
+      return;
+    }
+
+    setClaimLoading(true);
+    try {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/claim-earnings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setWalletBalance(data.newWalletBalance);
+        setBrokerEarnings(0);
+        setTotalBrokerClaimed(prev => prev + data.claimedAmount);
+        setTransactions(prev => [
+          {
+            id: `TX-${Math.floor(100000 + Math.random() * 900000)}`,
+            type: 'referral',
+            asset: 'wallet',
+            amount: data.claimedAmount,
+            details: 'Broker Partner Guaranteed Commission Claim (Transferred to Wallet)',
+            status: 'Completed',
+            date: new Date().toISOString().slice(0, 19).replace('T', ' ')
+          },
+          ...prev
+        ]);
+        alert(`🎉 ₹${data.claimedAmount.toFixed(2)} transferred directly to your Main Trading Wallet! You can now use it or request a bank withdrawal.`);
+      } else {
+        alert(data.error || 'Failed to claim broker earnings.');
+      }
+    } catch (err) {
+      console.error("Error claiming broker earnings:", err);
+      alert('Failed to claim earnings.');
+    } finally {
+      setClaimLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setPartnerForm(prev => ({
+        name: prev.name || user.displayName || user.name || '',
+        phone: prev.phone || user.phone || ''
+      }));
+    }
+  }, [user]);
+
   useEffect(() => {
     if (user && user.email === 'sandeepkumar.pikili@vrpigroup.co.in') {
       if (adminTab === 'contest') {
@@ -2277,6 +2570,8 @@ function App() {
         fetchAdminDeposits();
       } else if (adminTab === 'support') {
         fetchExecutives();
+      } else if (adminTab === 'brokers') {
+        fetchBrokerRequests();
       }
     }
   }, [user, adminTab]);
@@ -2285,7 +2580,74 @@ function App() {
     if (user && user.email === 'sandeepkumar.pikili@vrpigroup.co.in') {
       fetchAdminClientsData();
       fetchPlatformProfit();
+      fetchBrokerRequests();
     }
+  }, [user]);
+
+  // Real-time broker updates via Socket
+  useEffect(() => {
+    const handleBrokerStatus = (data) => {
+      const isBrokerActive = Boolean(data.isBroker) && data.brokerStatus !== 'Cancelled' && data.brokerStatus !== 'Rejected';
+      if (user && user.email && data.email && user.email.toLowerCase() === data.email.toLowerCase()) {
+        setIsBroker(isBrokerActive);
+        setBrokerStatus(data.brokerStatus || (isBrokerActive ? 'Approved' : 'None'));
+        if (data.commissionRate) setBrokerCommissionRate(data.commissionRate);
+      }
+      if (data.email) {
+        setClients(prevClients => {
+          const updated = (prevClients || []).map(c => {
+            if (c.email && c.email.toLowerCase() === data.email.toLowerCase()) {
+              const cleanBaseId = (c.id || `CUST-${data.userId || ''}`).replace(/^CUST-B-/, 'CUST-');
+              const newId = isBrokerActive ? cleanBaseId.replace(/^CUST-/, 'CUST-B-') : cleanBaseId;
+              return {
+                ...c,
+                id: newId,
+                isBroker: isBrokerActive,
+                brokerStatus: data.brokerStatus || (isBrokerActive ? 'Approved' : 'None')
+              };
+            }
+            return c;
+          });
+          try { localStorage.setItem('vb_clients', JSON.stringify(updated)); } catch (e) {}
+          return updated;
+        });
+      }
+      if (user && user.email === 'sandeepkumar.pikili@vrpigroup.co.in') {
+        fetchBrokerRequests();
+        fetchAdminClientsData();
+      }
+    };
+
+    const handleNewBrokerRequest = () => {
+      if (user && user.email === 'sandeepkumar.pikili@vrpigroup.co.in') {
+        fetchBrokerRequests();
+      }
+    };
+
+    const handleBrokerEarningUpdate = (data) => {
+      if (user && user.email && data.email && user.email.toLowerCase() === data.email.toLowerCase()) {
+        setBrokerEarnings(parseFloat(data.totalEarnings || 0));
+      }
+    };
+
+    const handleBrokerClaimed = (data) => {
+      if (user && user.email && data.email && user.email.toLowerCase() === data.email.toLowerCase()) {
+        setWalletBalance(data.newWalletBalance);
+        setBrokerEarnings(0);
+      }
+    };
+
+    socket.on('broker_status_updated', handleBrokerStatus);
+    socket.on('new_broker_request', handleNewBrokerRequest);
+    socket.on('broker_earning_update', handleBrokerEarningUpdate);
+    socket.on('broker_claimed', handleBrokerClaimed);
+
+    return () => {
+      socket.off('broker_status_updated', handleBrokerStatus);
+      socket.off('new_broker_request', handleNewBrokerRequest);
+      socket.off('broker_earning_update', handleBrokerEarningUpdate);
+      socket.off('broker_claimed', handleBrokerClaimed);
+    };
   }, [user]);
 
   // --- Core Application States ---
@@ -2306,6 +2668,78 @@ function App() {
   const [modalType, setModalType] = useState('buy'); // 'buy' or 'sip'
   const [modalData, setModalData] = useState({});
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPartnerModal, setShowPartnerModal] = useState(false);
+  const [partnerSubmitted, setPartnerSubmitted] = useState(false);
+  
+  // --- Centered Partner Ad Banner States ---
+  const AD_TOTAL_DURATION_SEC = 10;
+  const [showPartnerAd, setShowPartnerAd] = useState(true);
+  const [adSkipCountdown, setAdSkipCountdown] = useState(AD_TOTAL_DURATION_SEC);
+  const [pendingPartnerRedirect, setPendingPartnerRedirect] = useState(false);
+
+  // 10-second countdown timer for Partner Banner Ad: Automatically closes after completion
+  useEffect(() => {
+    let timer;
+    if (showPartnerAd && adSkipCountdown > 0) {
+      timer = setInterval(() => {
+        setAdSkipCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setShowPartnerAd(false); // Auto-close ad modal after 10 seconds completion
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [showPartnerAd, adSkipCountdown]);
+
+  // Click handler for Partner Banner Ad:
+  // If user is already logged in -> open Become a Partner popup window immediately
+  // If user is not logged in -> redirect to login page; once logged in, automatically open Become a Partner popup window
+  const handlePartnerAdClick = () => {
+    setShowPartnerAd(false);
+    if (user) {
+      setDashTab('profile');
+      setView('dashboard');
+      setPartnerSubmitted(false);
+      setShowPartnerModal(true);
+    } else {
+      setPendingPartnerRedirect(true);
+      setView('auth');
+      setAuthRole('client');
+      setAuthTab('login');
+    }
+  };
+
+  // When user logs in, check if they had clicked the partner ad and auto-open the popup window
+  useEffect(() => {
+    if (user && pendingPartnerRedirect) {
+      setDashTab('profile');
+      setView('dashboard');
+      setPartnerSubmitted(false);
+      setShowPartnerModal(true);
+      setPendingPartnerRedirect(false);
+    }
+  }, [user, pendingPartnerRedirect]);
+  
+  // --- Broker Partnership & Earnings State ---
+  const [isBroker, setIsBroker] = useState(false);
+  const [brokerStatus, setBrokerStatus] = useState('None'); // 'None' | 'Pending' | 'Approved' | 'Rejected'
+  const [brokerCommissionRate, setBrokerCommissionRate] = useState(7.5);
+  const [brokerEarnings, setBrokerEarnings] = useState(0);
+  const [totalBrokerSpent, setTotalBrokerSpent] = useState(0);
+  const [totalBrokerClaimed, setTotalBrokerClaimed] = useState(0);
+  const [brokerRequests, setBrokerRequests] = useState([]);
+  const [activeBrokers, setActiveBrokers] = useState([]);
+  const [cancelledBrokers, setCancelledBrokers] = useState([]);
+  const [brokerPendingCount, setBrokerPendingCount] = useState(0);
+  const [partnerForm, setPartnerForm] = useState({ name: '', phone: '' });
+  const [partnerSubmitting, setPartnerSubmitting] = useState(false);
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [distributeModal, setDistributeModal] = useState({ open: false, broker: null, amount: '', note: '' });
+  const [adminCommissionDrafts, setAdminCommissionDrafts] = useState({});
 
   // Floating Help Chat
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -2423,6 +2857,24 @@ function App() {
         .then(res => res.json())
         .then(data => {
           if (data.valid) {
+            if (data.isBroker !== undefined) {
+              setIsBroker(data.isBroker);
+            }
+            if (data.brokerStatus !== undefined) {
+              setBrokerStatus(data.brokerStatus);
+            }
+            if (data.brokerCommissionRate !== undefined) {
+              setBrokerCommissionRate(data.brokerCommissionRate);
+            }
+            if (data.brokerEarnings !== undefined) {
+              setBrokerEarnings(data.brokerEarnings);
+            }
+            if (data.totalBrokerSpent !== undefined) {
+              setTotalBrokerSpent(data.totalBrokerSpent);
+            }
+            if (data.totalBrokerClaimed !== undefined) {
+              setTotalBrokerClaimed(data.totalBrokerClaimed);
+            }
             if (data.referralCount !== undefined) {
               setSuccessfulReferralsCount(data.referralCount);
             }
@@ -2469,11 +2921,21 @@ function App() {
             setClients(prev => {
               const updated = prev.map(c => {
                 if (c.email.toLowerCase() === user.email.toLowerCase()) {
+                  const bActive = Boolean(data.isBroker !== undefined ? data.isBroker : c.isBroker) && data.brokerStatus !== 'Cancelled' && data.brokerStatus !== 'Rejected';
+                  const cleanBaseId = (c.id || `CUST-${user.id || '8888'}`).replace(/^CUST-B-/, 'CUST-');
+                  const resolvedId = bActive ? cleanBaseId.replace(/^CUST-/, 'CUST-B-') : cleanBaseId;
                   return {
                     ...c,
                     walletBalance: data.walletBalance !== undefined ? data.walletBalance : c.walletBalance,
                     referralCount: data.referralCount !== undefined ? data.referralCount : c.referralCount,
-                    holdings: calculateHoldingsFromTransactions(transactions)
+                    holdings: calculateHoldingsFromTransactions(transactions),
+                    isBroker: bActive,
+                    brokerStatus: data.brokerStatus || c.brokerStatus || 'None',
+                    brokerCommissionRate: data.brokerCommissionRate || c.brokerCommissionRate || 7.5,
+                    brokerEarnings: data.brokerEarnings !== undefined ? data.brokerEarnings : c.brokerEarnings,
+                    totalBrokerSpent: data.totalBrokerSpent !== undefined ? data.totalBrokerSpent : c.totalBrokerSpent,
+                    totalBrokerClaimed: data.totalBrokerClaimed !== undefined ? data.totalBrokerClaimed : c.totalBrokerClaimed,
+                    id: resolvedId
                   };
                 }
                 return c;
@@ -3882,6 +4344,40 @@ function App() {
             </button>
             <button 
               type="button"
+              onClick={() => setAdminTab('brokers')}
+              style={{
+                background: adminTab === 'brokers' ? '#f43f5e' : 'transparent',
+                color: '#ffffff',
+                border: '1px solid',
+                borderColor: adminTab === 'brokers' ? '#f43f5e' : 'rgba(255,255,255,0.15)',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              💼 Broker Requests
+              {brokerPendingCount > 0 && (
+                <span style={{
+                  background: '#f43f5e',
+                  color: '#ffffff',
+                  borderRadius: '12px',
+                  padding: '1px 8px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  boxShadow: '0 0 10px rgba(244, 63, 94, 0.6)'
+                }}>
+                  {brokerPendingCount}
+                </span>
+              )}
+            </button>
+            <button 
+              type="button"
               onClick={() => setAdminTab('contest')}
               style={{
                 background: adminTab === 'contest' ? '#f43f5e' : 'transparent',
@@ -4363,9 +4859,132 @@ function App() {
                   <span style={{ fontSize: '10px', color: '#d9af56', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Vault Client Inspector</span>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
                     <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#ffffff', margin: 0 }}>{inspectedClient.name}</h2>
-                    <span style={{ fontSize: '11px', color: '#9c93a8' }}>ID: {inspectedClient.id}</span>
+                    <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 700 }}>ID: {inspectedClient.id}</span>
                   </div>
                   <div style={{ fontSize: '12px', color: '#9c93a8', marginTop: '2px' }}>{inspectedClient.email} • {inspectedClient.phone}</div>
+                </div>
+
+                {/* Broker Partner VIP Status Panel in Inspector */}
+                <div style={{
+                  background: inspectedClient.isBroker ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(217, 175, 86, 0.12))' : 'rgba(255,255,255,0.02)',
+                  padding: '16px',
+                  borderRadius: '12px',
+                  border: '1px solid ' + (inspectedClient.isBroker ? 'rgba(217, 175, 86, 0.3)' : 'rgba(255,255,255,0.05)'),
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Broker Partnership Status</span>
+                      <strong style={{ 
+                        color: inspectedClient.isBroker ? '#f7df94' : '#9c93a8', 
+                        fontSize: '13px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        {inspectedClient.isBroker ? '👑 VERIFIED BROKER (CUST-B-)' : inspectedClient.brokerStatus === 'Pending' ? '⏳ APPLICATION PENDING' : 'STANDARD CUSTOMER'}
+                      </strong>
+                    </div>
+                    {inspectedClient.isBroker ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setDistributeModal({ open: true, broker: inspectedClient, amount: '', note: '' })}
+                          style={{
+                            background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+                            color: '#ffffff',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          + Distribute Profit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const rawId = parseInt(String(inspectedClient.id).replace(/^CUST-(B-)?/, ''));
+                            await handleCancelBrokerSubscription(rawId, inspectedClient.name || inspectedClient.email);
+                            setInspectedClient(null);
+                          }}
+                          style={{
+                            background: 'rgba(239, 68, 68, 0.15)',
+                            color: '#f87171',
+                            border: '1px solid rgba(239, 68, 68, 0.35)',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            cursor: 'pointer'
+                          }}
+                          title="Admin: Revoke and cancel broker partnership subscription"
+                        >
+                          Cancel Subscription
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const rate = prompt("Enter guaranteed commission % for this broker (5% to 10%):", "7.5");
+                          if (!rate) return;
+                          const numUserId = parseInt(String(inspectedClient.id).replace(/^CUST-(B-)?/, ''));
+                          try {
+                            const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/reactivate`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ userId: numUserId, commissionRate: parseFloat(rate) })
+                            });
+                            const d = await res.json();
+                            if (d.success) {
+                              alert(d.message || 'Broker upgraded to CUST-B- successfully!');
+                            } else {
+                              alert(d.error || 'Failed to upgrade broker');
+                            }
+                          } catch (err) {
+                            console.error('Error upgrading broker:', err);
+                          }
+                          fetchAdminClientsData();
+                          fetchBrokerRequests();
+                          setInspectedClient(null);
+                        }}
+                        style={{
+                          background: 'rgba(217, 175, 86, 0.15)',
+                          color: '#f7df94',
+                          border: '1px solid rgba(217, 175, 86, 0.3)',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Upgrade to CUST-B-
+                      </button>
+                    )}
+                  </div>
+
+                  {inspectedClient.isBroker && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '4px' }}>
+                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
+                        <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Profit Rate</span>
+                        <strong style={{ fontSize: '13px', color: '#d9af56' }}>{inspectedClient.brokerCommissionRate || 7.5}%</strong>
+                      </div>
+                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
+                        <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Live Earnings</span>
+                        <strong style={{ fontSize: '13px', color: '#10b981' }}>₹{parseFloat(inspectedClient.brokerEarnings || 0).toFixed(2)}</strong>
+                      </div>
+                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
+                        <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Spent On Trades</span>
+                        <strong style={{ fontSize: '13px', color: '#ffffff' }}>₹{parseFloat(inspectedClient.totalBrokerSpent || 0).toFixed(2)}</strong>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* KYC Interactive Toggle Panel */}
@@ -4390,7 +5009,7 @@ function App() {
                               const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', ''), status: 'Verified' })
+                                body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Verified' })
                               });
                               if (!res.ok) throw new Error('Update failed');
                               const updated = clients.map(c => {
@@ -4419,7 +5038,7 @@ function App() {
                               const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', ''), status: 'Rejected' })
+                                body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Rejected' })
                               });
                               if (!res.ok) throw new Error('Update failed');
                               const updated = clients.map(c => {
@@ -4446,7 +5065,7 @@ function App() {
                               const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', ''), status: 'Pending' })
+                                body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Pending' })
                               });
                               if (!res.ok) throw new Error('Update failed');
                               const updated = clients.map(c => {
@@ -4517,7 +5136,7 @@ function App() {
                                 const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/delete`, {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', '') })
+                                  body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, '') })
                                 });
                                 if (!res.ok) throw new Error('Delete failed');
                                 const updated = clients.map(c => {
@@ -4577,7 +5196,7 @@ function App() {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                              userId: inspectedClient.id.replace('CUST-', ''),
+                              userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''),
                               document: base64Data,
                               fileName: file.name,
                               fileType: file.type
@@ -4637,7 +5256,7 @@ function App() {
                             const res = await fetch(`${VITE_BACKEND_URL}/api/admin/users/unlock`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', '') })
+                              body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, '') })
                             });
                             if (!res.ok) throw new Error('Unlock failed');
                             const updated = clients.map(c => {
@@ -4886,7 +5505,7 @@ function App() {
                             const res = await fetch(`${VITE_BACKEND_URL}/api/admin/wallet/adjust`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', ''), amount: val, action: 'credit' })
+                              body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), amount: val, action: 'credit' })
                             });
                             const data = await res.json();
                             if (!data.success) {
@@ -4943,7 +5562,7 @@ function App() {
                             const res = await fetch(`${VITE_BACKEND_URL}/api/admin/wallet/adjust`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: inspectedClient.id.replace('CUST-', ''), amount: val, action: 'deduct' })
+                              body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), amount: val, action: 'deduct' })
                             });
                             const data = await res.json();
                             if (!data.success) {
@@ -5707,6 +6326,778 @@ function App() {
                     </table>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Broker Requests & Partner Profit Control Tab */}
+          {adminTab === 'brokers' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fade-in 0.3s ease-out' }}>
+              {/* Header & Refresh */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    💼 Broker Partnership Requests & Profit Management
+                  </h2>
+                  <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#9c93a8' }}>
+                    Review partner applications (Subscription fee ₹1,000), approve CUST-B- ID upgrades, and configure 5%–10% guaranteed commission rates.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    type="button"
+                    onClick={fetchBrokerRequests}
+                    style={{
+                      background: '#1e0b36',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      color: '#ffffff',
+                      padding: '10px 18px',
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    ↻ Refresh Requests
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={brokerRequests.length === 0}
+                    onClick={() => handleClearAllBrokerRequests('resolved')}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.12)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#f87171',
+                      padding: '10px 18px',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '13px',
+                      cursor: brokerRequests.length === 0 ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      opacity: brokerRequests.length === 0 ? 0.4 : 1,
+                      transition: 'all 0.2s'
+                    }}
+                    title="Clear all completed (Approved, Declined, Cancelled) requests from the list"
+                  >
+                    <Trash2 size={15} /> Clear Completed Requests
+                  </button>
+                </div>
+              </div>
+
+              {/* KPI Summary Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+                <div style={{ background: '#120524', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '14px', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ background: 'rgba(168, 85, 247, 0.1)', borderRadius: '10px', padding: '10px 14px', fontSize: '20px', fontWeight: 800, color: '#a855f7' }}>
+                    {brokerRequests.length}
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700, display: 'block' }}>Total Applications</span>
+                    <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: 600 }}>Fee: ₹1,000 / Partner</span>
+                  </div>
+                </div>
+
+                <div style={{ background: '#120524', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '14px', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ background: 'rgba(245, 158, 11, 0.1)', borderRadius: '10px', padding: '10px 14px', fontSize: '20px', fontWeight: 800, color: '#f59e0b' }}>
+                    {brokerRequests.filter(r => r.status === 'Pending').length}
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700, display: 'block' }}>Pending Requests</span>
+                    <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 600 }}>Awaiting Approval</span>
+                  </div>
+                </div>
+
+                <div style={{ background: '#120524', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '14px', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', padding: '10px 14px', fontSize: '20px', fontWeight: 800, color: '#10b981' }}>
+                    {activeBrokers.length}
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700, display: 'block' }}>Active Brokers</span>
+                    <span style={{ fontSize: '13px', color: '#10b981', fontWeight: 600 }}>CUST-B- Upgraded</span>
+                  </div>
+                </div>
+
+                <div style={{ background: '#120524', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '14px', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ background: 'rgba(217, 175, 86, 0.1)', borderRadius: '10px', padding: '10px 14px', fontSize: '20px', fontWeight: 800, color: '#d9af56' }}>
+                    ₹{activeBrokers.reduce((sum, b) => sum + (parseFloat(b.brokerEarnings || 0) + parseFloat(b.totalBrokerClaimed || 0)), 0).toFixed(2)}
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700, display: 'block' }}>Total Profits Generated</span>
+                    <span style={{ fontSize: '13px', color: '#d9af56', fontWeight: 600 }}>Guaranteed Commission</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Broker Applications Table */}
+              <div style={{ background: '#120524', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#ffffff' }}>Incoming Partnership Applications</h3>
+                    <span style={{ fontSize: '12px', color: '#9c93a8' }}>Subscription Fee: ₹1,000 • 5%–10% Guaranteed Commission</span>
+                  </div>
+
+                  {brokerRequests.length > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleClearAllBrokerRequests('resolved')}
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.14)',
+                          color: '#f87171',
+                          border: '1px solid rgba(239, 68, 68, 0.35)',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.2s ease'
+                        }}
+                        title="Clear all completed (Approved, Declined, Cancelled) requests from the list"
+                      >
+                        <Trash2 size={13} /> Clear Processed Requests
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {brokerRequests.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px', color: '#9c93a8', fontSize: '14px' }}>
+                    No partnership requests received yet. Applications submitted from the &quot;Want to be a Partner&quot; modal will appear here.
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: '#9c93a8', fontSize: '11px', textTransform: 'uppercase', fontWeight: 800 }}>
+                          <th style={{ padding: '12px 10px' }}>Application Date</th>
+                          <th style={{ padding: '12px 10px' }}>Customer ID</th>
+                          <th style={{ padding: '12px 10px' }}>Customer Name</th>
+                          <th style={{ padding: '12px 10px' }}>Mobile Number</th>
+                          <th style={{ padding: '12px 10px' }}>Email ID</th>
+                          <th style={{ padding: '12px 10px' }}>Subscription Fee</th>
+                          <th style={{ padding: '12px 10px' }}>Commission Rate (5% - 10%)</th>
+                          <th style={{ padding: '12px 10px' }}>Status</th>
+                          <th style={{ padding: '12px 10px', textAlign: 'center' }}>Admin Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {brokerRequests.map((req) => {
+                          const isPending = req.status === 'Pending';
+                          const isApproved = req.status === 'Approved';
+                          const selectedRate = adminCommissionDrafts[req.id] !== undefined ? adminCommissionDrafts[req.id] : (req.commissionRate || 7.5);
+
+                          return (
+                            <tr key={req.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                              <td style={{ padding: '14px 10px', fontSize: '12px', color: '#ffffff' }}>
+                                <div>{new Date(req.createdAt).toLocaleDateString()}</div>
+                                <div style={{ fontSize: '11px', color: '#9c93a8' }}>{new Date(req.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <span style={{
+                                  background: isApproved ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.06)',
+                                  color: isApproved ? '#c084fc' : '#ffffff',
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  fontWeight: 800,
+                                  fontSize: '12px',
+                                  fontFamily: 'monospace'
+                                }}>
+                                  {isApproved ? (req.customerId?.startsWith('CUST-B-') ? req.customerId : `CUST-B-${req.userId}`) : req.customerId}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 10px', fontWeight: 700, color: '#ffffff', fontSize: '13px' }}>
+                                {req.name}
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <a href={`tel:${req.phone}`} style={{ color: '#60a5fa', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}>
+                                  {req.phone}
+                                </a>
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <a href={`mailto:${req.email}`} style={{ color: '#d9af56', fontSize: '12px', textDecoration: 'none' }}>
+                                  {req.email}
+                                </a>
+                              </td>
+                              <td style={{ padding: '14px 10px', color: '#10b981', fontWeight: 700, fontSize: '13px' }}>
+                                ₹{req.subscriptionFee || 1000}
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                {isPending ? (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <select
+                                      value={selectedRate}
+                                      onChange={(e) => setAdminCommissionDrafts(prev => ({ ...prev, [req.id]: parseFloat(e.target.value) }))}
+                                      style={{
+                                        background: '#1e0b36',
+                                        border: '1px solid rgba(168, 85, 247, 0.4)',
+                                        color: '#f7df94',
+                                        padding: '6px 8px',
+                                        borderRadius: '6px',
+                                        fontSize: '12px',
+                                        fontWeight: 700,
+                                        outline: 'none'
+                                      }}
+                                    >
+                                      <option value="5.0">5.0%</option>
+                                      <option value="6.0">6.0%</option>
+                                      <option value="7.0">7.0%</option>
+                                      <option value="7.5">7.5%</option>
+                                      <option value="8.0">8.0%</option>
+                                      <option value="9.0">9.0%</option>
+                                      <option value="10.0">10.0%</option>
+                                    </select>
+                                    <span style={{ fontSize: '11px', color: '#9c93a8' }}>per trade</span>
+                                  </div>
+                                ) : (
+                                  <span style={{ color: '#d9af56', fontWeight: 700, fontSize: '13px' }}>
+                                    {req.commissionRate || 7.5}%
+                                  </span>
+                                )}
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <span style={{
+                                  padding: '4px 10px',
+                                  borderRadius: '6px',
+                                  fontSize: '11px',
+                                  fontWeight: 800,
+                                  textTransform: 'uppercase',
+                                  background: isPending ? 'rgba(245, 158, 11, 0.15)' : isApproved ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                                  color: isPending ? '#f59e0b' : isApproved ? '#10b981' : '#ef4444'
+                                }}>
+                                  {req.status}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 10px', textAlign: 'center' }}>
+                                {isPending ? (
+                                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleAcceptBrokerRequest(req.id, selectedRate)}
+                                      style={{
+                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                        color: '#ffffff',
+                                        border: 'none',
+                                        padding: '7px 14px',
+                                        borderRadius: '6px',
+                                        fontWeight: 700,
+                                        fontSize: '12px',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px'
+                                      }}
+                                    >
+                                      ✓ Accept & Upgrade ID
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRejectBrokerRequest(req.id)}
+                                      style={{
+                                        background: 'rgba(239, 68, 68, 0.12)',
+                                        color: '#ef4444',
+                                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                                        padding: '7px 12px',
+                                        borderRadius: '6px',
+                                        fontWeight: 700,
+                                        fontSize: '12px',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      ✕ Reject
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleClearBrokerRequest(req.id, req.name || req.customerId)}
+                                      style={{
+                                        background: 'rgba(255, 255, 255, 0.05)',
+                                        color: '#9c93a8',
+                                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                                        padding: '7px 10px',
+                                        borderRadius: '6px',
+                                        fontWeight: 700,
+                                        fontSize: '11.5px',
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px'
+                                      }}
+                                      title="Clear / Dismiss this request"
+                                    >
+                                      <Trash2 size={12} /> Clear
+                                    </button>
+                                  </div>
+                                ) : isApproved ? (
+                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                                    <span style={{ fontSize: '12px', color: '#10b981', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                      <Check size={14} /> Active Broker
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleClearBrokerRequest(req.id, req.name || req.customerId)}
+                                      style={{
+                                        background: 'rgba(239, 68, 68, 0.12)',
+                                        color: '#f87171',
+                                        border: '1px solid rgba(239, 68, 68, 0.28)',
+                                        padding: '5px 10px',
+                                        borderRadius: '6px',
+                                        fontSize: '11px',
+                                        fontWeight: 700,
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        transition: 'all 0.2s ease'
+                                      }}
+                                      onMouseOver={(e) => {
+                                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)';
+                                        e.currentTarget.style.borderColor = '#ef4444';
+                                      }}
+                                      onMouseOut={(e) => {
+                                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)';
+                                        e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.28)';
+                                      }}
+                                      title="Clear this completed request from incoming applications"
+                                    >
+                                      <Trash2 size={12} /> Clear
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                                    <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: 600 }}>
+                                      {req.status === 'Cancelled' ? 'Subscription Revoked' : 'Application Declined'}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleClearBrokerRequest(req.id, req.name || req.customerId)}
+                                      style={{
+                                        background: 'rgba(239, 68, 68, 0.12)',
+                                        color: '#f87171',
+                                        border: '1px solid rgba(239, 68, 68, 0.28)',
+                                        padding: '5px 10px',
+                                        borderRadius: '6px',
+                                        fontSize: '11px',
+                                        fontWeight: 700,
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        transition: 'all 0.2s ease'
+                                      }}
+                                      onMouseOver={(e) => {
+                                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)';
+                                        e.currentTarget.style.borderColor = '#ef4444';
+                                      }}
+                                      onMouseOut={(e) => {
+                                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)';
+                                        e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.28)';
+                                      }}
+                                      title="Clear this declined request from incoming applications"
+                                    >
+                                      <Trash2 size={12} /> Clear
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Active Approved Brokers Section */}
+              <div style={{ background: '#120524', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#ffffff' }}>Active Brokers Live Profit Control</h3>
+                    <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#9c93a8' }}>
+                      All brokers upgraded to CUST-B- ID. Control profit distribution and adjust guaranteed commission (5%–10%).
+                    </p>
+                  </div>
+                </div>
+
+                {activeBrokers.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px', color: '#9c93a8', fontSize: '14px' }}>
+                    No active brokers yet. When you approve partnership requests above, verified brokers will appear here with live earnings control.
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: '#9c93a8', fontSize: '11px', textTransform: 'uppercase', fontWeight: 800 }}>
+                          <th style={{ padding: '12px 10px' }}>Broker ID</th>
+                          <th style={{ padding: '12px 10px' }}>Name & Contact</th>
+                          <th style={{ padding: '12px 10px' }}>Commission %</th>
+                          <th style={{ padding: '12px 10px' }}>Total Spent</th>
+                          <th style={{ padding: '12px 10px' }}>Live Unclaimed Earnings</th>
+                          <th style={{ padding: '12px 10px' }}>Claimed to Wallet</th>
+                          <th style={{ padding: '12px 10px' }}>Main Wallet</th>
+                          <th style={{ padding: '12px 10px', textAlign: 'center' }}>Admin Actions & Controls</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {activeBrokers.map((b) => {
+                          const currentDraft = adminCommissionDrafts[`broker_${b.id}`] !== undefined ? adminCommissionDrafts[`broker_${b.id}`] : (b.brokerCommissionRate || 7.5);
+                          return (
+                            <tr key={b.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                              <td style={{ padding: '14px 10px' }}>
+                                <span style={{
+                                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(217, 175, 86, 0.25))',
+                                  color: '#f7df94',
+                                  border: '1px solid rgba(217, 175, 86, 0.4)',
+                                  padding: '4px 10px',
+                                  borderRadius: '6px',
+                                  fontWeight: 800,
+                                  fontSize: '12.5px',
+                                  fontFamily: 'monospace'
+                                }}>
+                                  CUST-B-{b.id}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <div style={{ fontWeight: 700, fontSize: '13.5px', color: '#ffffff' }}>{b.name || b.email.split('@')[0]}</div>
+                                <div style={{ fontSize: '11.5px', color: '#9c93a8' }}>{b.email} • {b.phone || 'N/A'}</div>
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <input
+                                    type="number"
+                                    min="5"
+                                    max="10"
+                                    step="0.5"
+                                    value={currentDraft}
+                                    onChange={(e) => setAdminCommissionDrafts(prev => ({ ...prev, [`broker_${b.id}`]: parseFloat(e.target.value) }))}
+                                    style={{
+                                      width: '65px',
+                                      background: '#1e0b36',
+                                      border: '1px solid rgba(255,255,255,0.15)',
+                                      color: '#d9af56',
+                                      padding: '5px 8px',
+                                      borderRadius: '6px',
+                                      fontSize: '12px',
+                                      fontWeight: 700,
+                                      outline: 'none'
+                                    }}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAdjustBrokerCommission(b.id, currentDraft)}
+                                    style={{
+                                      background: 'rgba(217, 175, 86, 0.15)',
+                                      color: '#d9af56',
+                                      border: '1px solid rgba(217, 175, 86, 0.3)',
+                                      padding: '5px 10px',
+                                      borderRadius: '6px',
+                                      fontSize: '11px',
+                                      fontWeight: 700,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              </td>
+                              <td style={{ padding: '14px 10px', color: '#ffffff', fontWeight: 600, fontSize: '13px' }}>
+                                ₹{parseFloat(b.totalBrokerSpent || 0).toFixed(2)}
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <span style={{ color: '#10b981', fontWeight: 800, fontSize: '14px' }}>
+                                  ₹{parseFloat(b.brokerEarnings || 0).toFixed(2)}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 10px', color: '#9c93a8', fontSize: '13px' }}>
+                                ₹{parseFloat(b.totalBrokerClaimed || 0).toFixed(2)}
+                              </td>
+                              <td style={{ padding: '14px 10px', color: '#ffffff', fontWeight: 700, fontSize: '13px' }}>
+                                ₹{parseFloat(b.walletBalance || 0).toFixed(2)}
+                              </td>
+                              <td style={{ padding: '14px 10px', textAlign: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => setDistributeModal({ open: true, broker: b, amount: '', note: '' })}
+                                    style={{
+                                      background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+                                      color: '#ffffff',
+                                      border: 'none',
+                                      padding: '7px 12px',
+                                      borderRadius: '6px',
+                                      fontWeight: 700,
+                                      fontSize: '11.5px',
+                                      cursor: 'pointer',
+                                      boxShadow: '0 2px 8px rgba(168, 85, 247, 0.3)',
+                                      whiteSpace: 'nowrap'
+                                    }}
+                                  >
+                                    + Distribute Profit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCancelBrokerSubscription(b.id, b.name || b.email)}
+                                    style={{
+                                      background: 'rgba(239, 68, 68, 0.15)',
+                                      color: '#f87171',
+                                      border: '1px solid rgba(239, 68, 68, 0.35)',
+                                      padding: '7px 12px',
+                                      borderRadius: '6px',
+                                      fontWeight: 700,
+                                      fontSize: '11.5px',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s ease',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '4px',
+                                      whiteSpace: 'nowrap'
+                                    }}
+                                    onMouseOver={(e) => {
+                                      e.currentTarget.style.background = 'rgba(239, 68, 68, 0.3)';
+                                      e.currentTarget.style.borderColor = '#ef4444';
+                                    }}
+                                    onMouseOut={(e) => {
+                                      e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                                      e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+                                    }}
+                                    title="Admin: Cancel and revoke this broker partnership subscription"
+                                  >
+                                    <X size={12} /> Cancel Subscription
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Cancelled Broker Subscriptions Audit List */}
+                {cancelledBrokers && cancelledBrokers.length > 0 && (
+                  <div style={{ marginTop: '30px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                      <AlertCircle size={16} style={{ color: '#ef4444' }} />
+                      <h4 style={{ margin: 0, fontSize: '14px', color: '#f87171', fontWeight: 800 }}>
+                        Cancelled Broker Subscriptions ({cancelledBrokers.length})
+                      </h4>
+                      <span style={{ fontSize: '11px', color: '#9c93a8' }}>• Status revoked by Admin (CUST-B- reverted to standard customer)</span>
+                    </div>
+
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', color: '#9c93a8', fontSize: '11px', textTransform: 'uppercase', fontWeight: 700 }}>
+                            <th style={{ padding: '10px' }}>Reverted Customer ID</th>
+                            <th style={{ padding: '10px' }}>Name & Contact</th>
+                            <th style={{ padding: '10px' }}>Status</th>
+                            <th style={{ padding: '10px' }}>Total Claimed</th>
+                            <th style={{ padding: '10px', textAlign: 'center' }}>Admin Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cancelledBrokers.map((cb) => (
+                            <tr key={cb.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                              <td style={{ padding: '10px', fontFamily: 'monospace', fontWeight: 700, color: '#9c93a8' }}>
+                                CUST-{cb.id}
+                              </td>
+                              <td style={{ padding: '10px' }}>
+                                <div style={{ color: '#ffffff', fontWeight: 600, fontSize: '13px' }}>{cb.name || cb.email.split('@')[0]}</div>
+                                <div style={{ color: '#9c93a8', fontSize: '11px' }}>{cb.email}</div>
+                              </td>
+                              <td style={{ padding: '10px' }}>
+                                <span style={{
+                                  background: 'rgba(239, 68, 68, 0.15)',
+                                  color: '#f87171',
+                                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                                  padding: '3px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '11px',
+                                  fontWeight: 700
+                                }}>
+                                  Subscription Cancelled
+                                </span>
+                              </td>
+                              <td style={{ padding: '10px', color: '#9c93a8', fontSize: '12px' }}>
+                                ₹{parseFloat(cb.totalBrokerClaimed || 0).toFixed(2)}
+                              </td>
+                              <td style={{ padding: '10px', textAlign: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    const rate = prompt(`Re-activate broker partnership for ${cb.email}?\nEnter guaranteed commission % (5% to 10%):`, "7.5");
+                                    if (!rate) return;
+                                    try {
+                                      const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/reactivate`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ userId: cb.id, commissionRate: parseFloat(rate) })
+                                      });
+                                      const d = await res.json();
+                                      if (d.success) {
+                                        alert(d.message || 'Broker re-activated successfully!');
+                                      } else {
+                                        alert(d.error || 'Failed to re-activate broker');
+                                      }
+                                    } catch (err) {
+                                      console.error('Error reactivating broker:', err);
+                                    }
+                                    fetchBrokerRequests();
+                                    fetchAdminClientsData();
+                                  }}
+                                  style={{
+                                    background: 'rgba(217, 175, 86, 0.15)',
+                                    color: '#f7df94',
+                                    border: '1px solid rgba(217, 175, 86, 0.35)',
+                                    padding: '5px 12px',
+                                    borderRadius: '6px',
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  Re-activate Broker
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Admin Distribute Profit Modal */}
+          {distributeModal.open && distributeModal.broker && (
+            <div style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 999999,
+              background: 'rgba(5, 2, 12, 0.85)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px'
+            }}>
+              <div style={{
+                maxWidth: '460px',
+                width: '100%',
+                background: 'linear-gradient(145deg, #160a2b 0%, #0b0318 100%)',
+                border: '1px solid rgba(168, 85, 247, 0.35)',
+                borderRadius: '20px',
+                padding: '28px',
+                boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ margin: 0, color: '#ffffff', fontSize: '18px', fontWeight: 800 }}>
+                    Distribute Profit to Broker
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setDistributeModal({ open: false, broker: null, amount: '', note: '' })}
+                    style={{ background: 'transparent', border: 'none', color: '#9c93a8', cursor: 'pointer' }}
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+                <p style={{ margin: '0 0 18px', fontSize: '12.5px', color: '#9c93a8' }}>
+                  Credit profit directly into <strong>{distributeModal.broker.name || distributeModal.broker.email}</strong>&apos;s (CUST-B-{distributeModal.broker.id}) live earnings pool.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#ffffff', marginBottom: '6px', fontWeight: 600 }}>Profit Amount (₹) *</label>
+                    <input
+                      type="number"
+                      step="any"
+                      min="1"
+                      placeholder="e.g. 500"
+                      value={distributeModal.amount}
+                      onChange={(e) => setDistributeModal(prev => ({ ...prev, amount: e.target.value }))}
+                      style={{
+                        width: '100%',
+                        background: '#1e0b36',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        color: '#ffffff',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: 700,
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#ffffff', marginBottom: '6px', fontWeight: 600 }}>Note / Reason</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Trading volume bonus"
+                      value={distributeModal.note}
+                      onChange={(e) => setDistributeModal(prev => ({ ...prev, note: e.target.value }))}
+                      style={{
+                        width: '100%',
+                        background: '#1e0b36',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        color: '#ffffff',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={() => setDistributeModal({ open: false, broker: null, amount: '', note: '' })}
+                    style={{
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      color: '#ffffff',
+                      padding: '10px 18px',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDistributeBrokerProfit(distributeModal.broker.id, distributeModal.amount, distributeModal.note)}
+                    disabled={!distributeModal.amount || parseFloat(distributeModal.amount) <= 0}
+                    style={{
+                      background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+                      border: 'none',
+                      color: '#ffffff',
+                      padding: '10px 20px',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      cursor: (!distributeModal.amount || parseFloat(distributeModal.amount) <= 0) ? 'not-allowed' : 'pointer',
+                      opacity: (!distributeModal.amount || parseFloat(distributeModal.amount) <= 0) ? 0.6 : 1
+                    }}
+                  >
+                    Confirm & Credit Profit
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -8669,29 +10060,37 @@ function App() {
         {/* Live Rates Ticker */}
         <div className="ticker-bar">
           <div className="ticker-track">
-            {Object.entries(rates).map(([key, data]) => (
-              <div className="ticker-item" key={`dash-t1-${key}`}>
-                <span className="ticker-name">{key}</span>
-                <span className="ticker-val">{'₹'}{data.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                <span className={`ticker-change ${data.change >= 0 ? 'up' : 'down'}`}>
-                  {data.change >= 0 ? <ArrowUpRight size={14} strokeWidth={2.5} /> : <ArrowDownRight size={14} strokeWidth={2.5} />}
-                  {data.change >= 0 ? '+' : ''}{data.change.toFixed(2)} ({data.pct >= 0 ? '+' : ''}{data.pct.toFixed(2)}%)
-                </span>
-                <span className="ticker-separator">|</span>
-              </div>
-            ))}
+            {Object.entries(rates).map(([key, data]) => {
+              const label = getAssetLabel(key);
+              const priceDecimals = data.price < 1 ? 4 : 2;
+              return (
+                <div className="ticker-item" key={`dash-t1-${key}`}>
+                  <span className="ticker-name">{label}</span>
+                  <span className="ticker-val">{'₹'}{data.price.toLocaleString('en-IN', { minimumFractionDigits: priceDecimals, maximumFractionDigits: priceDecimals })}/g</span>
+                  <span className={`ticker-change ${data.change >= 0 ? 'up' : 'down'}`}>
+                    {data.change >= 0 ? <ArrowUpRight size={14} strokeWidth={2.5} /> : <ArrowDownRight size={14} strokeWidth={2.5} />}
+                    {data.change >= 0 ? '+' : ''}{data.change.toFixed(2)} ({data.pct >= 0 ? '+' : ''}{data.pct.toFixed(2)}%)
+                  </span>
+                  <span className="ticker-separator">|</span>
+                </div>
+              );
+            })}
             {/* Duplicate for scrolling */}
-            {Object.entries(rates).map(([key, data]) => (
-              <div className="ticker-item" key={`dash-t2-${key}`}>
-                <span className="ticker-name">{key}</span>
-                <span className="ticker-val">{'\u20b9'}{data.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                <span className={`ticker-change ${data.change >= 0 ? 'up' : 'down'}`}>
-                  {data.change >= 0 ? <ArrowUpRight size={14} strokeWidth={2.5} /> : <ArrowDownRight size={14} strokeWidth={2.5} />}
-                  {data.change >= 0 ? '+' : ''}{data.change.toFixed(2)} ({data.pct >= 0 ? '+' : ''}{data.pct.toFixed(2)}%)
-                </span>
-                <span className="ticker-separator">|</span>
-              </div>
-            ))}
+            {Object.entries(rates).map(([key, data]) => {
+              const label = getAssetLabel(key);
+              const priceDecimals = data.price < 1 ? 4 : 2;
+              return (
+                <div className="ticker-item" key={`dash-t2-${key}`}>
+                  <span className="ticker-name">{label}</span>
+                  <span className="ticker-val">{'₹'}{data.price.toLocaleString('en-IN', { minimumFractionDigits: priceDecimals, maximumFractionDigits: priceDecimals })}/g</span>
+                  <span className={`ticker-change ${data.change >= 0 ? 'up' : 'down'}`}>
+                    {data.change >= 0 ? <ArrowUpRight size={14} strokeWidth={2.5} /> : <ArrowDownRight size={14} strokeWidth={2.5} />}
+                    {data.change >= 0 ? '+' : ''}{data.change.toFixed(2)} ({data.pct >= 0 ? '+' : ''}{data.pct.toFixed(2)}%)
+                  </span>
+                  <span className="ticker-separator">|</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -8942,9 +10341,34 @@ function App() {
                 <p style={{ color: '#8b8098', fontSize: '13px', textAlign: 'center', marginTop: '0', marginBottom: '10px', fontWeight: '500' }}>
                   Invest & earn 1% daily interest. Withdrawals are automatically processed to your wallet after the 7-day lock period.
                 </p>
-                <div style={{ color: '#d9af56', fontSize: '12px', textAlign: 'center', marginBottom: '20px', background: 'rgba(217, 175, 86, 0.08)', padding: '6px 16px', borderRadius: '20px', border: '1px solid rgba(217, 175, 86, 0.2)', fontWeight: '600' }}>
+                <div style={{ color: '#d9af56', fontSize: '12px', textAlign: 'center', marginBottom: isBroker ? '10px' : '20px', background: 'rgba(217, 175, 86, 0.08)', padding: '6px 16px', borderRadius: '20px', border: '1px solid rgba(217, 175, 86, 0.2)', fontWeight: '600' }}>
                   ⚡ Unlimited Investments &nbsp;|&nbsp; 📈 1% Daily Return &nbsp;|&nbsp; 🔒 7-Day Lock with Auto-Withdrawal
                 </div>
+
+                {isBroker && (
+                  <div style={{
+                    margin: '0 auto 20px auto',
+                    padding: '8px 20px',
+                    background: 'linear-gradient(135deg, rgba(217, 175, 86, 0.16), rgba(168, 85, 247, 0.16))',
+                    border: '1px solid rgba(217, 175, 86, 0.4)',
+                    borderRadius: '30px',
+                    color: '#fef08a',
+                    fontSize: '12.5px',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    boxShadow: '0 4px 15px rgba(217, 175, 86, 0.12)',
+                    textAlign: 'center',
+                    maxWidth: '95%'
+                  }}>
+                    <span style={{ fontSize: '16px' }}>👑</span>
+                    <span>
+                      <strong>Broker Partner Privilege:</strong> You earn <strong style={{ color: '#34d399', fontSize: '13.5px' }}>{brokerCommissionRate || 7.5}% Guaranteed Profit Sharing</strong> strictly on all 7-day investment returns (payout calculated only on returns, not principal)!
+                    </span>
+                  </div>
+                )}
                 
                 <div className="investment-dashboard-bar" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
                   {/* Column 1 */}
@@ -9002,6 +10426,8 @@ function App() {
                         index={index}
                         totalLength={investments.length}
                         onWithdraw={handleWithdrawInvestment}
+                        isBroker={isBroker}
+                        brokerCommissionRate={brokerCommissionRate}
                       />
                     ))}
                   </div>
@@ -9206,15 +10632,21 @@ function App() {
 
           {dashTab === 'profile' && (() => {
             const cRecord = clients.find(c => c.email.toLowerCase() === user.email.toLowerCase()) || {
-              id: 'IH-958204-A',
+              id: `CUST-${user.id || '8888'}`,
               kycStatus: 'Pending'
             };
             const currentKycStatus = cRecord.kycStatus || 'Pending';
+            const isUserBroker = Boolean(isBroker || brokerStatus === 'Approved') && brokerStatus !== 'Cancelled' && brokerStatus !== 'Rejected';
+            const rawCustId = cRecord.id || `CUST-${user.id || '8888'}`;
+            const cleanBaseId = rawCustId.replace(/^CUST-B-/, 'CUST-');
+            const displayCustomerId = isUserBroker
+              ? cleanBaseId.replace(/^CUST-/, 'CUST-B-')
+              : cleanBaseId;
 
             return (
               <div className="tab-pane-view profile-view animate-fade-in">
                 <div className="profile-dashboard-layout">
-                  {/* Left Column: Shield/Badge/Status Card */}
+                  {/* Left Column: Shield/Badge/Status Card & Broker Live Earnings Hub */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {currentKycStatus === 'Verified' ? (
                     <div className="profile-security-badge-card">
@@ -9222,7 +10654,7 @@ function App() {
                       <h3>Verified Vault Account</h3>
                       <p className="profile-desc-p">Your digital assets are 100% physically stored in hyper-secure vaults and backed by a 1-to-1 ratio.</p>
                       <div className="security-credentials-list">
-                        <div className="cred-row"><span>Vault Identifier</span><strong>{cRecord.id}</strong></div>
+                        <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
                         <div className="cred-row"><span>KYC Verification Status</span><strong className="positive-text"><Check size={12} /> SECURED & VERIFIED</strong></div>
                         <div className="cred-row"><span>Security Standard</span><strong>Mandatory OTP Login Enabled</strong></div>
                         <div className="cred-row"><span>Physical Vault Storage</span><strong>Brink&apos;s & Sequel London</strong></div>
@@ -9237,7 +10669,7 @@ function App() {
                       <h3>Verification In Progress</h3>
                       <p className="profile-desc-p">Our compliance team is verifying your details. This process typically takes between 2 to 4 hours.</p>
                       <div className="security-credentials-list">
-                        <div className="cred-row"><span>Vault Identifier</span><strong>{cRecord.id}</strong></div>
+                        <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
                         <div className="cred-row"><span>KYC Verification Status</span><strong style={{ color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}><RefreshCw size={12} className="animate-spin" /> UNDER REVIEW</strong></div>
                         <div className="cred-row"><span>Uploaded Document</span><strong>{cRecord.kycDocument?.type || 'ID Card'}</strong></div>
                         <div className="cred-row"><span>Physical Vault Storage</span><strong>Brink&apos;s & Sequel London</strong></div>
@@ -9276,13 +10708,243 @@ function App() {
                       <h3>Secure Your Vault</h3>
                       <p className="profile-desc-p">Complete your Know Your Customer (KYC) check to activate secure physical storage and enable full trading capabilities.</p>
                       <div className="security-credentials-list">
-                        <div className="cred-row"><span>Vault Identifier</span><strong>{cRecord.id}</strong></div>
+                        <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
                         <div className="cred-row"><span>KYC Verification Status</span><strong style={{ color: '#9c93a8' }}>UNVERIFIED</strong></div>
                         <div className="cred-row"><span>Requirements</span><strong>Aadhaar / PAN Card</strong></div>
                       </div>
                     </div>
                   )}
-                  
+
+                  {/* Broker Status & Live Earnings Hub */}
+                  {isUserBroker ? (
+                    <div className="profile-security-badge-card" style={{
+                      background: 'linear-gradient(145deg, rgba(30, 11, 54, 0.95) 0%, rgba(14, 4, 28, 0.98) 100%)',
+                      border: '1px solid rgba(217, 175, 86, 0.4)',
+                      boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(217, 175, 86, 0.15)',
+                      padding: '24px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '10px',
+                            background: 'linear-gradient(135deg, #a855f7, #d9af56)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#0b0318',
+                            boxShadow: '0 0 16px rgba(217, 175, 86, 0.3)'
+                          }}>
+                            <Briefcase size={22} />
+                          </div>
+                          <div>
+                            <h3 style={{ margin: 0, fontSize: '16px', color: '#ffffff', fontWeight: 800 }}>
+                              Institutional Broker Partner
+                            </h3>
+                            <span style={{ fontSize: '11px', color: '#d9af56', fontWeight: 700 }}>
+                              Lifetime Subscription (₹1,000) Active
+                            </span>
+                          </div>
+                        </div>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '20px',
+                          background: 'rgba(217, 175, 86, 0.15)',
+                          border: '1px solid rgba(217, 175, 86, 0.4)',
+                          color: '#f7df94',
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          fontFamily: 'monospace'
+                        }}>
+                          {displayCustomerId}
+                        </span>
+                      </div>
+
+                      <p style={{ fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 16px', lineHeight: 1.5 }}>
+                        You earn a guaranteed <strong style={{ color: '#10b981' }}>{brokerCommissionRate || 7.5}% profit/commission</strong> on every rupee you spend on trading, plus <strong style={{ color: '#f7df94' }}>{brokerCommissionRate || 7.5}% profit sharing strictly on all 7-day investment returns</strong> (calculated only on returns, not principal)!
+                      </p>
+
+                      {/* Live Earnings Metrics Grid */}
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '12px',
+                        marginBottom: '16px'
+                      }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Guaranteed Profit Rate</span>
+                          <strong style={{ fontSize: '16px', color: '#f7df94' }}>{brokerCommissionRate || 7.5}%</strong>
+                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>Admin Decided & Controlled</span>
+                        </div>
+
+                        <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Total Rupee Spent</span>
+                          <strong style={{ fontSize: '16px', color: '#ffffff' }}>₹{totalBrokerSpent.toFixed(2)}</strong>
+                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>Trading Stakes Volume</span>
+                        </div>
+
+                        <div style={{
+                          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(217, 175, 86, 0.12))',
+                          padding: '12px',
+                          borderRadius: '10px',
+                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                          gridColumn: 'span 2'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                              <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
+                                Live Unclaimed Broker Earnings
+                              </span>
+                              <strong style={{ fontSize: '24px', color: '#10b981', fontWeight: 800, textShadow: '0 0 12px rgba(16, 185, 129, 0.3)' }}>
+                                ₹{brokerEarnings.toFixed(2)}
+                              </strong>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <span style={{ fontSize: '10.5px', color: '#9c93a8', display: 'block' }}>Total Claimed</span>
+                              <strong style={{ fontSize: '13px', color: '#ffffff' }}>₹{totalBrokerClaimed.toFixed(2)}</strong>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <button
+                          type="button"
+                          disabled={brokerEarnings <= 0 || claimLoading}
+                          onClick={handleClaimBrokerEarnings}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '10px',
+                            background: brokerEarnings > 0 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'rgba(255, 255, 255, 0.05)',
+                            border: brokerEarnings > 0 ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
+                            color: brokerEarnings > 0 ? '#ffffff' : '#6b7280',
+                            fontWeight: 800,
+                            fontSize: '13px',
+                            cursor: brokerEarnings > 0 ? 'pointer' : 'not-allowed',
+                            boxShadow: brokerEarnings > 0 ? '0 4px 16px rgba(16, 185, 129, 0.3)' : 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          {claimLoading ? (
+                            <>
+                              <RefreshCw size={16} className="animate-spin" /> Transferring to Wallet...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles size={16} /> Transfer Live Earnings to Wallet (₹{brokerEarnings.toFixed(2)})
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setDashTab('wallet')}
+                          style={{
+                            width: '100%',
+                            padding: '10px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.04)',
+                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                            color: '#ffffff',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          <DollarSign size={14} style={{ color: '#d9af56' }} />
+                          Go to Wallet & Request Withdrawal
+                        </button>
+                      </div>
+
+                      <div style={{ marginTop: '12px', padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.04)', fontSize: '11px', color: '#9c93a8', lineHeight: 1.4 }}>
+                        💡 <strong>Real-time Profit Guarantee:</strong> Earn guaranteed {brokerCommissionRate || 7.5}% on every rupee spent on trades, plus guaranteed {brokerCommissionRate || 7.5}% profit sharing strictly on all 7-day investment returns (payout on returns, not principal).
+                      </div>
+                    </div>
+                  ) : brokerStatus === 'Pending' ? (
+                    <div className="profile-security-badge-card" style={{
+                      background: 'rgba(245, 158, 11, 0.04)',
+                      borderColor: 'rgba(245, 158, 11, 0.25)',
+                      padding: '22px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                        <RefreshCw size={20} className="animate-spin" style={{ color: '#f59e0b' }} />
+                        <h4 style={{ margin: 0, fontSize: '15px', color: '#f59e0b', fontWeight: 800 }}>
+                          Broker Application Pending Approval
+                        </h4>
+                      </div>
+                      <p style={{ fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 12px', lineHeight: 1.5 }}>
+                        Your broker subscription request (Fee ₹1,000) for <strong style={{ color: '#f7df94' }}>{displayCustomerId}</strong> has been notified to the Super Admin in the <strong>💼 Broker Requests</strong> tab.
+                      </p>
+                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px', fontSize: '11.5px', color: '#9c93a8' }}>
+                        ⏳ Once accepted, your ID will upgrade to <strong style={{ color: '#d9af56', fontFamily: 'monospace' }}>{displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}</strong> and your 5%–10% guaranteed live profits on every spent rupee will be activated!
+                      </div>
+                    </div>
+                  ) : brokerStatus === 'Cancelled' ? (
+                    <div className="profile-security-badge-card" style={{
+                      background: 'rgba(239, 68, 68, 0.05)',
+                      borderColor: 'rgba(239, 68, 68, 0.3)',
+                      padding: '22px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                        <AlertCircle size={20} style={{ color: '#ef4444' }} />
+                        <h4 style={{ margin: 0, fontSize: '15px', color: '#f87171', fontWeight: 800 }}>
+                          Broker Subscription Revoked / Cancelled by Admin
+                        </h4>
+                      </div>
+                      <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 14px', lineHeight: 1.5 }}>
+                        Your broker partnership subscription has been cancelled by the Administrator. Your account status has been reverted to standard customer (<strong style={{ color: '#d9af56' }}>{displayCustomerId}</strong>). You may submit a new application to re-subscribe if desired.
+                      </p>
+                      <button
+                        type="button"
+                        className="btn-partner-action"
+                        onClick={() => {
+                          setPartnerSubmitted(false);
+                          setShowPartnerModal(true);
+                        }}
+                      >
+                        <Briefcase size={16} />
+                        <span>Re-apply for Broker Partnership (₹1,000)</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="profile-security-badge-card" style={{
+                      background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(217, 175, 86, 0.08) 100%)',
+                      borderColor: 'rgba(217, 175, 86, 0.3)',
+                      padding: '22px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                        <Sparkles size={20} style={{ color: '#d9af56' }} />
+                        <h4 style={{ margin: 0, fontSize: '15px', color: '#ffffff', fontWeight: 800 }}>
+                          Become a Broker Partner
+                        </h4>
+                      </div>
+                      <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 14px', lineHeight: 1.5 }}>
+                        Pay a one-time subscription fee of ₹1,000 and earn <strong style={{ color: '#f7df94' }}>5%–10% guaranteed commission/profit</strong> on every rupee spent. Upgrade to a <strong style={{ color: '#d9af56' }}>CUST-B-</strong> VIP ID with instant 1-click transfer to wallet!
+                      </p>
+                      <button
+                        type="button"
+                        className="btn-partner-action"
+                        onClick={() => {
+                          setPartnerSubmitted(false);
+                          setShowPartnerModal(true);
+                        }}
+                      >
+                        <Briefcase size={16} />
+                        <span>Apply to Become a Partner (₹1,000 Fee)</span>
+                      </button>
+                    </div>
+                  )}
 
                   </div>
 
@@ -9302,7 +10964,7 @@ function App() {
                         </div>
                         <div className="p-setting-item">
                           <label>Account Class</label>
-                          <input type="text" readOnly value="Premium Institutional Bullion Vault" className="profile-readonly-input" />
+                          <input type="text" readOnly value={isUserBroker ? `VIP Institutional Broker Partner (${displayCustomerId})` : brokerStatus === 'Pending' ? 'Broker Application Pending Review' : 'Premium Institutional Bullion Vault'} className="profile-readonly-input" />
                         </div>
                         <div className="p-setting-item">
                           <label>Active Client Session ID</label>
@@ -9504,6 +11166,323 @@ function App() {
                     </button>
                   </div>
                 </div>
+
+                {/* Partner Application Modal */}
+                {showPartnerModal && (
+                  <div className="modal-overlay" style={{
+                    position: 'fixed',
+                    inset: 0,
+                    zIndex: 99999,
+                    background: 'rgba(5, 2, 12, 0.82)',
+                    backdropFilter: 'blur(8px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '20px'
+                  }}>
+                    <div className="modal-content" style={{
+                      maxWidth: '560px',
+                      width: '100%',
+                      maxHeight: '90vh',
+                      overflowY: 'auto',
+                      background: 'linear-gradient(145deg, #160a2b 0%, #0b0318 100%)',
+                      border: '1px solid rgba(168, 85, 247, 0.35)',
+                      borderRadius: '24px',
+                      padding: '30px',
+                      boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(168, 85, 247, 0.15)',
+                      position: 'relative'
+                    }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowPartnerModal(false)}
+                        style={{
+                          position: 'absolute',
+                          top: '20px',
+                          right: '20px',
+                          background: 'rgba(255, 255, 255, 0.06)',
+                          border: 'none',
+                          color: '#9c93a8',
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        <X size={18} />
+                      </button>
+
+                      {partnerSubmitted ? (
+                        <div style={{ textAlign: 'center', padding: '24px 12px' }}>
+                          <div style={{
+                            width: '68px',
+                            height: '68px',
+                            borderRadius: '50%',
+                            background: 'rgba(16, 185, 129, 0.12)',
+                            border: '2px solid rgba(16, 185, 129, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 18px',
+                            color: '#10b981',
+                            boxShadow: '0 0 24px rgba(16, 185, 129, 0.25)'
+                          }}>
+                            <CheckCircle2 size={40} />
+                          </div>
+                          <h3 style={{ color: '#ffffff', fontSize: '22px', fontWeight: 800, margin: '0 0 8px' }}>
+                            Broker Request Dispatched to Admin!
+                          </h3>
+                          <p style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '13.5px', lineHeight: 1.6, margin: '0 0 20px' }}>
+                            Your application for Customer ID <strong style={{ color: '#f7df94' }}>{displayCustomerId}</strong> has been transmitted to the Super Admin in the <strong>💼 Broker Requests</strong> tab.
+                          </p>
+
+                          <div style={{
+                            background: 'rgba(168, 85, 247, 0.08)',
+                            border: '1px solid rgba(168, 85, 247, 0.25)',
+                            borderRadius: '14px',
+                            padding: '16px',
+                            textAlign: 'left',
+                            marginBottom: '24px',
+                            fontSize: '12.5px'
+                          }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                              <span style={{ color: '#9c93a8' }}>Applicant Name:</span>
+                              <strong style={{ color: '#ffffff' }}>{partnerForm.name}</strong>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                              <span style={{ color: '#9c93a8' }}>Contact Mobile:</span>
+                              <strong style={{ color: '#ffffff' }}>{partnerForm.phone}</strong>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                              <span style={{ color: '#9c93a8' }}>Notification Email:</span>
+                              <strong style={{ color: '#ffffff' }}>{user?.email}</strong>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                              <span style={{ color: '#9c93a8' }}>Subscription Fee:</span>
+                              <strong style={{ color: '#10b981' }}>₹1,000 (One-Time)</strong>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '8px', marginTop: '8px' }}>
+                              <span style={{ color: '#9c93a8' }}>New Upgraded ID:</span>
+                              <strong style={{ color: '#d9af56', fontFamily: 'monospace' }}>
+                                {displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}
+                              </strong>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="btn-kyc-submit"
+                            style={{ marginTop: '0', width: '100%' }}
+                            onClick={() => setShowPartnerModal(false)}
+                          >
+                            Understood, Return to Profile
+                          </button>
+                        </div>
+                      ) : (
+                        <form onSubmit={handleSubmitPartnerRequest}>
+                          {/* Header */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                            <div style={{
+                              width: '46px',
+                              height: '46px',
+                              borderRadius: '12px',
+                              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(217, 175, 86, 0.25))',
+                              border: '1px solid rgba(217, 175, 86, 0.4)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#f7df94',
+                              boxShadow: '0 0 16px rgba(217, 175, 86, 0.2)'
+                            }}>
+                              <Briefcase size={24} />
+                            </div>
+                            <div>
+                              <h3 style={{ color: '#ffffff', fontSize: '19px', fontWeight: 800, margin: 0 }}>
+                                Partner with InvestHour
+                              </h3>
+                              <p style={{ color: '#d9af56', fontSize: '12.5px', fontWeight: 600, margin: '2px 0 0' }}>
+                                ₹1,000 Subscription Fee • 5%–10% Guaranteed Profit
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Benefits Showcase Box */}
+                          <div style={{
+                            background: 'rgba(217, 175, 86, 0.05)',
+                            border: '1px solid rgba(217, 175, 86, 0.25)',
+                            borderRadius: '14px',
+                            padding: '16px',
+                            marginBottom: '18px'
+                          }}>
+                            <h4 style={{ color: '#ffffff', fontSize: '13px', fontWeight: 700, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Sparkles size={14} style={{ color: '#d9af56' }} />
+                              Partner Privileges & Guaranteed Benefits:
+                            </h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', fontSize: '12px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                <div><strong style={{ color: '#ffffff' }}>₹1,000 One-time Subscription Fee:</strong> Lifetime broker accreditation and guaranteed payout privileges.</div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                <div><strong style={{ color: '#f7df94' }}>5%–10% Guaranteed Commission / Profit:</strong> Earn guaranteed profit on every single rupee spent in trading (e.g. spend ₹10 on trade stake, earn 5%–10% return decided & distributed by Admin).</div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                <div><strong style={{ color: '#ffffff' }}>VIP ID Upgrade (CUST-B-):</strong> Once admin accepts, &apos;B&apos; is inserted into your customer identifier (<span style={{ color: '#d9af56', fontFamily: 'monospace' }}>{displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}</span>).</div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                <div><strong style={{ color: '#ffffff' }}>Live Earnings & 1-Click Wallet Payout:</strong> Live profit accumulates in real-time. Transfer to trading wallet anytime and withdraw directly to your bank account!</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Form Fields: Details Forwarded to Admin */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                              <div>
+                                <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                  Customer Vault ID
+                                </label>
+                                <input
+                                  type="text"
+                                  readOnly
+                                  value={displayCustomerId}
+                                  style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    borderRadius: '10px',
+                                    background: 'rgba(255, 255, 255, 0.04)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    color: '#ffffff',
+                                    fontSize: '12.5px',
+                                    fontFamily: 'monospace',
+                                    cursor: 'not-allowed'
+                                  }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                  Subscription Fee
+                                </label>
+                                <input
+                                  type="text"
+                                  readOnly
+                                  value="₹1,000 (One-Time)"
+                                  style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    borderRadius: '10px',
+                                    background: 'rgba(16, 185, 129, 0.08)',
+                                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                                    color: '#10b981',
+                                    fontWeight: 700,
+                                    fontSize: '12.5px',
+                                    cursor: 'not-allowed'
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                Registered Notification Email
+                              </label>
+                              <input
+                                type="email"
+                                readOnly
+                                value={user?.email || ''}
+                                style={{
+                                  width: '100%',
+                                  padding: '10px 12px',
+                                  borderRadius: '10px',
+                                  background: 'rgba(255, 255, 255, 0.04)',
+                                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                                  color: '#d9af56',
+                                  fontSize: '12.5px',
+                                  cursor: 'not-allowed'
+                                }}
+                              />
+                            </div>
+
+                            <div>
+                              <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                Full Legal Name <span style={{ color: '#ef4444' }}>*</span>
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                placeholder="Enter your full name"
+                                value={partnerForm.name}
+                                onChange={(e) => setPartnerForm(prev => ({ ...prev, name: e.target.value }))}
+                                style={{
+                                  width: '100%',
+                                  padding: '10px 12px',
+                                  borderRadius: '10px',
+                                  background: 'rgba(255, 255, 255, 0.07)',
+                                  border: '1px solid rgba(168, 85, 247, 0.3)',
+                                  color: '#ffffff',
+                                  fontSize: '13px',
+                                  outline: 'none'
+                                }}
+                              />
+                            </div>
+
+                            <div>
+                              <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                Mobile Phone Number <span style={{ color: '#ef4444' }}>*</span>
+                              </label>
+                              <input
+                                type="tel"
+                                required
+                                placeholder="Enter 10-digit mobile number"
+                                value={partnerForm.phone}
+                                onChange={(e) => setPartnerForm(prev => ({ ...prev, phone: e.target.value }))}
+                                style={{
+                                  width: '100%',
+                                  padding: '10px 12px',
+                                  borderRadius: '10px',
+                                  background: 'rgba(255, 255, 255, 0.07)',
+                                  border: '1px solid rgba(168, 85, 247, 0.3)',
+                                  color: '#ffffff',
+                                  fontSize: '13px',
+                                  outline: 'none'
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Submit Action */}
+                          <button
+                            type="submit"
+                            disabled={partnerSubmitting}
+                            className="btn-kyc-submit"
+                            style={{
+                              marginTop: '0',
+                              background: 'linear-gradient(135deg, #a855f7 0%, #d9af56 100%)',
+                              color: '#ffffff',
+                              fontWeight: 800,
+                              fontSize: '13.5px',
+                              boxShadow: '0 4px 18px rgba(168, 85, 247, 0.4)'
+                            }}
+                          >
+                            {partnerSubmitting ? (
+                              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                <RefreshCw size={16} className="animate-spin" /> Submitting Request to Admin...
+                              </span>
+                            ) : (
+                              "Pay ₹1,000 Fee & Submit Broker Request"
+                            )}
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 </div>
               </div>
@@ -11426,6 +13405,109 @@ function App() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* CENTERED PROFESSIONAL PARTNER ADVERTISEMENT MODAL ON WEBSITE OPENING */}
+      {showPartnerAd ? (
+        <div 
+          className="partner-center-ad-overlay" 
+          role="dialog" 
+          aria-label="Partner with InvestHour Ad"
+          onClick={() => setShowPartnerAd(false)}
+        >
+          <div 
+            className="partner-center-ad-card" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Countdown progress bar */}
+            <div className="partner-ad-progress-bar-bg">
+              <div 
+                className="partner-ad-progress-bar-fill" 
+                style={{ width: `${Math.max(0, ((AD_TOTAL_DURATION_SEC - adSkipCountdown) / AD_TOTAL_DURATION_SEC) * 100)}%` }}
+              />
+            </div>
+
+            {/* Ad Header with Skip Option */}
+            <div className="partner-ad-header">
+              <span className="partner-ad-badge">
+                <Sparkles size={11} /> 5%–10% Guaranteed Profit Sharing
+              </span>
+              <button
+                type="button"
+                className={`partner-ad-skip-btn ${adSkipCountdown === 0 ? 'countdown-done' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowPartnerAd(false);
+                }}
+                title="Skip this ad"
+              >
+                {adSkipCountdown > 0 ? (
+                  <>Skip ({adSkipCountdown}s) <X size={13} /></>
+                ) : (
+                  <>Skip Ad <X size={13} /></>
+                )}
+              </button>
+            </div>
+
+            {/* Cleaned Banner Image (Watermark Removed) */}
+            <div 
+              className="partner-ad-img-box" 
+              onClick={handlePartnerAdClick} 
+              title="Click to become a partner (Redirects to Login if not logged in, or opens Partner Window)"
+            >
+              <img 
+                src={becomePartnerBanner} 
+                alt="Become an InvestHour Partner - Earn profit sharing on every rupee spent" 
+              />
+            </div>
+
+            {/* Ad Footer Action Bar */}
+            <div className="partner-ad-footer-bar" onClick={handlePartnerAdClick}>
+              <div>
+                <div style={{ color: '#ffffff', fontSize: '15px', fontWeight: 800 }}>
+                  Become an InvestHour Partner
+                </div>
+                <div style={{ color: '#d9af56', fontSize: '12px', fontWeight: 600, marginTop: '2px' }}>
+                  Earn 5%–10% on every rupee spent & investment returns • Fee: ₹1,000
+                </div>
+              </div>
+              <button
+                type="button"
+                style={{
+                  background: 'linear-gradient(135deg, #d9af56 0%, #b8860b 100%)',
+                  color: '#060309',
+                  border: 'none',
+                  borderRadius: '26px',
+                  padding: '9px 20px',
+                  fontSize: '13px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 16px rgba(217, 175, 86, 0.45)',
+                  flexShrink: 0
+                }}
+              >
+                Get Started <ChevronRight size={15} />
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Minimized Re-open Trigger at bottom-right */
+        <button
+          type="button"
+          className="partner-ad-min-reopen-btn"
+          onClick={() => {
+            setShowPartnerAd(true);
+            setAdSkipCountdown(AD_TOTAL_DURATION_SEC);
+          }}
+          title="Open Partner with InvestHour Offer"
+        >
+          <Briefcase size={14} />
+          <span>Partner Offer (5%–10% Profit)</span>
+        </button>
       )}
 
       {/* GLOBAL IMAGE PREVIEW MODAL */}

@@ -73,6 +73,19 @@ const buyTrade = async (req, res) => {
         [user.id, 'TRADE_PLACE', symbol, -amt, appFee, `Standard Paper Trade BUY placement of ${symbol}`]
       );
 
+      // 4. If user is an approved Broker, credit guaranteed commission profit on trade stake spent
+      const brokerCheck = await client.query('SELECT "isBroker", "brokerCommissionRate" FROM "User" WHERE id = $1', [user.id]);
+      if (brokerCheck.rows.length > 0 && brokerCheck.rows[0].isBroker) {
+        const commRate = parseFloat(brokerCheck.rows[0].brokerCommissionRate || 7.5);
+        const commEarned = parseFloat((tradeStake * (commRate / 100)).toFixed(2));
+        if (commEarned > 0) {
+          await client.query(
+            'UPDATE "User" SET "brokerEarnings" = "brokerEarnings" + $1, "totalBrokerSpent" = "totalBrokerSpent" + $2 WHERE id = $3',
+            [commEarned, tradeStake, user.id]
+          );
+        }
+      }
+
       await client.query('COMMIT');
       res.status(201).json(result.rows[0]);
     } catch (txErr) {
@@ -145,6 +158,19 @@ const sellTrade = async (req, res) => {
          VALUES ($1, $2, $3, $4, $5, 0.00, $6, CURRENT_TIMESTAMP)`,
         [user.id, 'TRADE_PLACE', symbol, -amt, appFee, `Standard Paper Trade SELL placement of ${symbol}`]
       );
+
+      // 4. If user is an approved Broker, credit guaranteed commission profit on trade stake spent
+      const brokerCheck = await client.query('SELECT "isBroker", "brokerCommissionRate" FROM "User" WHERE id = $1', [user.id]);
+      if (brokerCheck.rows.length > 0 && brokerCheck.rows[0].isBroker) {
+        const commRate = parseFloat(brokerCheck.rows[0].brokerCommissionRate || 7.5);
+        const commEarned = parseFloat((tradeStake * (commRate / 100)).toFixed(2));
+        if (commEarned > 0) {
+          await client.query(
+            'UPDATE "User" SET "brokerEarnings" = "brokerEarnings" + $1, "totalBrokerSpent" = "totalBrokerSpent" + $2 WHERE id = $3',
+            [commEarned, tradeStake, user.id]
+          );
+        }
+      }
 
       await client.query('COMMIT');
       res.status(201).json(result.rows[0]);

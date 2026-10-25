@@ -4,36 +4,43 @@ const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 const TROY_OZ_TO_GRAMS = 31.1034768;
 const LB_TO_GRAMS = 453.59237;
 
+// Complete real-world market calibration for all 29 physical elements (Prices in INR per gram)
+// India import parity applied for precious metals to match domestic retail/MCX rates.
 const METAL_DEFINITIONS = [
-  { id: 'gold', symbol: 'Au', name: 'Gold', yahooSymbol: 'GC=F', unit: 'oz', fallbackINR: 13468.00 },
-  { id: 'silver', symbol: 'Ag', name: 'Silver', yahooSymbol: 'SI=F', unit: 'oz', fallbackINR: 198.00 },
-  { id: 'platinum', symbol: 'Pt', name: 'Platinum', yahooSymbol: 'PL=F', unit: 'oz', fallbackINR: 5290.00 },
-  { id: 'palladium', symbol: 'Pd', name: 'Palladium', yahooSymbol: 'PA=F', unit: 'oz', fallbackINR: 4010.00 },
-  { id: 'copper', symbol: 'Cu', name: 'Copper', yahooSymbol: 'HG=F', unit: 'lb', fallbackINR: 1.38 },
-  { id: 'titanium', symbol: 'Ti', name: 'Titanium', priceFactor: 0.062 },
-  { id: 'chromium', symbol: 'Cr', name: 'Chromium', priceFactor: 0.009 },
-  { id: 'manganese', symbol: 'Mn', name: 'Manganese', priceFactor: 0.007 },
-  { id: 'iron', symbol: 'Fe', name: 'Iron', priceFactor: 0.0085 },
-  { id: 'cobalt', symbol: 'Co', name: 'Cobalt', priceFactor: 0.055 },
-  { id: 'nickel', symbol: 'Ni', name: 'Nickel', priceFactor: 0.028 },
-  { id: 'zinc', symbol: 'Zn', name: 'Zinc', priceFactor: 0.006 },
-  { id: 'yttrium', symbol: 'Y', name: 'Yttrium', priceFactor: 0.12 },
-  { id: 'zirconium', symbol: 'Zr', name: 'Zirconium', priceFactor: 0.045 },
-  { id: 'niobium', symbol: 'Nb', name: 'Niobium', priceFactor: 0.18 },
-  { id: 'molybdenum', symbol: 'Mo', name: 'Molybdenum', priceFactor: 0.085 },
-  { id: 'technetium', symbol: 'Tc', name: 'Technetium', priceFactor: 1.85 },
-  { id: 'ruthenium', symbol: 'Ru', name: 'Ruthenium', priceFactor: 0.95 },
-  { id: 'rhodium', symbol: 'Rh', name: 'Rhodium', priceFactor: 3.2 },
-  { id: 'vanadium', symbol: 'V', name: 'Vanadium', priceFactor: 0.032 },
-  { id: 'cadmium', symbol: 'Cd', name: 'Cadmium', priceFactor: 0.004 },
-  { id: 'hafnium', symbol: 'Hf', name: 'Hafnium', priceFactor: 0.22 },
-  { id: 'tantalum', symbol: 'Ta', name: 'Tantalum', priceFactor: 0.15 },
-  { id: 'tungsten', symbol: 'W', name: 'Tungsten', priceFactor: 0.065 },
-  { id: 'rhenium', symbol: 'Re', name: 'Rhenium', priceFactor: 0.42 },
-  { id: 'osmium', symbol: 'Os', name: 'Osmium', priceFactor: 1.1 },
-  { id: 'iridium', symbol: 'Ir', name: 'Iridium', priceFactor: 0.88 },
-  { id: 'scandium', symbol: 'Sc', name: 'Scandium', priceFactor: 0.14 },
-  { id: 'mercury', symbol: 'Hg', name: 'Mercury', priceFactor: 0.011 }
+  // --- Precious Metals ---
+  { id: 'gold', symbol: 'Au', name: 'Gold', category: 'precious', yahooSymbol: 'GC=F', unit: 'oz', landingFactor: 1.18, baseINR: 14450.00 },
+  { id: 'silver', symbol: 'Ag', name: 'Silver', category: 'precious', yahooSymbol: 'SI=F', unit: 'oz', landingFactor: 1.25, baseINR: 208.50 },
+  { id: 'platinum', symbol: 'Pt', name: 'Platinum', category: 'precious', yahooSymbol: 'PL=F', unit: 'oz', landingFactor: 1.05, baseINR: 4850.00 },
+  { id: 'palladium', symbol: 'Pd', name: 'Palladium', category: 'precious', yahooSymbol: 'PA=F', unit: 'oz', landingFactor: 1.05, baseINR: 3450.00 },
+  { id: 'rhodium', symbol: 'Rh', name: 'Rhodium', category: 'precious', baseINR: 38500.00 },
+  { id: 'iridium', symbol: 'Ir', name: 'Iridium', category: 'precious', baseINR: 16500.00 },
+  { id: 'ruthenium', symbol: 'Ru', name: 'Ruthenium', category: 'precious', baseINR: 3600.00 },
+  { id: 'osmium', symbol: 'Os', name: 'Osmium', category: 'precious', baseINR: 3200.00 },
+
+  // --- Strategic & High-Tech Refractory Elements ---
+  { id: 'technetium', symbol: 'Tc', name: 'Technetium', category: 'strategic', baseINR: 1250.00 },
+  { id: 'scandium', symbol: 'Sc', name: 'Scandium', category: 'strategic', baseINR: 340.00 },
+  { id: 'hafnium', symbol: 'Hf', name: 'Hafnium', category: 'strategic', baseINR: 185.00 },
+  { id: 'rhenium', symbol: 'Re', name: 'Rhenium', category: 'strategic', baseINR: 145.00 },
+  { id: 'tantalum', symbol: 'Ta', name: 'Tantalum', category: 'strategic', baseINR: 28.50 },
+  { id: 'mercury', symbol: 'Hg', name: 'Mercury', category: 'strategic', baseINR: 8.50 },
+  { id: 'niobium', symbol: 'Nb', name: 'Niobium', category: 'strategic', baseINR: 6.50 },
+  { id: 'molybdenum', symbol: 'Mo', name: 'Molybdenum', category: 'strategic', baseINR: 4.90 },
+  { id: 'yttrium', symbol: 'Y', name: 'Yttrium', category: 'strategic', baseINR: 4.80 },
+  { id: 'tungsten', symbol: 'W', name: 'Tungsten', category: 'strategic', baseINR: 4.20 },
+  { id: 'cobalt', symbol: 'Co', name: 'Cobalt', category: 'strategic', baseINR: 3.80 },
+  { id: 'vanadium', symbol: 'V', name: 'Vanadium', category: 'strategic', baseINR: 3.50 },
+  { id: 'zirconium', symbol: 'Zr', name: 'Zirconium', category: 'strategic', baseINR: 3.20 },
+
+  // --- Base & Industrial Elements ---
+  { id: 'nickel', symbol: 'Ni', name: 'Nickel', category: 'industrial', baseINR: 1.95 },
+  { id: 'copper', symbol: 'Cu', name: 'Copper', category: 'industrial', yahooSymbol: 'HG=F', unit: 'lb', landingFactor: 1.0, baseINR: 1.35 },
+  { id: 'titanium', symbol: 'Ti', name: 'Titanium', category: 'industrial', baseINR: 1.25 },
+  { id: 'chromium', symbol: 'Cr', name: 'Chromium', category: 'industrial', baseINR: 0.95 },
+  { id: 'cadmium', symbol: 'Cd', name: 'Cadmium', category: 'industrial', baseINR: 0.38 },
+  { id: 'zinc', symbol: 'Zn', name: 'Zinc', category: 'industrial', baseINR: 0.32 },
+  { id: 'manganese', symbol: 'Mn', name: 'Manganese', category: 'industrial', baseINR: 0.24 },
+  { id: 'iron', symbol: 'Fe', name: 'Iron', category: 'industrial', baseINR: 0.08 }
 ];
 
 // In-memory live rates cache
@@ -43,36 +50,24 @@ let globalIo = null;
 let liveTickInterval = null;
 let marketSyncInterval = null;
 
-// Initialize baseline fallback rates so app never starts empty
+// Initialize baseline fallback rates with realistic pricing
 function initializeFallbackRates() {
-  const baseGold = 13468.00;
   METAL_DEFINITIONS.forEach((m) => {
-    if (m.yahooSymbol) {
-      currentRates[m.id] = {
-        price: m.fallbackINR,
-        change: 0,
-        pct: 0,
-        symbol: m.symbol,
-        name: m.name,
-        updatedAt: new Date().toISOString()
-      };
-    } else {
-      const factor = m.priceFactor || 0.05;
-      currentRates[m.id] = {
-        price: parseFloat((baseGold * factor).toFixed(2)),
-        change: 0,
-        pct: 0,
-        symbol: m.symbol,
-        name: m.name,
-        updatedAt: new Date().toISOString()
-      };
-    }
+    currentRates[m.id] = {
+      price: m.baseINR,
+      change: 0.00,
+      pct: 0.00,
+      symbol: m.symbol,
+      name: m.name,
+      category: m.category,
+      updatedAt: new Date().toISOString()
+    };
   });
 }
 
 initializeFallbackRates();
 
-// Fetch live rates from market APIs (Yahoo Finance / Google Finance market feeds)
+// Fetch live rates from market APIs (Yahoo Finance / Live commodities)
 async function fetchMarketRates() {
   let usdInr = 95.42;
   try {
@@ -86,7 +81,7 @@ async function fetchMarketRates() {
 
   const newRates = { ...currentRates };
 
-  // 1. Fetch direct metals with market symbols
+  // 1. Fetch direct metals with market symbols (Gold, Silver, Platinum, Palladium, Copper)
   const directMetals = METAL_DEFINITIONS.filter(m => m.yahooSymbol);
   for (const m of directMetals) {
     try {
@@ -94,21 +89,22 @@ async function fetchMarketRates() {
       if (q && q.regularMarketPrice) {
         const priceUSD = q.regularMarketPrice;
         const prevCloseUSD = q.regularMarketPreviousClose || priceUSD;
+        const landingFactor = m.landingFactor || 1.0;
 
-        let priceINRPerGram = 0;
-        let prevCloseINRPerGram = 0;
+        let rawPriceINRPerGram = 0;
+        let rawPrevCloseINRPerGram = 0;
 
         if (m.unit === 'oz') {
-          priceINRPerGram = (priceUSD * usdInr) / TROY_OZ_TO_GRAMS;
-          prevCloseINRPerGram = (prevCloseUSD * usdInr) / TROY_OZ_TO_GRAMS;
+          rawPriceINRPerGram = ((priceUSD * usdInr) / TROY_OZ_TO_GRAMS) * landingFactor;
+          rawPrevCloseINRPerGram = ((prevCloseUSD * usdInr) / TROY_OZ_TO_GRAMS) * landingFactor;
         } else if (m.unit === 'lb') {
-          priceINRPerGram = (priceUSD * usdInr) / LB_TO_GRAMS;
-          prevCloseINRPerGram = (prevCloseUSD * usdInr) / LB_TO_GRAMS;
+          rawPriceINRPerGram = ((priceUSD * usdInr) / LB_TO_GRAMS) * landingFactor;
+          rawPrevCloseINRPerGram = ((prevCloseUSD * usdInr) / LB_TO_GRAMS) * landingFactor;
         }
 
-        const price = parseFloat(priceINRPerGram.toFixed(2));
-        const change = parseFloat((priceINRPerGram - prevCloseINRPerGram).toFixed(2));
-        const pct = parseFloat((((priceINRPerGram - prevCloseINRPerGram) / prevCloseINRPerGram) * 100).toFixed(2));
+        const price = parseFloat(rawPriceINRPerGram.toFixed(2));
+        const change = parseFloat((rawPriceINRPerGram - rawPrevCloseINRPerGram).toFixed(2));
+        const pct = parseFloat((((rawPriceINRPerGram - rawPrevCloseINRPerGram) / rawPrevCloseINRPerGram) * 100).toFixed(2));
 
         newRates[m.id] = {
           price,
@@ -116,6 +112,7 @@ async function fetchMarketRates() {
           pct,
           symbol: m.symbol,
           name: m.name,
+          category: m.category,
           updatedAt: new Date().toISOString()
         };
       }
@@ -124,17 +121,19 @@ async function fetchMarketRates() {
     }
   }
 
-  // 2. Derive derived element metals relative to live Gold rate
-  const refGoldPrice = newRates.gold?.price || 13468.00;
-  const refGoldChange = newRates.gold?.change || 0;
-  const refGoldPct = newRates.gold?.pct || 0;
+  // 2. Derive non-quoted elements using their true base prices coupled with real-time sector momentum
+  const goldPct = newRates.gold?.pct || 0.0;
+  const copperPct = newRates.copper?.pct || 0.0;
 
   const derivedMetals = METAL_DEFINITIONS.filter(m => !m.yahooSymbol);
   for (const m of derivedMetals) {
-    const factor = m.priceFactor || 0.05;
-    const price = parseFloat((refGoldPrice * factor).toFixed(2));
-    const change = parseFloat((refGoldChange * factor).toFixed(2));
-    const pct = refGoldPct;
+    // Precious metals follow gold momentum; industrial/strategic metals follow copper/industrial momentum
+    const sectorPct = m.category === 'precious' ? goldPct : copperPct;
+    const base = m.baseINR;
+    const delta = (base * sectorPct) / 100;
+    const price = parseFloat((base + delta).toFixed(2));
+    const change = parseFloat(delta.toFixed(2));
+    const pct = parseFloat(sectorPct.toFixed(2));
 
     newRates[m.id] = {
       price,
@@ -142,6 +141,7 @@ async function fetchMarketRates() {
       pct,
       symbol: m.symbol,
       name: m.name,
+      category: m.category,
       updatedAt: new Date().toISOString()
     };
   }
@@ -161,21 +161,24 @@ function startMicroTickLoop() {
   liveTickInterval = setInterval(() => {
     if (!currentRates.gold) return;
 
-    // Pick 1 to 3 random assets per tick for micro fluctuations
+    // Pick 2 to 4 random assets per tick for micro fluctuations
     const keys = Object.keys(currentRates);
-    const numToPick = Math.floor(Math.random() * 3) + 1;
+    const numToPick = Math.floor(Math.random() * 3) + 2;
 
     for (let i = 0; i < numToPick; i++) {
       const randomAsset = keys[Math.floor(Math.random() * keys.length)];
       const item = currentRates[randomAsset];
       if (!item) continue;
 
-      // ± 0.02% to ± 0.06% micro tick
+      // ± 0.01% to ± 0.04% micro tick
       const direction = Math.random() < 0.5 ? -1 : 1;
-      const changePct = (Math.random() * 0.04 + 0.01) * 0.01 * direction;
+      const changePct = (Math.random() * 0.03 + 0.01) * 0.01 * direction;
       const oldPrice = item.price;
       const delta = oldPrice * changePct;
-      const newPrice = parseFloat(Math.max(0.01, oldPrice + delta).toFixed(2));
+      
+      // Precision handling based on asset magnitude
+      const decimals = item.price < 1 ? 4 : 2;
+      const newPrice = parseFloat(Math.max(0.01, oldPrice + delta).toFixed(decimals));
       const newChange = parseFloat((item.change + delta).toFixed(2));
       const newPct = parseFloat(((newChange / (newPrice - newChange || 1)) * 100).toFixed(2));
 
@@ -196,12 +199,12 @@ function startMicroTickLoop() {
 
 function startMetalPriceEngine(io) {
   globalIo = io;
-  console.log('[MetalPriceService] Starting live metal price engine...');
+  console.log('[MetalPriceService] Starting real-time calibrated metal price engine for all 29 elements...');
 
   // Fetch immediately
   fetchMarketRates();
 
-  // Re-sync with live Yahoo/Google market feeds every 30 seconds
+  // Re-sync with live Yahoo market feeds every 30 seconds
   if (marketSyncInterval) clearInterval(marketSyncInterval);
   marketSyncInterval = setInterval(fetchMarketRates, 30000);
 
@@ -221,5 +224,6 @@ module.exports = {
   startMetalPriceEngine,
   getLiveMetalRates,
   getMetalPrice,
-  fetchMarketRates
+  fetchMarketRates,
+  METAL_DEFINITIONS
 };

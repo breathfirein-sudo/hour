@@ -10,6 +10,7 @@ router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const db = require('../db');
 
 router.post('/validate', async (req, res) => {
   try {
@@ -46,8 +47,28 @@ router.post('/validate', async (req, res) => {
         }
       });
 
+      // Query broker details
+      const brokerRes = await db.query(
+        'SELECT "isBroker", "brokerStatus", "brokerCommissionRate", "brokerEarnings", "totalBrokerSpent", "totalBrokerClaimed" FROM "User" WHERE id = $1',
+        [user.id]
+      );
+      const bData = brokerRes.rows[0] || {};
+      const isBroker = !!bData.isBroker && bData.brokerStatus !== 'Cancelled' && bData.brokerStatus !== 'Rejected';
+      const brokerId = isBroker ? `CUST-B-${user.id}` : `CUST-${user.id}`;
+
       res.json({
         valid: true,
+        userId: user.id,
+        uniqueId: user.uniqueId,
+        name: user.name,
+        phone: user.phone,
+        isBroker,
+        brokerStatus: bData.brokerStatus || 'None',
+        brokerId,
+        brokerCommissionRate: parseFloat(bData.brokerCommissionRate || 7.5),
+        brokerEarnings: parseFloat(bData.brokerEarnings || 0),
+        totalBrokerSpent: parseFloat(bData.totalBrokerSpent || 0),
+        totalBrokerClaimed: parseFloat(bData.totalBrokerClaimed || 0),
         referralCount: user.referralCount,
         isUnlocked: user.isUnlocked || user.referralCount >= 1,
         hasPendingUnlockDeposit: !!pendingDeposit,
@@ -120,6 +141,22 @@ router.post('/metal-trade', async (req, res) => {
           data: { balance: { decrement: tradeAmt } }
         })
       ]);
+
+      // If user is a broker, credit guaranteed commission profit on the amount spent
+      const brokerCheck = await db.query(
+        'SELECT "isBroker", "brokerCommissionRate" FROM "User" WHERE id = $1',
+        [user.id]
+      );
+      if (brokerCheck.rows.length > 0 && brokerCheck.rows[0].isBroker) {
+        const commRate = parseFloat(brokerCheck.rows[0].brokerCommissionRate || 7.5);
+        const commEarned = parseFloat((tradeAmt * (commRate / 100)).toFixed(2));
+        if (commEarned > 0) {
+          await db.query(
+            'UPDATE "User" SET "brokerEarnings" = "brokerEarnings" + $1, "totalBrokerSpent" = "totalBrokerSpent" + $2 WHERE id = $3',
+            [commEarned, tradeAmt, user.id]
+          );
+        }
+      }
 
       return res.json({
         success: true,

@@ -2,9 +2,9 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 async function run() {
   const users = await prisma.user.findMany({
-    where: { email: { contains: 'shivaram' } },
-    select: { id: true, email: true, name: true, isUnlocked: true }
+    where: { email: { contains: 'kshivaprasad' } },
+    select: { id: true, email: true, name: true, isBroker: true, brokerStatus: true }
   });
-  console.log('Users matching shivaram:', users);
+  console.log('User matching kshivaprasad:', users);
 }
 run().finally(() => prisma.$disconnect());

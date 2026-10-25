@@ -40,30 +40,66 @@ async function processAutoWithdrawals(targetUserId = null) {
       const totalEarnings = elapsedSeconds * earningsPerSecond;
       const returnAmount = inv.amount + totalEarnings;
 
+      // Check if user is an approved Broker
+      const investor = await prisma.user.findUnique({
+        where: { id: inv.userId },
+        select: { id: true, isBroker: true, brokerCommissionRate: true }
+      });
+
+      const isBroker = investor && !!investor.isBroker;
+      const commRate = parseFloat((investor && investor.brokerCommissionRate) || 7.5);
+
+      // CRITICAL REQUIREMENT: Broker profit share is calculated STRICTLY ONLY ON RETURNS (totalEarnings), NOT on principal (inv.amount)
+      let brokerProfitShare = 0;
+      if (isBroker && totalEarnings > 0) {
+        brokerProfitShare = parseFloat((totalEarnings * (commRate / 100)).toFixed(4));
+      }
+
       await prisma.$transaction(async (tx) => {
         // 1. Delete investment
         await tx.investment.delete({ where: { id: inv.id } });
 
-        // 2. Update wallet balance
+        // 2. Update wallet balance with regular return + broker profit share
+        const totalPayout = returnAmount + brokerProfitShare;
         await tx.wallet.update({
           where: { userId: inv.userId },
-          data: { balance: { increment: returnAmount } }
+          data: { balance: { increment: totalPayout } }
         });
 
-        // 3. Create transaction audit log
+        // 3. Create transaction audit log for regular investment return
         await tx.transaction.create({
           data: {
             userId: inv.userId,
             type: 'INVESTMENT_AUTO_WITHDRAW',
             asset: 'INVESTMENT',
             amount: returnAmount,
-            details: `Automatic withdrawal of ₹${returnAmount.toFixed(2)} after 7-day lock period`
+            details: `Automatic withdrawal of ₹${returnAmount.toFixed(2)} (Principal: ₹${inv.amount.toFixed(2)} + 1% Returns: ₹${totalEarnings.toFixed(2)}) after 7-day lock period`
           }
         });
+
+        // 4. If broker, log separate broker guaranteed profit share transaction & increment totalBrokerClaimed
+        if (isBroker && brokerProfitShare > 0) {
+          await tx.transaction.create({
+            data: {
+              userId: inv.userId,
+              type: 'BROKER_PROFIT_SHARE',
+              asset: 'INVESTMENT_RETURNS',
+              amount: brokerProfitShare,
+              details: `Broker Partner Guaranteed Profit Sharing (${commRate}% strictly on returns of ₹${totalEarnings.toFixed(2)}): +₹${brokerProfitShare.toFixed(2)} credited to wallet`
+            }
+          });
+
+          await tx.user.update({
+            where: { id: inv.userId },
+            data: {
+              totalBrokerClaimed: { increment: brokerProfitShare }
+            }
+          });
+        }
       });
 
       processedCount++;
-      console.log(`[INVESTMENT AUTO-WITHDRAW] Investment #${inv.id} for user #${inv.userId} processed (Return: ₹${returnAmount.toFixed(2)})`);
+      console.log(`[INVESTMENT AUTO-WITHDRAW] Investment #${inv.id} for user #${inv.userId} processed (Return: ₹${returnAmount.toFixed(2)}${brokerProfitShare > 0 ? `, Broker Share: ₹${brokerProfitShare.toFixed(2)}` : ''})`);
     }
 
     return processedCount;

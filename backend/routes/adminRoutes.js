@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const db = require('../db');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { sendEmailHelper, getFromEmail } = require('../controllers/authController');
@@ -79,8 +80,8 @@ router.post('/wallet/adjust', async (req, res) => {
 
   try {
     const val = parseFloat(amount);
-    const numericUserId = typeof userId === 'string' && userId.startsWith('CUST-') 
-      ? parseInt(userId.replace('CUST-', '')) 
+    const numericUserId = typeof userId === 'string' && (userId.startsWith('CUST-') || userId.startsWith('CUST-B-')) 
+      ? parseInt(userId.replace(/^CUST-(B-)?/, '')) 
       : parseInt(userId);
 
     if (isNaN(numericUserId)) {
@@ -128,8 +129,8 @@ router.post('/wallet/adjust', async (req, res) => {
 router.post('/users/unlock', async (req, res) => {
   const { userId } = req.body;
   try {
-    const numericUserId = typeof userId === 'string' && userId.startsWith('CUST-') 
-      ? parseInt(userId.replace('CUST-', '')) 
+    const numericUserId = typeof userId === 'string' && (userId.startsWith('CUST-') || userId.startsWith('CUST-B-')) 
+      ? parseInt(userId.replace(/^CUST-(B-)?/, '')) 
       : parseInt(userId);
 
     const updatedUser = await prisma.user.update({
@@ -210,7 +211,13 @@ router.get('/users/sync', async (req, res) => {
       }
     });
 
+    const brokerRows = await db.query('SELECT id, "isBroker", "brokerStatus", "brokerCommissionRate", "brokerEarnings", "totalBrokerSpent", "totalBrokerClaimed" FROM "User"');
+    const brokerMap = {};
+    brokerRows.rows.forEach(b => { brokerMap[b.id] = b; });
+
     const clients = users.map(user => {
+      const bInfo = brokerMap[user.id] || {};
+      const isBroker = !!bInfo.isBroker && bInfo.brokerStatus !== 'Cancelled' && bInfo.brokerStatus !== 'Rejected';
       const txs = user.transactions.map(t => ({
         id: 'TX-' + t.id,
         type: t.type?.toLowerCase() === 'deposit' ? 'deposit' : 
@@ -223,7 +230,8 @@ router.get('/users/sync', async (req, res) => {
       }));
 
       return {
-        id: 'CUST-' + user.id,
+        id: (isBroker ? 'CUST-B-' : 'CUST-') + user.id,
+        numericId: user.id,
         name: user.name || user.email.split('@')[0],
         email: user.email,
         phone: user.phone || '',
@@ -239,7 +247,13 @@ router.get('/users/sync', async (req, res) => {
         } : null,
         transactions: txs,
         referralCount: user.referralCount || 0,
-        isUnlocked: user.isUnlocked || false
+        isUnlocked: user.isUnlocked || false,
+        isBroker,
+        brokerStatus: bInfo.brokerStatus || 'None',
+        brokerCommissionRate: parseFloat(bInfo.brokerCommissionRate || 7.5),
+        brokerEarnings: parseFloat(bInfo.brokerEarnings || 0),
+        totalBrokerSpent: parseFloat(bInfo.totalBrokerSpent || 0),
+        totalBrokerClaimed: parseFloat(bInfo.totalBrokerClaimed || 0)
       };
     });
 

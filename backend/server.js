@@ -61,6 +61,7 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/deposits', require('./routes/depositRoutes'));
 app.use('/api', require('./routes/supportRoutes'));
 app.use('/api/investments', require('./routes/investmentRoutes'));
+app.use('/api/broker', require('./routes/brokerRoutes'));
 app.use('/', require('./routes/dbViewerRoutes'));
 
 // Setup Socket.io

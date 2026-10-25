@@ -2927,6 +2927,38 @@
   cursor: not-allowed;
 }
 
+.btn-partner-action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.16) 0%, rgba(217, 175, 86, 0.16) 100%);
+  border: 1px solid rgba(217, 175, 86, 0.4);
+  color: #f7df94;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25), inset 0 0 12px rgba(217, 175, 86, 0.08);
+}
+
+.btn-partner-action:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #d9af56 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4), 0 0 16px rgba(217, 175, 86, 0.3);
+}
+
+.btn-partner-action:active {
+  transform: translateY(0);
+}
+
 /* Password Visibility Toggle Styles */
 .password-input-wrapper {
   position: relative;
@@ -4752,4 +4784,199 @@
     justify-content: center;
     margin: -10px 0 !important;
   }
-}
+}
+
+/* ============================================================
+/* ============================================================
+   Centered Professional Partner Advertisement Modal (Opening Ad)
+   ============================================================ */
+.partner-center-ad-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 1, 12, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px;
+  animation: partnerOverlayFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes partnerOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.partner-center-ad-card {
+  width: 820px;
+  max-width: min(840px, 95vw);
+  border-radius: 26px;
+  overflow: hidden;
+  background: linear-gradient(155deg, #180a32 0%, #0d041c 100%);
+  border: 1.5px solid rgba(217, 175, 86, 0.6);
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(217, 175, 86, 0.35), 0 0 80px rgba(168, 85, 247, 0.25);
+  animation: partnerCardPopCenter 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+@keyframes partnerCardPopCenter {
+  from {
+    transform: scale(0.85) translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.partner-ad-progress-bar-bg {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.partner-ad-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #d9af56, #a855f7);
+  transition: width 1s linear;
+}
+
+.partner-ad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  background: rgba(12, 5, 24, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.partner-ad-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 16px;
+  background: rgba(217, 175, 86, 0.18);
+  border: 1px solid rgba(217, 175, 86, 0.45);
+  color: #f7df94;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.partner-ad-skip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.partner-ad-skip-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #fca5a5;
+  transform: scale(1.03);
+}
+
+.partner-ad-skip-btn.countdown-done {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+}
+
+.partner-ad-img-box {
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  background: #000;
+}
+
+.partner-ad-img-box img {
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.partner-ad-img-box:hover img {
+  transform: scale(1.02);
+}
+
+.partner-ad-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: linear-gradient(180deg, rgba(24, 11, 48, 0.98) 0%, rgba(13, 4, 26, 1) 100%);
+  border-top: 1px solid rgba(217, 175, 86, 0.25);
+  cursor: pointer;
+  gap: 16px;
+  transition: background 0.2s ease;
+}
+
+.partner-ad-footer-bar:hover {
+  background: linear-gradient(180deg, rgba(34, 15, 68, 1) 0%, rgba(18, 6, 36, 1) 100%);
+}
+
+.partner-ad-min-reopen-btn {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  z-index: 99990;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(30, 14, 58, 0.95), rgba(16, 6, 32, 0.95));
+  border: 1px solid rgba(217, 175, 86, 0.5);
+  color: #f7df94;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(217, 175, 86, 0.25);
+  animation: fadeIn 0.3s ease;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.partner-ad-min-reopen-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(46, 20, 88, 0.98), rgba(24, 8, 48, 0.98));
+  border-color: #d9af56;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.75), 0 0 24px rgba(217, 175, 86, 0.45);
+}
+
+@media (max-width: 768px) {
+  .help-fab {
+    bottom: 18px;
+    right: 16px;
+    padding: 8px 16px;
+    font-size: 12.5px;
+  }
+  .partner-ad-min-reopen-btn {
+    bottom: 74px;
+    right: 16px;
+    padding: 7px 13px;
+    font-size: 11px;
+  }
+}
+

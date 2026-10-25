@@ -507,7 +507,7 @@ const AboutUs = ({
 
                 <div className="card-pricing-block">
                   <span className="card-price">
-                    {price > 0 ? `₹${price.toLocaleString('en-IN')}` : 'Loading...'}
+                    {price > 0 ? `₹${price.toLocaleString('en-IN', { minimumFractionDigits: price < 1 ? 4 : 2, maximumFractionDigits: price < 1 ? 4 : 2 })}/g` : 'Loading...'}
                   </span>
                   <span className={`card-change-badge ${isPositive ? 'positive' : 'negative'}`}>
                     {isPositive ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
