@@ -15,6 +15,7 @@ model User {
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   referralCount    Int             @default(0)
+  referredBy       Int?
   kycDocName       String?
   kycDocType       String?
   kycDocument      String?

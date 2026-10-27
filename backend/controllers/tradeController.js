@@ -1,4 +1,5 @@
 const db = require('../db');
+const { processBrokerCommission } = require('../services/brokerCommissionService');
 
 const getExpiryMs = (interval) => {
   if (!interval) return 60000; // default 1m
@@ -17,7 +18,7 @@ const prisma = new PrismaClient();
 const buyTrade = async (req, res) => {
   const { symbol, price, investmentAmount, interval } = req.body;
   const email = req.user.email.toLowerCase();
-  
+
   const amt = parseFloat(investmentAmount);
   if (isNaN(amt) || amt !== 100) {
     return res.status(400).json({ error: 'Investment amount is fixed at ₹100.' });
@@ -73,18 +74,17 @@ const buyTrade = async (req, res) => {
         [user.id, 'TRADE_PLACE', symbol, -amt, appFee, `Standard Paper Trade BUY placement of ${symbol}`]
       );
 
-      // 4. If user is an approved Broker, credit guaranteed commission profit on trade stake spent
-      const brokerCheck = await client.query('SELECT "isBroker", "brokerCommissionRate" FROM "User" WHERE id = $1', [user.id]);
-      if (brokerCheck.rows.length > 0 && brokerCheck.rows[0].isBroker) {
-        const commRate = parseFloat(brokerCheck.rows[0].brokerCommissionRate || 7.5);
-        const commEarned = parseFloat((tradeStake * (commRate / 100)).toFixed(2));
-        if (commEarned > 0) {
-          await client.query(
-            'UPDATE "User" SET "brokerEarnings" = "brokerEarnings" + $1, "totalBrokerSpent" = "totalBrokerSpent" + $2 WHERE id = $3',
-            [commEarned, tradeStake, user.id]
-          );
-        }
-      }
+      // 4. If this user was referred by an approved Broker, credit Superadmin-allotted commission to the broker on trade stake spent
+      const io = req.app ? req.app.get('io') : null;
+      await processBrokerCommission({
+        userId: user.id,
+        userEmail: email,
+        spentAmount: tradeStake,
+        actionType: 'TRADE_BUY',
+        description: `BUY ${symbol}`,
+        client,
+        io
+      });
 
       await client.query('COMMIT');
       res.status(201).json(result.rows[0]);
@@ -103,7 +103,7 @@ const buyTrade = async (req, res) => {
 const sellTrade = async (req, res) => {
   const { symbol, price, investmentAmount, interval } = req.body;
   const email = req.user.email.toLowerCase();
-  
+
   const amt = parseFloat(investmentAmount);
   if (isNaN(amt) || amt !== 100) {
     return res.status(400).json({ error: 'Investment amount is fixed at ₹100.' });
@@ -159,18 +159,17 @@ const sellTrade = async (req, res) => {
         [user.id, 'TRADE_PLACE', symbol, -amt, appFee, `Standard Paper Trade SELL placement of ${symbol}`]
       );
 
-      // 4. If user is an approved Broker, credit guaranteed commission profit on trade stake spent
-      const brokerCheck = await client.query('SELECT "isBroker", "brokerCommissionRate" FROM "User" WHERE id = $1', [user.id]);
-      if (brokerCheck.rows.length > 0 && brokerCheck.rows[0].isBroker) {
-        const commRate = parseFloat(brokerCheck.rows[0].brokerCommissionRate || 7.5);
-        const commEarned = parseFloat((tradeStake * (commRate / 100)).toFixed(2));
-        if (commEarned > 0) {
-          await client.query(
-            'UPDATE "User" SET "brokerEarnings" = "brokerEarnings" + $1, "totalBrokerSpent" = "totalBrokerSpent" + $2 WHERE id = $3',
-            [commEarned, tradeStake, user.id]
-          );
-        }
-      }
+      // 4. If this user was referred by an approved Broker, credit Superadmin-allotted commission to the broker on trade stake spent
+      const io = req.app ? req.app.get('io') : null;
+      await processBrokerCommission({
+        userId: user.id,
+        userEmail: email,
+        spentAmount: tradeStake,
+        actionType: 'TRADE_SELL',
+        description: `SELL ${symbol}`,
+        client,
+        io
+      });
 
       await client.query('COMMIT');
       res.status(201).json(result.rows[0]);

@@ -6810,7 +6810,8 @@ function App() {
                                 </div>
                               </td>
                               <td style={{ padding: '14px 10px', color: '#ffffff', fontWeight: 600, fontSize: '13px' }}>
-                                ₹{parseFloat(b.totalBrokerSpent || 0).toFixed(2)}
+                                <div>₹{parseFloat(b.totalBrokerSpent || 0).toFixed(2)}</div>
+                                <div style={{ fontSize: '10.5px', color: '#9c93a8' }}>{b.referralCandidatesCount || 0} referral users</div>
                               </td>
                               <td style={{ padding: '14px 10px' }}>
                                 <span style={{ color: '#10b981', fontWeight: 800, fontSize: '14px' }}>
@@ -10762,8 +10763,54 @@ function App() {
                       </div>
 
                       <p style={{ fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 16px', lineHeight: 1.5 }}>
-                        You earn a guaranteed <strong style={{ color: '#10b981' }}>{brokerCommissionRate || 7.5}% profit/commission</strong> on every rupee you spend on trading, plus <strong style={{ color: '#f7df94' }}>{brokerCommissionRate || 7.5}% profit sharing strictly on all 7-day investment returns</strong> (calculated only on returns, not principal)!
+                        As an approved Broker, you earn a Superadmin-allotted <strong style={{ color: '#10b981' }}>{brokerCommissionRate || 7.5}% commission</strong> per transaction whenever users registered under your referral link spend on trading, invest in elements (Gold, Silver & metals), or place investments!
                       </p>
+
+                      {/* Broker Referral Share Bar */}
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                        <input
+                          type="text"
+                          readOnly
+                          value={`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`}
+                          style={{
+                            flex: 1,
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(217, 175, 86, 0.3)',
+                            borderRadius: '8px',
+                            padding: '8px 12px',
+                            fontSize: '12px',
+                            color: '#f7df94',
+                            outline: 'none',
+                            fontFamily: 'monospace'
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const link = `${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`;
+                            navigator.clipboard.writeText(link);
+                            setCopiedReferralLink(true);
+                            setTimeout(() => setCopiedReferralLink(false), 2000);
+                          }}
+                          style={{
+                            background: copiedReferralLink ? '#10b981' : 'linear-gradient(135deg, #d9af56, #b8860b)',
+                            color: '#000000',
+                            border: 'none',
+                            borderRadius: '8px',
+                            padding: '8px 14px',
+                            fontSize: '12px',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          {copiedReferralLink ? <Check size={14} /> : <Copy size={14} />}
+                          <span>{copiedReferralLink ? 'Copied!' : 'Copy Referral Link'}</span>
+                        </button>
+                      </div>
 
                       {/* Live Earnings Metrics Grid */}
                       <div style={{
@@ -10779,9 +10826,9 @@ function App() {
                         </div>
 
                         <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Total Rupee Spent</span>
+                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Referral Volume Spent</span>
                           <strong style={{ fontSize: '16px', color: '#ffffff' }}>₹{totalBrokerSpent.toFixed(2)}</strong>
-                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>Trading Stakes Volume</span>
+                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>From Referral Candidates</span>
                         </div>
 
                         <div style={{

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
+const db = require('../db');
+const { processBrokerCommission } = require('../services/brokerCommissionService');
 
 const prisma = new PrismaClient();
 
@@ -40,30 +42,14 @@ async function processAutoWithdrawals(targetUserId = null) {
       const totalEarnings = elapsedSeconds * earningsPerSecond;
       const returnAmount = inv.amount + totalEarnings;
 
-      // Check if user is an approved Broker
-      const investor = await prisma.user.findUnique({
-        where: { id: inv.userId },
-        select: { id: true, isBroker: true, brokerCommissionRate: true }
-      });
-
-      const isBroker = investor && !!investor.isBroker;
-      const commRate = parseFloat((investor && investor.brokerCommissionRate) || 7.5);
-
-      // CRITICAL REQUIREMENT: Broker profit share is calculated STRICTLY ONLY ON RETURNS (totalEarnings), NOT on principal (inv.amount)
-      let brokerProfitShare = 0;
-      if (isBroker && totalEarnings > 0) {
-        brokerProfitShare = parseFloat((totalEarnings * (commRate / 100)).toFixed(4));
-      }
-
       await prisma.$transaction(async (tx) => {
         // 1. Delete investment
         await tx.investment.delete({ where: { id: inv.id } });
 
-        // 2. Update wallet balance with regular return + broker profit share
-        const totalPayout = returnAmount + brokerProfitShare;
+        // 2. Update wallet balance with regular return
         await tx.wallet.update({
           where: { userId: inv.userId },
-          data: { balance: { increment: totalPayout } }
+          data: { balance: { increment: returnAmount } }
         });
 
         // 3. Create transaction audit log for regular investment return
@@ -77,29 +63,48 @@ async function processAutoWithdrawals(targetUserId = null) {
           }
         });
 
-        // 4. If broker, log separate broker guaranteed profit share transaction & increment totalBrokerClaimed
-        if (isBroker && brokerProfitShare > 0) {
-          await tx.transaction.create({
-            data: {
-              userId: inv.userId,
-              type: 'BROKER_PROFIT_SHARE',
-              asset: 'INVESTMENT_RETURNS',
-              amount: brokerProfitShare,
-              details: `Broker Partner Guaranteed Profit Sharing (${commRate}% strictly on returns of ₹${totalEarnings.toFixed(2)}): +₹${brokerProfitShare.toFixed(2)} credited to wallet`
-            }
+        // 4. If the investor was referred by an approved Broker, credit Broker's guaranteed profit share strictly on returns
+        const investorUser = await tx.user.findUnique({
+          where: { id: inv.userId },
+          select: { id: true, email: true, referredBy: true }
+        });
+
+        if (investorUser && investorUser.referredBy && totalEarnings > 0) {
+          const broker = await tx.user.findUnique({
+            where: { id: investorUser.referredBy },
+            select: { id: true, email: true, isBroker: true, brokerStatus: true, brokerCommissionRate: true }
           });
 
-          await tx.user.update({
-            where: { id: inv.userId },
-            data: {
-              totalBrokerClaimed: { increment: brokerProfitShare }
+          if (broker && broker.isBroker && (broker.brokerStatus === 'Approved' || broker.brokerStatus === 'Active')) {
+            const commRate = parseFloat(broker.brokerCommissionRate || 7.5);
+            const brokerShare = parseFloat((totalEarnings * (commRate / 100)).toFixed(4));
+            if (brokerShare > 0) {
+              await tx.user.update({
+                where: { id: broker.id },
+                data: {
+                  brokerEarnings: { increment: brokerShare },
+                  totalBrokerSpent: { increment: inv.amount }
+                }
+              });
+
+              await tx.transaction.create({
+                data: {
+                  userId: broker.id,
+                  type: 'BROKER_COMMISSION',
+                  asset: 'INVESTMENT_RETURNS',
+                  amount: brokerShare,
+                  details: `Broker Share (${commRate}% on returns of ₹${totalEarnings.toFixed(2)}): Earned from referral user ${investorUser.email}'s investment #${inv.id} (₹${inv.amount.toFixed(2)})`
+                }
+              });
+
+              console.log(`[BROKER PROFIT SHARE] Credited ₹${brokerShare} (${commRate}%) to Broker #${broker.id} from user #${inv.userId}'s completed investment returns`);
             }
-          });
+          }
         }
       });
 
       processedCount++;
-      console.log(`[INVESTMENT AUTO-WITHDRAW] Investment #${inv.id} for user #${inv.userId} processed (Return: ₹${returnAmount.toFixed(2)}${brokerProfitShare > 0 ? `, Broker Share: ₹${brokerProfitShare.toFixed(2)}` : ''})`);
+      console.log(`[INVESTMENT AUTO-WITHDRAW] Investment #${inv.id} for user #${inv.userId} processed (Return: ₹${returnAmount.toFixed(2)})`);
     }
 
     return processedCount;
@@ -192,6 +197,17 @@ router.post('/', async (req, res) => {
       });
 
       return { wallet: updatedWallet, investment: newInvestment };
+    });
+
+    // Credit Broker commission if user was referred by an approved broker
+    const io = req.app ? req.app.get('io') : null;
+    await processBrokerCommission({
+      userId: uid,
+      spentAmount: amt,
+      actionType: 'INVESTMENT',
+      description: `Investment placement ₹${amt}`,
+      client: db,
+      io
     });
 
     res.json({ success: true, investment: result.investment, wallet: result.wallet });

@@ -96,9 +96,12 @@ router.get('/status', async (req, res) => {
     const brokerId = u.isBroker ? `CUST-B-${u.id}` : `CUST-${u.id}`;
     const commRate = parseFloat(u.brokerCommissionRate || 7.5);
 
-    // Calculate live returns and broker profit share for all active investments
+    // Calculate live returns and broker profit share on active investments from referral users under this broker
     const invResult = await db.query(
-      'SELECT id, amount, "startTime" FROM "Investment" WHERE "userId" = $1',
+      `SELECT i.id, i.amount, i."startTime", i."userId", u.email as "userEmail", u.name as "userName"
+       FROM "Investment" i
+       JOIN "User" u ON i."userId" = u.id
+       WHERE u."referredBy" = $1`,
       [u.id]
     );
 
@@ -120,6 +123,12 @@ router.get('/status', async (req, res) => {
       }
     }
 
+    // Fetch referral candidates under this broker
+    const referralRes = await db.query(
+      'SELECT id, email, name, "createdAt" FROM "User" WHERE "referredBy" = $1 ORDER BY "createdAt" DESC',
+      [u.id]
+    );
+
     res.json({
       success: true,
       broker: {
@@ -136,7 +145,9 @@ router.get('/status', async (req, res) => {
         liveInvestmentProfitShare: parseFloat(liveInvestmentProfitShare.toFixed(4)),
         activeInvestmentsCount: invResult.rows.length,
         totalSpent: parseFloat(u.totalBrokerSpent || 0),
-        totalClaimed: parseFloat(u.totalBrokerClaimed || 0)
+        totalClaimed: parseFloat(u.totalBrokerClaimed || 0),
+        referralCandidatesCount: referralRes.rows.length,
+        referralCandidates: referralRes.rows
       }
     });
   } catch (error) {
@@ -270,7 +281,8 @@ router.get('/admin/requests', async (req, res) => {
         u."brokerEarnings",
         u."totalBrokerSpent",
         u."totalBrokerClaimed",
-        w.balance as "walletBalance"
+        w.balance as "walletBalance",
+        (SELECT COUNT(*) FROM "User" ref WHERE ref."referredBy" = u.id) as "referralCandidatesCount"
       FROM "User" u
       LEFT JOIN "Wallet" w ON u.id = w."userId"
       WHERE u."isBroker" = true OR u."brokerStatus" = 'Approved'
@@ -500,6 +512,19 @@ router.post('/admin/adjust-commission', async (req, res) => {
       'UPDATE "User" SET "brokerCommissionRate" = $1 WHERE id = $2',
       [rate, parseInt(userId)]
     );
+
+    await db.query(
+      'UPDATE "BrokerRequest" SET "commissionRate" = $1 WHERE "userId" = $2',
+      [rate, parseInt(userId)]
+    );
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('broker_status_updated', {
+        userId: parseInt(userId),
+        commissionRate: rate
+      });
+    }
 
     res.json({ success: true, message: `Commission rate updated to ${rate}%`, commissionRate: rate });
   } catch (error) {

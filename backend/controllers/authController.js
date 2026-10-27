@@ -4,6 +4,83 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const db = require('../db');
+
+function isValidReferralFormat(code) {
+  if (!code || typeof code !== 'string') return false;
+  const upper = code.trim().toUpperCase();
+  return (
+    upper === 'INVEST-WELCOME' ||
+    upper.startsWith('IH-') ||
+    upper.startsWith('CUST-') ||
+    upper.startsWith('B-') ||
+    /^\d+$/.test(upper)
+  );
+}
+
+async function resolveReferrer(referralCode) {
+  if (!referralCode || typeof referralCode !== 'string') return null;
+  const refTrimmed = referralCode.trim();
+  if (!refTrimmed) return null;
+  const refUpper = refTrimmed.toUpperCase();
+
+  if (refUpper === 'INVEST-WELCOME') {
+    return await getOrCreateAdminReferrer();
+  }
+
+  // Handle CUST-B-83, CUST-83, B-83
+  const custMatch = refUpper.match(/^CUST-(?:B-)?(\d+)$/) || refUpper.match(/^B-(\d+)$/);
+  if (custMatch) {
+    const userId = parseInt(custMatch[1]);
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (user) return user;
+  }
+
+  // Handle IH- prefix: IH-sandeepkumar.pikili or IH-83
+  if (refUpper.startsWith('IH-')) {
+    const codeWithoutPrefix = refUpper.replace('IH-', '').trim().toLowerCase();
+    
+    // 1. Try numeric ID after IH-
+    if (/^\d+$/.test(codeWithoutPrefix)) {
+      const byId = await prisma.user.findUnique({ where: { id: parseInt(codeWithoutPrefix) } });
+      if (byId) return byId;
+      const byUniqueId = await prisma.user.findUnique({ where: { uniqueId: codeWithoutPrefix } });
+      if (byUniqueId) return byUniqueId;
+    }
+
+    // 2. Try prefix matching email before @ (e.g. sandeepkumar.pikili@gmail.com or @vrpigroup.co.in)
+    const byEmailPrefix = await prisma.user.findFirst({
+      where: {
+        email: {
+          startsWith: codeWithoutPrefix + '@',
+          mode: 'insensitive'
+        }
+      }
+    });
+    if (byEmailPrefix) return byEmailPrefix;
+
+    // 3. Fallback exact prefix match for gmail.com
+    const byExactGmail = await prisma.user.findFirst({
+      where: {
+        email: {
+          equals: codeWithoutPrefix + '@gmail.com',
+          mode: 'insensitive'
+        }
+      }
+    });
+    if (byExactGmail) return byExactGmail;
+  }
+
+  // Try uniqueId or direct ID
+  if (/^\d+$/.test(refTrimmed)) {
+    const byId = await prisma.user.findUnique({ where: { id: parseInt(refTrimmed) } });
+    if (byId) return byId;
+    const byUnique = await prisma.user.findUnique({ where: { uniqueId: refTrimmed } });
+    if (byUnique) return byUnique;
+  }
+
+  return null;
+}
 
 const getOrCreateAdminReferrer = async () => {
   const adminEmail = 'sandeepkumar.pikili@vrpigroup.co.in';
@@ -107,34 +184,11 @@ exports.sendOtp = async (req, res) => {
 
     // Check referral code early if provided
     if (referralCode && referralCode.trim() !== '') {
-      const refUpper = referralCode.trim().toUpperCase();
-      let referrer = null;
-
-      const isValidFormat = (refUpper === 'INVEST-WELCOME' || refUpper.startsWith('IH-'));
-      if (!isValidFormat) {
+      if (!isValidReferralFormat(referralCode)) {
         return res.status(400).json({ success: false, error: 'Invalid referral code format' });
       }
 
-      if (refUpper === 'INVEST-WELCOME') {
-        // Super Admin referral
-        referrer = await getOrCreateAdminReferrer();
-      } else if (refUpper.startsWith('IH-')) {
-        const codeWithoutPrefix = refUpper.replace('IH-', '').toLowerCase();
-        // Use a targeted DB query instead of loading all users
-        const allUsers = await prisma.user.findMany({
-          where: {
-            email: {
-              equals: codeWithoutPrefix + '@gmail.com',
-              mode: 'insensitive'
-            }
-          },
-          take: 1
-        });
-        referrer = allUsers[0] || null;
-      }
-
-      // If the referrer doesn't exist (possibly deleted), we do NOT error out.
-      // We allow the signup to proceed, but skip the credit part.
+      const referrer = await resolveReferrer(referralCode);
       if (!referrer) {
         console.log(`[Referral] Referrer not found for code ${referralCode} (possibly deleted). Proceeding with OTP dispatch.`);
       }
@@ -244,36 +298,11 @@ exports.register = async (req, res) => {
     }
 
     let referrer = null;
-    if (referralCode) {
-      const refUpper = referralCode.toUpperCase();
-
-      const isValidFormat = (refUpper === 'INVEST-WELCOME' || refUpper.startsWith('IH-'));
-      if (!isValidFormat) {
-        return res.status(400).json({ success: false, error: 'Invalid referral code format' });
-      }
-
-      if (refUpper === 'INVEST-WELCOME') {
-        // Super Admin referral
-        referrer = await getOrCreateAdminReferrer();
-      } else if (refUpper.startsWith('IH-')) {
-        const codeWithoutPrefix = refUpper.replace('IH-', '').toLowerCase();
-        // Use a targeted DB query instead of loading all users
-        const allUsers = await prisma.user.findMany({
-          where: {
-            email: {
-              equals: codeWithoutPrefix + '@gmail.com',
-              mode: 'insensitive'
-            }
-          },
-          take: 1
-        });
-        referrer = allUsers[0] || null;
-      }
-
-      // If the referrer doesn't exist (possibly deleted), we do NOT error out.
-      // We proceed with registration without crediting the referrer.
+    const finalRefCode = referralCode || defaultReferralCode;
+    if (finalRefCode && finalRefCode.trim() !== '') {
+      referrer = await resolveReferrer(finalRefCode);
       if (!referrer) {
-        console.log(`[Referral] Referrer not found for code ${referralCode} (possibly deleted). Registering user without referral credit.`);
+        console.log(`[Referral] Referrer not found for code ${finalRefCode}. Registering user without referral credit.`);
       }
     }
 
@@ -304,8 +333,11 @@ exports.register = async (req, res) => {
       }
     });
 
-    // Credit referrer
+    // Credit referrer & set referredBy link
     if (referrer) {
+      // 1. Link referredBy in database permanently
+      await db.query('UPDATE "User" SET "referredBy" = $1 WHERE id = $2', [referrer.id, user.id]);
+
       let referrerWallet = await prisma.wallet.findUnique({
         where: { userId: referrer.id }
       });

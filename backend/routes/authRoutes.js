@@ -11,6 +11,7 @@ router.post('/reset-password', authController.resetPassword);
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const db = require('../db');
+const { processBrokerCommission } = require('../services/brokerCommissionService');
 
 router.post('/validate', async (req, res) => {
   try {
@@ -55,6 +56,8 @@ router.post('/validate', async (req, res) => {
       const bData = brokerRes.rows[0] || {};
       const isBroker = !!bData.isBroker && bData.brokerStatus !== 'Cancelled' && bData.brokerStatus !== 'Rejected';
       const brokerId = isBroker ? `CUST-B-${user.id}` : `CUST-${user.id}`;
+      const candRes = await db.query('SELECT COUNT(*) FROM "User" WHERE "referredBy" = $1', [user.id]);
+      const referralCandidatesCount = parseInt(candRes.rows[0]?.count || 0);
 
       res.json({
         valid: true,
@@ -69,6 +72,7 @@ router.post('/validate', async (req, res) => {
         brokerEarnings: parseFloat(bData.brokerEarnings || 0),
         totalBrokerSpent: parseFloat(bData.totalBrokerSpent || 0),
         totalBrokerClaimed: parseFloat(bData.totalBrokerClaimed || 0),
+        referralCandidatesCount,
         referralCount: user.referralCount,
         isUnlocked: user.isUnlocked || user.referralCount >= 1,
         hasPendingUnlockDeposit: !!pendingDeposit,
@@ -119,7 +123,7 @@ router.post('/metal-trade', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid trade amount' });
     }
 
-    if (action === 'buy') {
+    if (action === 'buy' || action === 'invest' || action === 'sip') {
       if (user.wallet.balance < tradeAmt) {
         return res.status(400).json({ success: false, error: 'Insufficient wallet balance' });
       }
@@ -142,21 +146,18 @@ router.post('/metal-trade', async (req, res) => {
         })
       ]);
 
-      // If user is a broker, credit guaranteed commission profit on the amount spent
-      const brokerCheck = await db.query(
-        'SELECT "isBroker", "brokerCommissionRate" FROM "User" WHERE id = $1',
-        [user.id]
-      );
-      if (brokerCheck.rows.length > 0 && brokerCheck.rows[0].isBroker) {
-        const commRate = parseFloat(brokerCheck.rows[0].brokerCommissionRate || 7.5);
-        const commEarned = parseFloat((tradeAmt * (commRate / 100)).toFixed(2));
-        if (commEarned > 0) {
-          await db.query(
-            'UPDATE "User" SET "brokerEarnings" = "brokerEarnings" + $1, "totalBrokerSpent" = "totalBrokerSpent" + $2 WHERE id = $3',
-            [commEarned, tradeAmt, user.id]
-          );
-        }
-      }
+      // If this user was referred by an approved Broker, credit Superadmin-allotted commission to the broker
+      const io = req.app ? req.app.get('io') : null;
+      const elementLabel = asset ? (asset.charAt(0).toUpperCase() + asset.slice(1)) : 'Element';
+      await processBrokerCommission({
+        userId: user.id,
+        userEmail: user.email,
+        spentAmount: tradeAmt,
+        actionType: 'ELEMENT_INVEST',
+        description: `Invested in Element ${elementLabel} (${parseFloat(weight || 0).toFixed(4)}g)`,
+        client: db,
+        io
+      });
 
       return res.json({
         success: true,
