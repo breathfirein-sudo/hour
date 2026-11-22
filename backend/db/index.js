@@ -61,6 +61,52 @@ pool.query(`
     pnl DECIMAL(18, 2) DEFAULT 0.00,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS device_orders (
+    id VARCHAR(60) PRIMARY KEY,
+    user_id INTEGER REFERENCES "User"(id) ON DELETE SET NULL,
+    order_type VARCHAR(30) DEFAULT 'BUY',
+    brand VARCHAR(100) NOT NULL,
+    model VARCHAR(150) NOT NULL,
+    condition VARCHAR(50) DEFAULT 'New',
+    ram VARCHAR(50) NOT NULL,
+    storage VARCHAR(50) NOT NULL,
+    color VARCHAR(50) NOT NULL,
+    base_price DECIMAL(18, 2) NOT NULL,
+    warranty_fee DECIMAL(18, 2) DEFAULT 0.00,
+    total_amount DECIMAL(18, 2) NOT NULL,
+    has_warranty BOOLEAN DEFAULT FALSE,
+    warranty_valid_until TIMESTAMP,
+    imei VARCHAR(100),
+    courier_name VARCHAR(100),
+    tracking_number VARCHAR(100),
+    status VARCHAR(50) DEFAULT 'Pending',
+    admin_notes TEXT,
+    full_name VARCHAR(150) NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    alternate_phone VARCHAR(30),
+    email VARCHAR(255) NOT NULL,
+    house_number VARCHAR(255) NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    landmark VARCHAR(255),
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    pin_code VARCHAR(20) NOT NULL,
+    delivery_instructions TEXT,
+    inspection_passed BOOLEAN,
+    rejection_reason TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_device_orders_user_id ON device_orders(user_id);
+  CREATE INDEX IF NOT EXISTS idx_device_orders_email ON device_orders(email);
+  CREATE INDEX IF NOT EXISTS idx_device_orders_status ON device_orders(status);
+
+  ALTER TABLE device_orders ADD COLUMN IF NOT EXISTS billing_date TIMESTAMP;
+  ALTER TABLE device_orders ADD COLUMN IF NOT EXISTS original_invoice_price DECIMAL(18, 2);
+  ALTER TABLE device_orders ADD COLUMN IF NOT EXISTS depreciation_rate DECIMAL(5, 2);
+  ALTER TABLE device_orders ADD COLUMN IF NOT EXISTS invoice_document TEXT;
+  ALTER TABLE device_orders ADD COLUMN IF NOT EXISTS premium_started_at TIMESTAMP;
 `).catch(err => console.error('Error auto-creating database tables:', err.message));
 
 module.exports = {

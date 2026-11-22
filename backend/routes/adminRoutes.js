@@ -195,6 +195,36 @@ router.post('/kyc/replace', async (req, res) => {
   }
 });
 
+router.get('/kyc/document/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      select: {
+        id: true,
+        kycStatus: true,
+        kycDocument: true,
+        kycDocName: true,
+        kycDocType: true,
+        kycUploadedAt: true
+      }
+    });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({
+      success: true,
+      document: user.kycDocument,
+      fileName: user.kycDocName,
+      fileType: user.kycDocType,
+      uploadedAt: user.kycUploadedAt,
+      status: user.kycStatus
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch KYC document', error: error.message });
+  }
+});
+
 router.get('/users/sync', async (req, res) => {
   try {
     const users = await prisma.user.findMany({

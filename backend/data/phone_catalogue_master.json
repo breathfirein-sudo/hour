@@ -1,0 +1,6022 @@
+[
+  {
+    "brand": "ASUS",
+    "modelCount": 18,
+    "models": [
+      {
+        "name": "ROG Phone 3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "ROG Phone 5",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ROG Phone 6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ROG Phone 7",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ROG Phone 7 Ultimate",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "ROG Phone 8",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ROG Phone 8 Pro",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "ROG Phone II",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone 10",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone 5Z",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone 6 (6Z)",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone 8",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone 8 Flip",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone 9",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone Max M1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone Max M2",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone Max Pro M1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Zenfone Max Pro M2",
+        "year": "2018",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Acer",
+    "modelCount": 9,
+    "models": [
+      {
+        "name": "Acer Liquid Jade Primo",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid X2",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid Z330",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid Z530",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid Z6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid Z6 Plus",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid Z630",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid Zest",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Acer Liquid Zest Plus",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Ai+",
+    "modelCount": 10,
+    "models": [
+      {
+        "name": "Nova 2 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nova 2 Neo 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nova 2 Power 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nova 2 Pro 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nova 2 Ultra 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nova 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "NovaFlip 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pulse",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Pulse 2",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pulse 2 FE",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Alcatel",
+    "modelCount": 11,
+    "models": [
+      {
+        "name": "Alcatel 1",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 1B",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 1S",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 1SE",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 1V",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 1X",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 3",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 3L",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 3V",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 3X",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Alcatel 5V",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Apple (iPhone)",
+    "modelCount": 43,
+    "models": [
+      {
+        "name": "iPhone 11",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 11 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 11 Pro Max",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 12",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 12 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 12 Pro Max",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 12 mini",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 13",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 13 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 13 Pro Max",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 13 mini",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 14",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 14 Plus",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 14 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 14 Pro Max",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 15",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 15 Plus",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 15 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 15 Pro Max",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 16",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 16 Plus",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 16 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 16 Pro Max",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 16e",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 17",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 17 Pro",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 17 Pro Max",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 17e",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 18 Pro",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 18 Pro Max",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 6s",
+        "year": "2015",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 7",
+        "year": "2016",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 7 Plus",
+        "year": "2016",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 8",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "iPhone 8 Plus",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "iPhone Air",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iPhone Duo",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "iPhone SE (2nd generation)",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "iPhone SE (3rd generation)",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iPhone X",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "iPhone XR",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "iPhone XS",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "iPhone XS Max",
+        "year": "2018",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Boltt",
+    "modelCount": 2,
+    "models": [
+      {
+        "name": "Boltt Ace 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Boltt Evo",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "CMF",
+    "modelCount": 2,
+    "models": [
+      {
+        "name": "CMF Phone 1",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "CMF Phone 2 Pro",
+        "year": "2025",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Google Pixel",
+    "modelCount": 27,
+    "models": [
+      {
+        "name": "Pixel 10",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 10 Pro",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 10 Pro Fold",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 10 Pro XL",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 10a",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 11",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 11 Pro",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 11 Pro Fold",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 11 Pro XL",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 3",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 3 XL",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 3a",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 3a XL",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 6 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 6a",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 7",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 7 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 7a",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 8",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 8 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 8a",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 9",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 9 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 9 Pro Fold",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 9 Pro XL",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pixel 9a",
+        "year": "2025",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "HMD",
+    "modelCount": 10,
+    "models": [
+      {
+        "name": "HMD Aura",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "HMD Crest",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "HMD Crest Max",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "HMD Fame",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "HMD Fusion",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "HMD Pulse",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "HMD Pulse Pro",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "HMD Pulse+",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "HMD Skyline",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "HMD Vibe 5G",
+        "year": "2025",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Honor",
+    "modelCount": 24,
+    "models": [
+      {
+        "name": "10",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "10 Lite",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "20",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "20i",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "6X",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "7A",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "7C",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "7S",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "7X",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "8 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "8A",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "8C",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "8X",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "9 Lite",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "9A",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "9N",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "9S",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "9X",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "9i",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Honor 200",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Honor 200 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Magic6 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Play",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "View 10",
+        "year": "2018",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Huawei",
+    "modelCount": 11,
+    "models": [
+      {
+        "name": "Huawei Mate 10 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Huawei Mate 20 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Huawei Mate 20 X",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Huawei Nova 3",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Huawei Nova 3i",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Huawei P20",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Huawei P20 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Huawei P30 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Huawei Y7 Pro 2019",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Huawei Y9 2019",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Huawei Y9 Prime 2019",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "I KALL",
+    "modelCount": 21,
+    "models": [
+      {
+        "name": "I KALL K series (individual model names require catalogue-level verification)",
+        "year": "",
+        "variant": "Series-level placeholder; not counted as a verified individual model"
+      },
+      {
+        "name": "I1",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "I1 Pro",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "I6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K201",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K220",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K24 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K260",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K3 New",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K400",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K401",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K444",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K500",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K510",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K7 New",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K700",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K99 Pro Rugged",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K999",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "S2 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Z10",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Z19 Pro",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Infinix",
+    "modelCount": 54,
+    "models": [
+      {
+        "name": "GT 20 Pro",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "GT 30 5G+",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "GT 30 Pro",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "GT 50 Pro",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Hot 10",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Hot 10S",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Hot 11",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Hot 11S",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Hot 12",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Hot 12 Play",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Hot 12 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Hot 20 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Hot 20 Play",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Hot 30 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Hot 30 Play",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Hot 40",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Hot 40 Pro",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Hot 40i",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Hot 50 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Hot 50i",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Hot 60i 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Hot 70 Pro",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Hot 9",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Hot 9 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Note 10 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Note 11",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Note 11S",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Note 12",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Note 12 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Note 12 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Note 12 VIP",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Note 30 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Note 30 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Note 30 VIP",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Note 40",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Note 40 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Note 40 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Note 40 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Note 40 Pro+ 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Note 40X 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Note 50s 5G+",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Note 50x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Note 7",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Note 7 Lite",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Smart 5",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Smart 6",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Smart 7",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Smart 8",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Smart 8 Plus",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Zero 20",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Zero 30 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Zero 40",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Zero Flip",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Zero Ultra",
+        "year": "2023",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Itel",
+    "modelCount": 38,
+    "models": [
+      {
+        "name": "A05s",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A100",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A100C",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A50",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A50C",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A56",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A60s",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A70",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "A80",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A90",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A95 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "City 100",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "City 200",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Color Pro 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P36",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P38 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P40",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P40+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P55",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P55 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P55+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "P65",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Power 70",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "S16 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "S18",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "S18 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "S23",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "S23+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "S24",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "S25",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "S25 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Super 26 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Zeno 10",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Zeno 100",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Zeno 20",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Zeno 20 Max",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Zeno 200",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Zeno 5G",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Jio",
+    "modelCount": 9,
+    "models": [
+      {
+        "name": "JioBharat K1 Karbonn",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "JioBharat V2",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "JioBharat V3",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "JioBharat V4",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "JioPhone",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "JioPhone 2",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "JioPhone Next",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "JioPhone Prima 2",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "JioPhone Prima 4G",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Lava",
+    "modelCount": 24,
+    "models": [
+      {
+        "name": "Agni 2 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Agni 3 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Agni 4",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Agni 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Blaze 2 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Blaze 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Blaze AMOLED 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Blaze Curve 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Blaze Dragon 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Blaze Duo 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Blaze Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Blaze X 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Bold N1",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Play Ultra 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Shark 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Smart 4",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Storm 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Storm Play",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Virat Curve 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Virat V1",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Yuva 3",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Yuva 3 Pro",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Yuva 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Yuva Star",
+        "year": "2024",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Motorola",
+    "modelCount": 77,
+    "models": [
+      {
+        "name": "E13",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "E14",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "E22s",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "E32",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "E32s",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "E40",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "E7 Plus",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "E7 Power",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "E7i Power",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Edge 20",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Edge 20 Fusion",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Edge 30",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Edge 30 Fusion",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Edge 30 Neo",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Edge 30 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 30 Ultra",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Edge 40",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Edge 40 Neo",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 50 Fusion",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 50 Neo",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 50 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 50 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 60 Fusion",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 60 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Edge 60 Stylus",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Edge 70 Fusion",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "G Max",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "G04",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G05",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "G10 Power",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G100",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G13",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "G14",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "G24 Power",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "G30",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G31",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G32",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G34 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "G35 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "G40 Fusion",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G42",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G45 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G51 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G52",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G54 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "G56 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "G60",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G62 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G64 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "G71 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G72",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G73 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "G8 Power",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "G8 Power Lite",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "G82 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G84 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "G85 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "G86 Power 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "G9",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "G9 Plus",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "G9 Power",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "G96 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Moto G5 Plus",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "Moto G5s Plus",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "Moto G7 Power",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Moto G8 Plus",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "One Action",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "One Fusion+",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "One Macro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "One Power",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "One Vision",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Razr 40",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Razr 40 Ultra",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Razr 50",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Razr 50 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Razr 60",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Razr 60 Ultra",
+        "year": "2025",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Nokia",
+    "modelCount": 41,
+    "models": [
+      {
+        "name": "2.1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "2.2",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "2.3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "2.4",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "3",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "3.1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "3.2",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "3.4",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "4.2",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "5",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "5.1 Plus",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "5.3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "5.4",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "6",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "6.1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "6.1 Plus",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "7.1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "8",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "8.1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "C01 Plus",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "C1",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "C12",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "C21 Plus",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "C22",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "C3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "C30",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "C31",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "C32",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G10",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G11",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G11 Plus",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G20",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G21",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G22",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "G400 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "G42 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "G50",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "G60 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "X10",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "X20",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "X30 5G",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Nothing",
+    "modelCount": 8,
+    "models": [
+      {
+        "name": "Phone (1)",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Phone (2)",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Phone (2a)",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Phone (2a) Plus",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Phone (3)",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Phone (3a)",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Phone (3a) Lite",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Phone (3a) Pro",
+        "year": "2025",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Nubia",
+    "modelCount": 9,
+    "models": [
+      {
+        "name": "Nubia Flip 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nubia Neo 2 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nubia Neo 3 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nubia Z50 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nubia Z50S Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nubia Z60 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Nubia Z70 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Red Magic 8S Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Red Magic 9 Pro",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "OnePlus",
+    "modelCount": 49,
+    "models": [
+      {
+        "name": "OnePlus 10 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 10R",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 10T",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 11",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 11R",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 12",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 12R",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 13",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 13R",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 13s",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 15",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 15R",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 3",
+        "year": "2016",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 3T",
+        "year": "2016",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 5",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 5T",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 6",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 6T",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 7",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 7 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 7T",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 7T Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 8",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 8 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 8T",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 9",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 9 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 9R",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus 9RT",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus N6 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus N6 Lite (4G)",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord 2",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord 2T",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord 3",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord 4",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord 5",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord 6",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE 2",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE 2 Lite",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE 3",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE 3 Lite",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE 4",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE 4 Lite",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord CE 5",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Nord N20 SE",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Open",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "OnePlus Open Apex Edition",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Oppo",
+    "modelCount": 80,
+    "models": [
+      {
+        "name": "A17",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "A18",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "A3 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A31",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "A38",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "A3x 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "A5 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "A53",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "A54",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "A57",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "A58",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "A59 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "A5x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "A74 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "A76",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "A77",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "A78 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "A79 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "A96",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "A98 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "F19",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "F19 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "F19 Pro+ 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "F21 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "F21 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "F21s Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "F23 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "F25 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "F27",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "F27 Pro+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "F29 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "F29 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "F31 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "F31 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "F31 Pro+ 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "F35 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "F35 Pro 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Find N2 Flip",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Find N3 Flip",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Find X3 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Find X5 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Find X8",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Find X8 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Find X9",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Find X9 Pro",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "K10",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "K10 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "K10x 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "K12x",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "K13 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "K13 Turbo 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "K13 Turbo Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "K13x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Reno10 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Reno10 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Reno10 Pro+ 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Reno11 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Reno11 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Reno12",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Reno12 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Reno13 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Reno13 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Reno14 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Reno14 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Reno15 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Reno15 Pro 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Reno15 Pro Mini",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Reno16c 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Reno2",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Reno3 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Reno4 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Reno5 Pro 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Reno6 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Reno6 Pro 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Reno7 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Reno7 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Reno8 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Reno8 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Reno8 T",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Reno8 T 5G",
+        "year": "2023",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "POCO",
+    "modelCount": 43,
+    "models": [
+      {
+        "name": "POCO C3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "POCO C31",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "POCO C40",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO C50",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO C51",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO C55",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO C61",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "POCO C65",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO C71",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "POCO F1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "POCO F3 GT",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "POCO F4 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO F5",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO F6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "POCO F7",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "POCO M2",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "POCO M2 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "POCO M2 Reloaded",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "POCO M3",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "POCO M3 Pro 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "POCO M4 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO M4 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO M4 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO M5",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO M5s",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO M6 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO M6 Plus 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "POCO M6 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO M7 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "POCO M7 Plus 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "POCO M7 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "POCO M8 Power 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "POCO X2",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "POCO X3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "POCO X3 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "POCO X4 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "POCO X5 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO X5 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "POCO X6 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "POCO X6 Neo 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "POCO X6 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "POCO X7",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "POCO X7 Pro",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "REDMAGIC",
+    "modelCount": 9,
+    "models": [
+      {
+        "name": "REDMAGIC 10 Air",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 10 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 10S Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 7",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 7 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 8 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 8S Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 9 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "REDMAGIC 9S Pro",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Realme",
+    "modelCount": 126,
+    "models": [
+      {
+        "name": "Realme 1",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Realme 10",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme 10 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme 10 Pro+ 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme 11 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme 11 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme 11 Pro+ 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme 11x 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme 12 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme 12 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme 12 Pro+ 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme 12+ 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme 12x 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme 13",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme 13 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme 13 Pro+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme 13+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme 13x 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme 14 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme 14 Pro+ 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme 14T 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme 14x",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme 15 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme 15 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme 15T 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme 15x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme 16 Pro 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Realme 16 Pro+ 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Realme 16x 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Realme 2",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Realme 2 Pro",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Realme 3",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme 3 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme 3i",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme 5",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme 5 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme 5i",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme 6",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme 6 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme 6i",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme 7",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme 7 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme 7i",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme 8",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme 8 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme 8 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme 8i",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme 8s 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme 9",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme 9 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme 9 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme 9 Pro+",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme 9i",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme C11",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme C12",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme C15",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme C20",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme C21",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme C21Y",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme C25",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme C25Y",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme C25s",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme C3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme C30",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme C31",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme C33",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme C35",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme C51",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme C53",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme C55",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme C61",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme C63",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme C65 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme C67 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme C71",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme C75 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT 2 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT 6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT 6T",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT 7",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT 7 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT 7T",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT Master Edition",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme GT Neo 3",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 20",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 30",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 30 Pro 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 50",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 50 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 50A",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 50i",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 60 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 60 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 60x 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 70 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 70 Turbo 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 70x 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 80 Lite",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 80 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo 80x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo N53",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo N55",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo N61",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme Narzo N63",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme P1 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme P1 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme P2 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Realme P3 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme P3 Lite 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme P3 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme P3 Ultra 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme P3x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme P4 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme P4 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme P4s 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Realme P4x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Realme X",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme X2",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme X2 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Realme X3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme X3 SuperZoom",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Realme X7 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme X7 Max 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme X7 Pro 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Realme XT",
+        "year": "2019",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Redmi",
+    "modelCount": 67,
+    "models": [
+      {
+        "name": "Redmi 10",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 10 Power",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 10 Prime",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 10A",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 11 Prime 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 12",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 12 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 12C",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 13 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 13C",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 13C 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 14C 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 15 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 15C 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 6",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 6A",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 7",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 7A",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 8",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 8A",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 9",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 9 Power",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 9 Prime",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 9A",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Redmi 9i",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Redmi A1",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi A2",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi A3",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Redmi A4 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Redmi A5",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Go",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi K20",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi K20 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 10",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 10 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 10 Pro Max",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 10S",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 10T 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 11",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 11 Pro+ 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 11S",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 11T 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 12 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 12 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 12 Pro+ 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 13 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 13 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 13 Pro+ 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 14",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 14 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 14 Pro+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 14 SE 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 15 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 15 Pro 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 15 Pro+ 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 17 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 17 Pro 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 17 Pro Max 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 5 Pro",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 6 Pro",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 7",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 7 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 8",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 8 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 9",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 9 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Redmi Note 9 Pro Max",
+        "year": "2020",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Samsung",
+    "modelCount": 110,
+    "models": [
+      {
+        "name": "Galaxy A05s",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A06",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A08",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A12",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A13",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A14 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A15 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A16 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A17 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A22 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A23",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A25 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A26 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A32",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A34 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A35",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A36 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A51",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A52",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A53 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A54 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A55",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A56 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A57",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A71",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A72",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy A73 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F05",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F06 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F08",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F12",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F13",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F14 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F15 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F16 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F22",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F23 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F34 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F36 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F41",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F42 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F54 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F55 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F56 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F62",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F70 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy F70 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M05",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M06 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M08",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M13",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M14 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M15 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M16 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M30s",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M31",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M32 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M33 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M34 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M35 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M36 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M51",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M53 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M54 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M55 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy M56 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Note10+",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Note20 Ultra",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S10+",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S20 FE",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S20 Ultra",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S20+",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S21",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S21 FE",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S21 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S21+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S22",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S22 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S22+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S23",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S23 FE",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S23 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S23+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S24",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S24 FE",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S24 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S24+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S25",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S25 Edge",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S25 FE",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S25 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S25+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S26",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S26 FE",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S26 Ultra",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy S26+",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Flip3",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Flip4",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Flip5",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Flip6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Flip7",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Flip7 FE",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Flip8",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Fold3",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Fold4",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Fold5",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Fold6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Fold7",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Fold8",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Galaxy Z Fold8 Ultra",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Sony",
+    "modelCount": 15,
+    "models": [
+      {
+        "name": "Xperia 1",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 1 II",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 1 III",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 1 IV",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 1 V",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 1 VI",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 10 III",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 10 IV",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 10 V",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 10 VI",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 5",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 5 II",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 5 III",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 5 IV",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xperia 5 V",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "TCL",
+    "modelCount": 13,
+    "models": [
+      {
+        "name": "TCL 10 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 20 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 20 Pro 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 20 R 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 20 SE",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 20L",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 20L+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 30",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 30 5G",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 30 SE",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 30+",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 40 NXTPAPER",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "TCL 40 SE",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Tecno",
+    "modelCount": 34,
+    "models": [
+      {
+        "name": "Camon 17 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Camon 18 Premier",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Camon 19 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Camon 20",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Camon 20 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Phantom V Flip",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Phantom V Flip2",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Phantom V Fold",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Phantom V Fold2",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Phantom X",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Pop 7 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Pop 8",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Pova",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Pova 2",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Pova 3",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Pova 4",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Pova 4 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Pova 5",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Pova 5 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Pova 6 Neo",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Pova 6 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Pova 7 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Pova 7 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Pova Slim 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Spark 10 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Spark 10 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Spark 20 Pro+",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Spark 7 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Spark 8 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Spark 8C",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Spark Go 2023",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Spark Go 2024",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Spark Go 3",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Spark Go 3 Pro",
+        "year": "2026",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Vivo",
+    "modelCount": 96,
+    "models": [
+      {
+        "name": "S2 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "T1 44W",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "T1 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "T1 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "T2 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "T2 Pro 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "T2x 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "T3 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "T3 Lite 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "T3 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "T3 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "T3x 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "T4 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "T4 Lite 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "T4 Ultra",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "T4R 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "T4x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "T5 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "T5x 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "V11 Pro",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "V15",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "V15 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "V17",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "V17 Pro",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "V19",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "V20",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "V20 Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "V20 SE",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "V21",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "V21e",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "V23",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "V23 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "V23e",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "V25",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "V25 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "V25e",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "V27",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "V27 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "V29",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "V29 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "V29e",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "V30",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "V30 Pro",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "V30e",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "V40",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "V40 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "V40e",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "V50",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "V50e",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "V5s",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "V60",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "V60e",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "V7+",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "V9",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "X Fold 6",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "X Fold3 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "X Fold5",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "X100",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "X100 Pro",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "X200",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "X200 FE",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "X200 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "X300",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "X300 Pro",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "X60 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "X70 Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "X70 Pro+",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "X80",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "X80 Pro",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "X90 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Y100",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y12s",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Y16",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Y17s",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Y18",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y19 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Y19e",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Y20",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Y200",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Y200 Pro 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y200e 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y21",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Y21T",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Y22",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Y28",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y28s 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y29 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y300",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Y31t 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "Y33s",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Y36",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Y39 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Y400 Pro 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Y56 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Y58 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Y73",
+        "year": "2021",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "Wobble",
+    "modelCount": 2,
+    "models": [
+      {
+        "name": "Wobble One",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Wobble smartphone listing (model name not exposed in captured directory extract)",
+        "year": "",
+        "variant": "Placeholder only; not counted as a verified individual model"
+      }
+    ]
+  },
+  {
+    "brand": "Xiaomi",
+    "modelCount": 21,
+    "models": [
+      {
+        "name": "Mi 10",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Mi 10T",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Mi 10T Pro",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "Mi 10i",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Mi 11 Lite NE 5G",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Mi 11 Ultra",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Mi 11X",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Mi 11X Pro",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "Mi A1",
+        "year": "2017",
+        "variant": ""
+      },
+      {
+        "name": "Mi A2",
+        "year": "2018",
+        "variant": ""
+      },
+      {
+        "name": "Mi A3",
+        "year": "2019",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 11T Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 11i HyperCharge 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 12 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 13 Pro",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 14",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 14 Civi",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 14T",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 14T Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 15 Ultra",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "Xiaomi 17T",
+        "year": "2026",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "ZTE",
+    "modelCount": 9,
+    "models": [
+      {
+        "name": "ZTE Axon 30",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Axon 30 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Axon 40 Ultra",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Blade A52",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Blade A71",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Blade A72",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Blade V30",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Blade V40",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "ZTE Blade V40 Pro",
+        "year": "",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "brand": "iQOO",
+    "modelCount": 40,
+    "models": [
+      {
+        "name": "iQOO 11",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 12",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 13",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 15",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 3",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 7",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 7 Legend",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 9",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 9 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 9 SE",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO 9T",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Neo 10",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Neo 10R 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Neo6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Neo7",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Neo7 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Neo9 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z10 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z10 Lite 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z10R 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z10x 5G",
+        "year": "2025",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z11",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z11x 5G",
+        "year": "2026",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z1x",
+        "year": "2020",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z3",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z5",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z5x",
+        "year": "2021",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z6",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z6 Lite 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z6 Pro 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z6x 5G",
+        "year": "2022",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z7 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z7 Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z7s",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z7x 5G",
+        "year": "2023",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z9 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z9 Lite 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z9s 5G",
+        "year": "2024",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z9s Pro",
+        "year": "",
+        "variant": ""
+      },
+      {
+        "name": "iQOO Z9x 5G",
+        "year": "2024",
+        "variant": ""
+      }
+    ]
+  }
+]

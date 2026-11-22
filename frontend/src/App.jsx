@@ -84,6 +84,8 @@ import ReferralProgramPage from './ReferralProgramPage';
 import SupportManagementTab from './components/Admin/SupportManagementTab';
 import TradingViewWidget from './charts/TradingViewWidget';
 import LiveChartWidget from './components/LiveChart/LiveChartWidget';
+import DeviceExchange from './components/DeviceExchange';
+import AdminDeviceRequests from './components/AdminDeviceRequests';
 import {
   createAllMetalRates,
   createInitialHoldings,
@@ -122,13 +124,13 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw, isBroker = false, 
         const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
         const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
         const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
-        
+
         let timeStr = '';
         if (days > 0) timeStr += `${days}d `;
         if (hours > 0 || days > 0) timeStr += `${hours}h `;
         if (minutes > 0 || hours > 0 || days > 0) timeStr += `${minutes}m `;
         timeStr += `${seconds}s`;
-        
+
         setTimeLeft(timeStr);
       }
     };
@@ -149,7 +151,7 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw, isBroker = false, 
           </div>
           <span style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
         </div>
-        
+
         <div className="investment-meta-container" style={{ flexWrap: 'wrap', gap: '6px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="live-dot-small"></span>
@@ -157,47 +159,47 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw, isBroker = false, 
           </div>
 
           {isBroker && (
-            <div style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '4px', 
-              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(217, 175, 86, 0.18))', 
-              color: '#f7df94', 
-              border: '1px solid rgba(217, 175, 86, 0.35)', 
-              padding: '2px 8px', 
-              borderRadius: '4px', 
-              fontSize: '11px', 
-              fontWeight: '700' 
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(217, 175, 86, 0.18))',
+              color: '#f7df94',
+              border: '1px solid rgba(217, 175, 86, 0.35)',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              fontSize: '11px',
+              fontWeight: '700'
             }}>
               👑 Broker ({brokerCommissionRate || 7.5}% on returns)
             </div>
           )}
-          
+
           {isLocked ? (
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '4px', 
-              background: 'rgba(239, 68, 68, 0.1)', 
-              color: '#f87171', 
-              padding: '2px 8px', 
-              borderRadius: '4px', 
-              fontSize: '11px', 
-              fontWeight: '600' 
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: '#f87171',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              fontSize: '11px',
+              fontWeight: '600'
             }}>
               <Lock size={10} /> Locked ({timeLeft})
             </div>
           ) : (
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '4px', 
-              background: 'rgba(16, 185, 129, 0.1)', 
-              color: '#34d399', 
-              padding: '2px 8px', 
-              borderRadius: '4px', 
-              fontSize: '11px', 
-              fontWeight: '600' 
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(16, 185, 129, 0.1)',
+              color: '#34d399',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              fontSize: '11px',
+              fontWeight: '600'
             }}>
               <Unlock size={10} /> Unlocked (Auto-Withdrawing)
             </div>
@@ -211,17 +213,17 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw, isBroker = false, 
           })}
         </div>
       </div>
-      
+
       <div className="investment-row-right">
         <div className="flip-clock-wrapper">
-          <FlipClock 
-            amount={inv.amount} 
-            startTime={inv.startTime} 
-            isBroker={isBroker} 
-            brokerCommissionRate={brokerCommissionRate} 
+          <FlipClock
+            amount={inv.amount}
+            startTime={inv.startTime}
+            isBroker={isBroker}
+            brokerCommissionRate={brokerCommissionRate}
           />
         </div>
-        <button 
+        <button
           onClick={() => {
             if (isLocked) {
               alert(`This investment is locked for 7 days. Remaining time: ${timeLeft}`);
@@ -230,14 +232,14 @@ const InvestmentRow = ({ inv, index, totalLength, onWithdraw, isBroker = false, 
             onWithdraw(inv.id);
           }}
           disabled={isLocked}
-          style={{ 
-            background: isLocked ? 'rgba(255,255,255,0.05)' : 'rgba(217,175,86,0.1)', 
-            color: isLocked ? '#6b7280' : '#d9af56', 
-            border: isLocked ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(217,175,86,0.3)', 
-            padding: '8px 16px', 
-            borderRadius: '8px', 
-            fontSize: '12px', 
-            fontWeight: 'bold', 
+          style={{
+            background: isLocked ? 'rgba(255,255,255,0.05)' : 'rgba(217,175,86,0.1)',
+            color: isLocked ? '#6b7280' : '#d9af56',
+            border: isLocked ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(217,175,86,0.3)',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: 'bold',
             cursor: isLocked ? 'not-allowed' : 'pointer',
             transition: 'all 0.2s',
             whiteSpace: 'nowrap'
@@ -293,7 +295,7 @@ const fetchWithTimeout = (url, options = {}, timeoutMs = 90000) => {
 
 // Warm up the Render backend on page load to avoid cold-start delays
 if (typeof window !== 'undefined') {
-  fetch(`${VITE_BACKEND_URL}/api/health`).catch(() => {});
+  fetch(`${VITE_BACKEND_URL}/api/health`).catch(() => { });
 }
 
 const InvesthourLogoText = ({ customStyle, suffix }) => (
@@ -310,7 +312,7 @@ const InvesthourLogoText = ({ customStyle, suffix }) => (
 const IntervalDropdown = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [favorites, setFavorites] = useState(['1', '30']);
-  
+
   const minutes = [
     { value: '1', label: '1 minute' },
     { value: '3', label: '3 minutes' },
@@ -328,9 +330,9 @@ const IntervalDropdown = ({ value, onChange }) => {
 
   return (
     <div className="interval-dropdown-container">
-      <button 
-        type="button" 
-        className="interval-dropdown-trigger" 
+      <button
+        type="button"
+        className="interval-dropdown-trigger"
         onClick={() => setIsOpen(!isOpen)}
       >
         {getDisplayValue()}
@@ -341,8 +343,8 @@ const IntervalDropdown = ({ value, onChange }) => {
         <div className="interval-dropdown-menu">
           <div className="interval-menu-header">MINUTES</div>
           {minutes.map((item) => (
-            <div 
-              key={item.value} 
+            <div
+              key={item.value}
               className={`interval-menu-item ${value === item.value ? 'selected' : ''}`}
               onClick={() => {
                 onChange(item.value);
@@ -350,13 +352,13 @@ const IntervalDropdown = ({ value, onChange }) => {
               }}
             >
               <span>{item.label}</span>
-              <Star 
-                size={16} 
+              <Star
+                size={16}
                 className={`interval-star ${favorites.includes(item.value) ? 'favorite' : ''}`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setFavorites(prev => 
-                    prev.includes(item.value) 
+                  setFavorites(prev =>
+                    prev.includes(item.value)
                       ? prev.filter(f => f !== item.value)
                       : [...prev, item.value]
                   );
@@ -390,7 +392,7 @@ function App() {
   // --- Auth & Profile States ---
   const [user, setUser] = useState(null);
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
-  
+
   // --- KYC Upload States ---
   const [kycDocType, setKycDocType] = useState('Aadhaar'); // 'Aadhaar', 'PAN', 'Passport'
   const [kycFile, setKycFile] = useState(null); // { name: string, size: number, type: string }
@@ -426,7 +428,7 @@ function App() {
 
   const handleKycSubmit = () => {
     if (!kycFile || kycUploading) return;
-    
+
     const reader = new FileReader();
     reader.onload = async (e) => {
       const fileData = e.target.result;
@@ -572,12 +574,12 @@ function App() {
   };
 
   const [loading, setLoading] = useState(true);
-  
+
   const [view, setView] = useState(() => {
     if (isSupportSubdomain && !localStorage.getItem('vb_exec_token')) return 'auth';
     return localStorage.getItem('vb_view') || 'home';
   }); // 'home', 'auth', 'dashboard'
-  
+
   useEffect(() => { localStorage.setItem('vb_view', view); }, [view]);
   const [authTab, setAuthTab] = useState('login'); // 'login' or 'register'
   const [authRole, setAuthRole] = useState('client'); // 'client' or 'support'
@@ -618,7 +620,7 @@ function App() {
       setResetLoading(false);
     }
   };
-  
+
   // --- Forgot Password States & Handlers ---
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotStep, setForgotStep] = useState('request'); // 'request' | 'sent'
@@ -627,7 +629,7 @@ function App() {
   const handleForgotPasswordRequest = async (e) => {
     e.preventDefault();
     if (!forgotEmail) return alert("Please enter your registered email address.");
-    
+
     setForgotLoading(true);
     try {
       const response = await fetchWithTimeout(`${VITE_BACKEND_URL}/api/auth/forgot-password`, {
@@ -637,7 +639,7 @@ function App() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to request password reset');
-      
+
       setForgotStep('sent');
     } catch (error) {
       alert(error.message);
@@ -665,7 +667,7 @@ function App() {
     }
   }, []);
 
-  
+
   // --- Real-time OTP Login States ---
   const [otpStep, setOtpStep] = useState('login'); // 'login', 'verify', 'register', 'register-verify'
   const [generatedOtp, setGeneratedOtp] = useState('');
@@ -688,10 +690,18 @@ function App() {
     }
     return () => clearInterval(timer);
   }, [otpStep, otpTimer]);
-  
+
   // --- Dashboard Navigation Tab ---
-  const [dashTab, setDashTab] = useState(() => localStorage.getItem('vb_dashTab') || 'portfolio'); // 'portfolio', 'trade', 'wallet', 'profile'
-  useEffect(() => { localStorage.setItem('vb_dashTab', dashTab); }, [dashTab]);
+  const VALID_DASH_TABS = ['portfolio', 'investment', 'trade', 'wallet', 'contest', 'devices', 'referral', 'profile'];
+  const [dashTab, setDashTab] = useState(() => {
+    const saved = localStorage.getItem('vb_dashTab');
+    return VALID_DASH_TABS.includes(saved) ? saved : 'portfolio';
+  });
+  useEffect(() => {
+    if (VALID_DASH_TABS.includes(dashTab)) {
+      localStorage.setItem('vb_dashTab', dashTab);
+    }
+  }, [dashTab]);
   const [aboutInitialMetalId, setAboutInitialMetalId] = useState(null);
   const [aboutInitialAction, setAboutInitialAction] = useState('buy');
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(() => localStorage.getItem('vb_disclaimer_accepted') === 'true');
@@ -716,7 +726,7 @@ function App() {
 
   // Scoped synchronization for investments and walletBalance to prevent cross-user data leaking
   const lastLoadedUserRef = useRef(null);
-  
+
   useEffect(() => {
     if (user && user.email) {
       const userKey = user.email.toLowerCase();
@@ -738,7 +748,7 @@ function App() {
         } else {
           setInvestments([]);
         }
-        
+
         try {
           const savedWallet = localStorage.getItem(`vb_walletBalance_${userKey}`);
           setWalletBalance(savedWallet ? parseFloat(savedWallet) : 0);
@@ -935,10 +945,10 @@ function App() {
     // Always render — visibility is controlled via CSS to avoid expensive DOM mount/unmount on each open
     const isOpen = showManualDepositModal;
     return (
-      <div className="modal-overlay" style={{ 
+      <div className="modal-overlay" style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 9999, 
+        zIndex: 9999,
         // No backdrop-filter: blur — that forces GPU compositing on every frame (very slow)
         background: 'rgba(5, 2, 10, 0.88)',
         display: 'flex',
@@ -950,29 +960,29 @@ function App() {
         pointerEvents: isOpen ? 'all' : 'none',
         transition: 'opacity 0.12s ease-out, visibility 0.12s'
       }}>
-        <div className="modal-content" style={{ 
-          maxWidth: '800px', 
-          background: 'linear-gradient(135deg, #15092a 0%, #0d031b 100%)', 
-          border: '1px solid rgba(217, 175, 86, 0.25)', 
-          boxShadow: '0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(217, 175, 86, 0.05)', 
-          width: '100%', 
+        <div className="modal-content" style={{
+          maxWidth: '800px',
+          background: 'linear-gradient(135deg, #15092a 0%, #0d031b 100%)',
+          border: '1px solid rgba(217, 175, 86, 0.25)',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(217, 175, 86, 0.05)',
+          width: '100%',
           borderRadius: '20px',
           padding: '28px',
           position: 'relative'
         }}>
           {/* Header */}
-          <div className="modal-header" style={{ 
+          <div className="modal-header" style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)', 
+            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
             paddingBottom: '16px',
             marginBottom: '20px'
           }}>
-            <h3 style={{ 
-              color: '#d9af56', 
-              margin: 0, 
-              fontSize: '20px', 
+            <h3 style={{
+              color: '#d9af56',
+              margin: 0,
+              fontSize: '20px',
               fontWeight: 800,
               letterSpacing: '0.5px',
               background: 'linear-gradient(135deg, #fff 0%, #d9af56 100%)',
@@ -981,13 +991,13 @@ function App() {
             }}>
               {depositAmount === '10' ? 'Pay Vault Unlock Fee' : 'Submit Manual Deposit'}
             </h3>
-            <button 
-              className="btn-close" 
-              onClick={() => setShowManualDepositModal(false)} 
-              style={{ 
-                color: '#9c93a8', 
-                border: 'none', 
-                background: 'rgba(255,255,255,0.05)', 
+            <button
+              className="btn-close"
+              onClick={() => setShowManualDepositModal(false)}
+              style={{
+                color: '#9c93a8',
+                border: 'none',
+                background: 'rgba(255,255,255,0.05)',
                 cursor: 'pointer',
                 borderRadius: '50%',
                 width: '32px',
@@ -1006,9 +1016,9 @@ function App() {
 
           {/* Form */}
           <form onSubmit={handleManualDepositSubmit}>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1fr 1.1fr', 
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1.1fr',
               gap: '24px',
               alignItems: 'start',
               marginBottom: '20px'
@@ -1016,26 +1026,26 @@ function App() {
               {/* Left Column: QR Code */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <span style={{ fontSize: '11px', color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>SCAN QR CODE</span>
-                
+
                 {/* QR Code display */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '5px 0' }}>
-                    <div style={{ 
-                      background: '#fff', 
-                      padding: '0', 
-                      borderRadius: '16px', 
-                      boxShadow: '0 8px 30px rgba(16, 185, 129, 0.15)', 
-                      border: '2px solid rgba(16, 185, 129, 0.3)',
-                      display: 'inline-block',
-                      overflow: 'hidden',
-                      width: '160px',
-                      height: '160px'
-                    }}>
-                      <img src="/deposit-qr.jpg" alt="Deposit QR Code" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', transform: 'scale(1.25) translateY(-4%)' }} />
-                    </div>
-                    <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 500, textAlign: 'center', maxWidth: '300px', lineHeight: '1.4' }}>
-                      Scan QR code using PhonePe, Paytm, GooglePay or any UPI application.
-                    </span>
+                  <div style={{
+                    background: '#fff',
+                    padding: '0',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 30px rgba(16, 185, 129, 0.15)',
+                    border: '2px solid rgba(16, 185, 129, 0.3)',
+                    display: 'inline-block',
+                    overflow: 'hidden',
+                    width: '160px',
+                    height: '160px'
+                  }}>
+                    <img src="/deposit-qr.jpg" alt="Deposit QR Code" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', transform: 'scale(1.25) translateY(-4%)' }} />
                   </div>
+                  <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 500, textAlign: 'center', maxWidth: '300px', lineHeight: '1.4' }}>
+                    Scan QR code using PhonePe, Paytm, GooglePay or any UPI application.
+                  </span>
+                </div>
               </div>
 
               {/* Right Column: Submission Form Inputs */}
@@ -1060,26 +1070,26 @@ function App() {
                 {/* UTR Input */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: 700 }}>UTR / Transaction Ref Number</label>
-                  <input 
-                    type="text" 
-                    required 
+                  <input
+                    type="text"
+                    required
                     maxLength={30}
-                    placeholder="Enter UTR or Reference Number" 
-                    value={manualUtr} 
-                    onChange={(e) => setManualUtr(e.target.value.trim())} 
-                    style={{ 
-                      width: '100%', 
-                      padding: '10px 14px', 
-                      borderRadius: '10px', 
-                      border: '1px solid rgba(255, 255, 255, 0.1)', 
-                      background: 'rgba(0, 0, 0, 0.3)', 
-                      color: '#fff', 
+                    placeholder="Enter UTR or Reference Number"
+                    value={manualUtr}
+                    onChange={(e) => setManualUtr(e.target.value.trim())}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      color: '#fff',
                       outline: 'none',
                       fontSize: '13px',
                       fontFamily: 'monospace',
                       letterSpacing: '1px',
                       transition: 'all 0.2s'
-                    }} 
+                    }}
                     onFocus={(e) => {
                       e.currentTarget.style.borderColor = '#10b981';
                       e.currentTarget.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.15)';
@@ -1094,17 +1104,17 @@ function App() {
                 {/* Payment Method */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: 700 }}>Payment Mode Used</label>
-                  <select 
-                    required 
-                    value={manualPaymentMethod} 
-                    onChange={(e) => setManualPaymentMethod(e.target.value)} 
-                    style={{ 
-                      width: '100%', 
-                      padding: '10px 14px', 
-                      borderRadius: '10px', 
-                      border: '1px solid rgba(255, 255, 255, 0.1)', 
-                      background: 'rgba(0, 0, 0, 0.3)', 
-                      color: '#fff', 
+                  <select
+                    required
+                    value={manualPaymentMethod}
+                    onChange={(e) => setManualPaymentMethod(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      color: '#fff',
                       outline: 'none',
                       fontSize: '13px',
                       cursor: 'pointer',
@@ -1132,24 +1142,24 @@ function App() {
             </div>
 
             {/* Submit Button */}
-            <div style={{ 
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)', 
+            <div style={{
+              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
               paddingTop: '20px',
               display: 'flex',
               justifyContent: 'flex-end'
             }}>
-              <button 
-                type="submit" 
-                disabled={manualDepositSubmitting} 
-                style={{ 
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
-                  color: '#fff', 
-                  border: 'none', 
-                  padding: '14px 28px', 
-                  borderRadius: '10px', 
-                  fontWeight: 'bold', 
+              <button
+                type="submit"
+                disabled={manualDepositSubmitting}
+                style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '14px 28px',
+                  borderRadius: '10px',
+                  fontWeight: 'bold',
                   fontSize: '14px',
-                  cursor: manualDepositSubmitting ? 'not-allowed' : 'pointer', 
+                  cursor: manualDepositSubmitting ? 'not-allowed' : 'pointer',
                   boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
@@ -1209,7 +1219,7 @@ function App() {
         ifsc: ifscCode.toUpperCase(),
         mode: payoutMode
       };
-      
+
       const res = await fetch(`${VITE_BACKEND_URL}/api/payments/create-order`, {
         method: 'POST',
         headers: {
@@ -1252,7 +1262,7 @@ function App() {
       setWithdrawSubmitting(false);
     }
   };
-  
+
   const withdrawableBalance = Number(walletBalance || 0);
 
   // --- Real-time Transaction Log Ledger ---
@@ -1311,7 +1321,7 @@ function App() {
   const [selectedContestParticipant, setSelectedContestParticipant] = useState(null);
   const [contestParticipantTrades, setContestParticipantTrades] = useState([]);
   const [contestSearchQuery, setContestSearchQuery] = useState('');
-  
+
   // --- Admin Withdrawal Request States & Methods ---
   const [adminWithdrawals, setAdminWithdrawals] = useState([]);
   const [fetchingWithdrawals, setFetchingWithdrawals] = useState(false);
@@ -1610,7 +1620,7 @@ function App() {
       const token = getExecToken();
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/chats/send`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -1671,9 +1681,9 @@ function App() {
       if (!token) return;
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/pending-requests/claim`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ type, requestId, userEmail })
       });
@@ -1760,7 +1770,7 @@ function App() {
     try {
       const token = getExecToken();
       if (!token) return;
-      
+
       const params = new URLSearchParams({
         status: depositFilterStatus,
         search: depositSearch,
@@ -1805,12 +1815,12 @@ function App() {
       if (input === null) return; // User cancelled
       reason = input.trim();
     }
-    
+
     try {
       const token = getExecToken();
       const res = await fetch(`${VITE_BACKEND_URL}/api/deposits/${id}/action`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -1836,7 +1846,7 @@ function App() {
       const token = getExecToken();
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/call-requests/${id}/status`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -1884,13 +1894,13 @@ function App() {
 
           const emailStr = payload.userEmail || '';
           const newReq = {
-             type: payload.type,
-             id: payload.requestId || payload.id,
-             userEmail: payload.userEmail,
-             userName: payload.userName || (emailStr ? emailStr.split('@')[0] : 'User'),
-             phone: payload.phone || '',
-             amount: payload.amount || 0,
-             timestamp: payload.timestamp || Date.now()
+            type: payload.type,
+            id: payload.requestId || payload.id,
+            userEmail: payload.userEmail,
+            userName: payload.userName || (emailStr ? emailStr.split('@')[0] : 'User'),
+            phone: payload.phone || '',
+            amount: payload.amount || 0,
+            timestamp: payload.timestamp || Date.now()
           };
           return [...prev, newReq].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         });
@@ -2001,7 +2011,7 @@ function App() {
       setFetchingWithdrawals(false);
     }
   };
-  
+
   const exportPendingToExcelAndClear = async () => {
     const pending = adminWithdrawals.filter(w => w.status === 'processing');
     if (pending.length === 0) {
@@ -2079,7 +2089,7 @@ function App() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `pending_withdrawals_export_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute("download", `pending_withdrawals_export_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -2152,7 +2162,7 @@ function App() {
               const localMetalTx = (existingClient.transactions || []).filter(t => t.type === 'buy' || t.type === 'sell');
               const backendTx = dbClient.transactions !== undefined ? dbClient.transactions : [];
               const mergedTx = [...localMetalTx, ...backendTx].sort((a, b) => new Date(b.date) - new Date(a.date));
-              
+
               return {
                 ...existingClient,
                 ...dbClient,
@@ -2204,8 +2214,8 @@ function App() {
         alert("Stats updated successfully!");
         fetchAdminContestData();
         if (selectedContestParticipant && selectedContestParticipant.email === email) {
-          setSelectedContestParticipant(prev => ({ 
-            ...prev, 
+          setSelectedContestParticipant(prev => ({
+            ...prev,
             balance: stats.balance,
             total_trades: stats.totalTrades,
             profit_trades: stats.profitTrades,
@@ -2608,7 +2618,7 @@ function App() {
             }
             return c;
           });
-          try { localStorage.setItem('vb_clients', JSON.stringify(updated)); } catch (e) {}
+          try { localStorage.setItem('vb_clients', JSON.stringify(updated)); } catch (e) { }
           return updated;
         });
       }
@@ -2670,7 +2680,7 @@ function App() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [partnerSubmitted, setPartnerSubmitted] = useState(false);
-  
+
   // --- Centered Partner Ad Banner States ---
   const AD_TOTAL_DURATION_SEC = 10;
   const [showPartnerAd, setShowPartnerAd] = useState(true);
@@ -2723,7 +2733,7 @@ function App() {
       setPendingPartnerRedirect(false);
     }
   }, [user, pendingPartnerRedirect]);
-  
+
   // --- Broker Partnership & Earnings State ---
   const [isBroker, setIsBroker] = useState(false);
   const [brokerStatus, setBrokerStatus] = useState('None'); // 'None' | 'Pending' | 'Approved' | 'Rejected'
@@ -3421,13 +3431,13 @@ function App() {
         body: JSON.stringify({ email: emailAddress })
       });
       const data = await response.json();
-      
+
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Failed to dispatch secure OTP.');
       }
-      
+
       console.log(`[Backend OTP Dispatch] Status: OK. Delivery: ${data.deliveryType}. Redis Cache: ${data.redisType}`);
-      
+
       setOtpSending(false);
       setOtpStep(type === 'register' ? 'register-verify' : 'verify');
 
@@ -3466,9 +3476,9 @@ function App() {
           throw new Error(data.error || 'Invalid support credentials');
         }
 
-        const localUser = { 
-          email: data.executive.email, 
-          uid: 'exec-user-' + data.executive.id, 
+        const localUser = {
+          email: data.executive.email,
+          uid: 'exec-user-' + data.executive.id,
           displayName: data.executive.name,
           isExecutive: true,
           role: data.executive.role,
@@ -3504,10 +3514,10 @@ function App() {
         throw new Error(data.error || 'Invalid email or password');
       }
 
-      const localUser = { 
-        email: data.user.email, 
-        uid: 'db-user-' + data.user.id, 
-        displayName: data.user.name || data.user.email.split('@')[0] 
+      const localUser = {
+        email: data.user.email,
+        uid: 'db-user-' + data.user.id,
+        displayName: data.user.name || data.user.email.split('@')[0]
       };
       localStorage.setItem('vb_jwt_token', data.token);
       localStorage.setItem('vb_local_user', JSON.stringify(localUser));
@@ -3556,7 +3566,7 @@ function App() {
       const response = await fetchWithTimeout(`${VITE_BACKEND_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: authForm.email,
           referralCode: authForm.referralCode
         })
@@ -3576,7 +3586,7 @@ function App() {
   const handleVerifySignupOtp = async (e) => {
     e.preventDefault();
     if (!signupOtp) return alert("Please enter the OTP.");
-    
+
     setOtpSending(true);
     try {
       // 1. Verify OTP
@@ -3608,12 +3618,12 @@ function App() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      const localUser = { 
-        email: data.user.email, 
-        uid: 'db-user-' + data.user.id, 
-        displayName: data.user.name || data.user.email.split('@')[0] 
+      const localUser = {
+        email: data.user.email,
+        uid: 'db-user-' + data.user.id,
+        displayName: data.user.name || data.user.email.split('@')[0]
       };
-      
+
       // Initialize registering client profile and credit referrer in local storage
       const cRecord = {
         id: `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -3655,7 +3665,7 @@ function App() {
                 status: 'Completed',
                 details: `Referral bonus for inviting ${data.user.email}`
               };
-              
+
               // If referrer is the logged in user, update current frontend state in real-time
               if (user && c.email.toLowerCase() === user.email.toLowerCase()) {
                 setSuccessfulReferralsCount(newCount);
@@ -3806,7 +3816,7 @@ function App() {
       if (token && user && !user.isExecutive) {
         await fetch(`${VITE_BACKEND_URL}/api/user/chats/send`, {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
@@ -3860,7 +3870,7 @@ function App() {
       if (token && user && !user.isExecutive) {
         await fetch(`${VITE_BACKEND_URL}/api/user/chats/send`, {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
@@ -3904,11 +3914,11 @@ function App() {
       const token = getExecToken();
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/chats/send`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           userEmail: selectedChatEmail,
           text: `Attachment: ${fileName}`,
           mediaUrl
@@ -3942,7 +3952,7 @@ function App() {
       };
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/profile/update`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -3992,7 +4002,7 @@ function App() {
 
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/profile/update`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -4027,7 +4037,7 @@ function App() {
       const token = getExecToken();
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/profile/change-password`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -4063,13 +4073,13 @@ function App() {
       const token = getExecToken();
       const res = await fetch(`${VITE_BACKEND_URL}/api/support/profile/change-password`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ 
-          currentPassword: firstTimePassword.currentPassword, 
-          newPassword: firstTimePassword.newPassword 
+        body: JSON.stringify({
+          currentPassword: firstTimePassword.currentPassword,
+          newPassword: firstTimePassword.newPassword
         })
       });
       const data = await res.json();
@@ -4217,9 +4227,9 @@ function App() {
                 <div style={{ fontSize: '14px', fontWeight: '700', color: '#ffffff' }}>sandeepkumar.pikili@vrpigroup.co.in</div>
                 <div style={{ fontSize: '11px', color: '#d9af56', fontWeight: 600 }}>Master Administrator</div>
               </div>
-              <button 
-                className="btn-sec-signout" 
-                onClick={handleSignOut} 
+              <button
+                className="btn-sec-signout"
+                onClick={handleSignOut}
                 style={{ background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', padding: '8px 15px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', transition: 'all 0.3s' }}
               >
                 <LogOut size={14} /> Exit Console
@@ -4246,10 +4256,10 @@ function App() {
         )}
 
         <main style={{ flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1440px', margin: '0 auto', width: '100%' }}>
-          
+
           {/* Top Metrics Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-            
+
             {/* Metric 1 */}
             <div style={{ background: '#120524', border: '1px solid rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', padding: '12px', borderRadius: '10px' }}>
@@ -4324,7 +4334,7 @@ function App() {
 
           {/* Admin Tabs Toggle */}
           <div className="admin-tabs-toggle">
-            <button 
+            <button
               type="button"
               onClick={() => setAdminTab('clients')}
               style={{
@@ -4342,7 +4352,7 @@ function App() {
             >
               👥 Client Watchlist & Balances
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setAdminTab('brokers')}
               style={{
@@ -4376,7 +4386,7 @@ function App() {
                 </span>
               )}
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setAdminTab('contest')}
               style={{
@@ -4394,7 +4404,7 @@ function App() {
             >
               🏆 Contest Leaderboard & Participants
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setAdminTab('referrals')}
               style={{
@@ -4412,7 +4422,7 @@ function App() {
             >
               🎁 Referral Program Tracking
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setAdminTab('withdrawals')}
               style={{
@@ -4430,7 +4440,7 @@ function App() {
             >
               💰 Withdrawal Requests
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setAdminTab('deposits')}
               style={{
@@ -4448,7 +4458,7 @@ function App() {
             >
               📥 Deposit Requests & History
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setAdminTab('support')}
               style={{
@@ -4465,6 +4475,24 @@ function App() {
               }}
             >
               🎧 Customer Service
+            </button>
+            <button
+              type="button"
+              onClick={() => setAdminTab('devices')}
+              style={{
+                background: adminTab === 'devices' ? '#f43f5e' : 'transparent',
+                color: '#ffffff',
+                border: '1px solid',
+                borderColor: adminTab === 'devices' ? '#f43f5e' : 'rgba(255,255,255,0.15)',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s'
+              }}
+            >
+              📱 Mobile & Device Requests
             </button>
           </div>
 
@@ -4505,24 +4533,24 @@ function App() {
                   {/* Name field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Name *</label>
-                    <input type="text" required value={execForm.name} onChange={e => setExecForm({...execForm, name: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
+                    <input type="text" required value={execForm.name} onChange={e => setExecForm({ ...execForm, name: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
                   </div>
                   {/* Phone & Email Row */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Phone</label>
-                      <input type="text" value={execForm.phone} onChange={e => setExecForm({...execForm, phone: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
+                      <input type="text" value={execForm.phone} onChange={e => setExecForm({ ...execForm, phone: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Email *</label>
-                      <input type="email" required value={execForm.email} onChange={e => setExecForm({...execForm, email: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
+                      <input type="email" required value={execForm.email} onChange={e => setExecForm({ ...execForm, email: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
                     </div>
                   </div>
                   {/* Role & Shift Row */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Role *</label>
-                      <select value={execForm.role} onChange={e => setExecForm({...execForm, role: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }}>
+                      <select value={execForm.role} onChange={e => setExecForm({ ...execForm, role: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }}>
                         <option value="Chat">Chat</option>
                         <option value="Call">Call</option>
                         <option value="Both">Both</option>
@@ -4530,7 +4558,7 @@ function App() {
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Shift *</label>
-                      <select value={execForm.shift} onChange={e => setExecForm({...execForm, shift: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }}>
+                      <select value={execForm.shift} onChange={e => setExecForm({ ...execForm, shift: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }}>
                         <option value="Day">Day</option>
                         <option value="Night">Night</option>
                         <option value="Rotational">Rotational</option>
@@ -4541,22 +4569,22 @@ function App() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Monthly Salary (₹) *</label>
-                      <input type="number" required value={execForm.salary} onChange={e => setExecForm({...execForm, salary: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
+                      <input type="number" required value={execForm.salary} onChange={e => setExecForm({ ...execForm, salary: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Experience (Yrs)</label>
-                      <input type="number" value={execForm.experienceYrs} onChange={e => setExecForm({...execForm, experienceYrs: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
+                      <input type="number" value={execForm.experienceYrs} onChange={e => setExecForm({ ...execForm, experienceYrs: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
                     </div>
                   </div>
                   {/* Languages & Rating Row */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Languages</label>
-                      <input type="text" value={execForm.languages} onChange={e => setExecForm({...execForm, languages: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
+                      <input type="text" value={execForm.languages} onChange={e => setExecForm({ ...execForm, languages: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '12px', color: '#9c93a8', fontWeight: 600 }}>Initial Rating (1-5) *</label>
-                      <input type="number" step="0.1" min="1.0" max="5.0" required value={execForm.rating} onChange={e => setExecForm({...execForm, rating: e.target.value})} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
+                      <input type="number" step="0.1" min="1.0" max="5.0" required value={execForm.rating} onChange={e => setExecForm({ ...execForm, rating: e.target.value })} style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '10px', color: '#ffffff', fontSize: '14px' }} />
                     </div>
                   </div>
                   {/* Action Buttons */}
@@ -4570,1075 +4598,1075 @@ function App() {
           )}
 
 
-          
+
           {/* Main Content Workspace Split */}
           {adminTab === 'clients' && (
             <div className="admin-grid-layout">
-            
-            {/* Left Side: Client Roster list (7 Cols) */}
-            <div className="admin-col-7" style={{ background: '#120524', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#ffffff', margin: 0 }}>Registered Client Directory</h2>
-                  <p style={{ fontSize: '12px', color: '#9c93a8', margin: '4px 0 0' }}>Real-time balance, KYC tracking, and portfolio inspect controls</p>
-                </div>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  <input
-                    type="text"
-                    placeholder="Search clients..."
-                    value={clientSearchQuery}
-                    onChange={(e) => setClientSearchQuery(e.target.value)}
-                    style={{
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      color: '#fff',
-                      fontSize: '12px',
-                      width: '200px'
-                    }}
-                  />
-                  <button 
-                    type="button"
-                    onClick={() => {
-                      if (window.confirm('Are you sure you want to clear all client data? This action cannot be undone.')) {
-                        localStorage.removeItem('vb_clients');
-                        setClients([]);
-                        setSelectedClientId('');
-                        alert('All client data has been cleared successfully.');
-                      }
-                    }}
-                    style={{ 
-                      background: '#dc2626', 
-                      color: '#ffffff', 
-                      border: 'none', 
-                      padding: '8px 16px', 
-                      borderRadius: '8px', 
-                      fontSize: '12px', 
-                      fontWeight: 600, 
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}
-                  >
-                    <X size={14} /> Clear All Data
-                  </button>
-                  <div style={{ background: '#1e0b36', padding: '4px 12px', borderRadius: '8px', fontSize: '12px', color: '#d9af56', fontWeight: 600 }}>
-                    {clients.filter(c => c.email.toLowerCase() !== 'sandeepkumar.pikili@vrpigroup.co.in').length} Clients
-                  </div>
-                </div>
-              </div>
 
-              {/* Clients Roster Table */}
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                      <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700 }}>Client Profile</th>
-                      <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700 }}>Vault Wallet</th>
-                      <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700 }}>KYC Status</th>
-                      <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700, textAlign: 'right' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {clients
-                      .filter(c => c.email.toLowerCase() !== 'sandeepkumar.pikili@vrpigroup.co.in')
-                      .filter(c => {
-                        if (!clientSearchQuery) return true;
-                        const query = clientSearchQuery.toLowerCase();
-                        return (
-                          (c.name && c.name.toLowerCase().includes(query)) ||
-                          (c.email && c.email.toLowerCase().includes(query)) ||
-                          (c.referralCode && c.referralCode.toLowerCase().includes(query)) ||
-                          (c.phone && c.phone.toLowerCase().includes(query))
-                        );
-                      })
-                      .map(c => {
-                      const isSelected = selectedClientId === c.id;
-                      const matchedVal = (c.holdings?.gold || 0) * rates.gold.price + (c.holdings?.silver || 0) * rates.silver.price + (c.holdings?.platinum || 0) * rates.platinum.price + (c.holdings?.iron || 0) * rates.iron.price + (c.walletBalance || 0);
-                      return (
-                        <tr 
-                          key={c.id} 
-                          onClick={() => setSelectedClientId(c.id)}
-                          style={{ 
-                            borderBottom: '1px solid rgba(255,255,255,0.04)', 
-                            background: isSelected ? 'rgba(244, 63, 94, 0.05)' : 'transparent',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                          }}
-                          className="client-directory-row"
-                        >
-                          <td style={{ padding: '14px 10px' }}>
-                            <div style={{ fontWeight: '700', fontSize: '14px', color: isSelected ? '#f43f5e' : '#ffffff' }}>{c.name}</div>
-                            <div style={{ fontSize: '12px', color: '#9c93a8' }}>{c.email}</div>
-                            <div style={{ fontSize: '10px', color: '#d9af56', fontFamily: 'monospace', marginTop: '2px' }}>
-                              Code: IH-{c.email?.split('@')[0].toUpperCase() || 'USER'}
-                            </div>
-                          </td>
-                          <td style={{ padding: '14px 10px' }}>
-                            <div style={{ fontWeight: '700', fontSize: '14px', color: '#ffffff' }}>₹{c.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-                            <div style={{ fontSize: '11px', color: '#10b981' }}>Valuation: ₹{matchedVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
-                          </td>
-                          <td style={{ padding: '14px 10px' }}>
-                            <span style={{ 
-                              fontSize: '10px', 
-                              fontWeight: 800, 
-                              letterSpacing: '0.5px',
-                              textTransform: 'uppercase',
-                              padding: '4px 8px', 
-                              borderRadius: '4px',
-                              background: c.kycStatus === 'Verified' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                              color: c.kycStatus === 'Verified' ? '#10b981' : '#f59e0b',
-                            }}>
-                              {c.kycStatus}
-                            </span>
-                          </td>
-                          <td style={{ padding: '14px 10px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedClientId(c.id);
-                                }}
-                                style={{ 
-                                  padding: '6px 12px', 
-                                  fontSize: '12px', 
-                                  border: '1px solid',
-                                  borderColor: isSelected ? '#f43f5e' : 'rgba(255,255,255,0.15)', 
-                                  background: isSelected ? '#f43f5e' : 'transparent',
-                                  color: '#ffffff',
-                                  borderRadius: '6px',
-                                  fontWeight: 600,
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                Inspect Portfolio
-                              </button>
-                              <button 
-                                onClick={async (e) => {
-                                  e.stopPropagation();
-                                  if (window.confirm(`Are you sure you want to delete ${c.name}'s account? This will permanently delete:\n- Client profile data\n- Authentication account\n- All transaction history\n\nThis action cannot be undone.`)) {
-                                    try {
-                                      // Call backend to delete user
-                                      const response = await fetch(`${VITE_BACKEND_URL}/api/admin/delete-user`, {
-                                        method: "POST",
-                                        headers: {
-                                          "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({ 
-                                          email: c.email,
-                                          clientId: c.id 
-                                        })
-                                      });
-                                      
-                                      const data = await response.json();
-                                      
-                                      if (!response.ok) {
-                                        console.warn("Backend deletion warning:", data.message);
-                                      }
-                                      
-                                      // Remove from local state and localStorage
-                                      const updatedClients = clients.filter(client => client.id !== c.id);
-                                      setClients(updatedClients);
-                                      localStorage.setItem('vb_clients', JSON.stringify(updatedClients));
-                                      
-                                      // Update selected client if needed
-                                      if (selectedClientId === c.id) {
-                                        setSelectedClientId(updatedClients.length > 0 ? updatedClients[0].id : '');
-                                      }
-                                      
-                                      alert(`${c.name}'s account has been deleted successfully from all systems.`);
-                                    } catch (error) {
-                                      console.error("Error deleting user:", error);
-                                      // Still delete locally even if backend fails
-                                      const updatedClients = clients.filter(client => client.id !== c.id);
-                                      setClients(updatedClients);
-                                      localStorage.setItem('vb_clients', JSON.stringify(updatedClients));
-                                      
-                                      if (selectedClientId === c.id) {
-                                        setSelectedClientId(updatedClients.length > 0 ? updatedClients[0].id : '');
-                                      }
-                                      
-                                      alert(`${c.name}'s local data has been deleted. Note: Backend account deletion may have failed. Error: ${error.message}`);
-                                    }
-                                  }
-                                }}
-                                style={{ 
-                                  padding: '6px 12px', 
-                                  fontSize: '12px', 
-                                  border: '1px solid #dc2626',
-                                  background: 'transparent',
-                                  color: '#dc2626',
-                                  borderRadius: '6px',
-                                  fontWeight: 600,
-                                  cursor: 'pointer',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '4px'
-                                }}
-                                title={`Delete ${c.name}'s account`}
-                              >
-                                <X size={14} /> Delete
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Client Balances & Holdings Summary */}
-              <div style={{ display: 'none' }}>
+              {/* Left Side: Client Roster list (7 Cols) */}
+              <div className="admin-col-7" style={{ background: '#120524', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '15px', fontWeight: '800', margin: 0 }}>
-                    Client Balances &amp; Holdings
-                    <span style={{ fontSize: '11px', fontWeight: 400, color: '#9c93a8', marginLeft: '8px' }}>({clients.length} clients)</span>
-                  </h3>
-                </div>
-                <div style={{ maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '4px' }}>
-                  {/* Header row */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px 70px 70px 70px 70px', gap: '8px', padding: '6px 10px', fontSize: '10px', fontWeight: 700, color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                    <span>Client</span>
-                    <span style={{ textAlign: 'right' }}>Wallet</span>
-                    <span style={{ textAlign: 'right' }}>Gold</span>
-                    <span style={{ textAlign: 'right' }}>Silver</span>
-                    <span style={{ textAlign: 'right' }}>Platinum</span>
-                    <span style={{ textAlign: 'right' }}>Iron</span>
+                  <div>
+                    <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#ffffff', margin: 0 }}>Registered Client Directory</h2>
+                    <p style={{ fontSize: '12px', color: '#9c93a8', margin: '4px 0 0' }}>Real-time balance, KYC tracking, and portfolio inspect controls</p>
                   </div>
-                  {clients.map((c) => {
-                    const holdings = c.holdings || {};
-                    return (
-                      <div
-                        key={c.id}
-                        style={{ display: 'grid', gridTemplateColumns: '1fr 90px 70px 70px 70px 70px', gap: '8px', padding: '8px 10px', borderRadius: '8px', background: selectedClientId === c.id ? 'rgba(217,175,86,0.08)' : 'rgba(255,255,255,0.02)', cursor: 'pointer', transition: 'background 0.15s' }}
-                        onClick={() => setSelectedClientId(c.id)}
-                        onMouseEnter={e => { if (selectedClientId !== c.id) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
-                        onMouseLeave={e => { if (selectedClientId !== c.id) e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
-                      >
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '12px', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name}</div>
-                          <div style={{ fontSize: '10px', color: '#9c93a8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.email}</div>
-                        </div>
-                        <span style={{ textAlign: 'right', fontWeight: 700, fontSize: '12px', color: '#10b981' }}>
-                          ₹{(c.walletBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                        </span>
-                        <span style={{ textAlign: 'right', fontSize: '12px', color: '#d9af56' }}>
-                          {(holdings.gold || 0) > 0 ? `${(holdings.gold).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
-                        </span>
-                        <span style={{ textAlign: 'right', fontSize: '12px', color: '#94a3b8' }}>
-                          {(holdings.silver || 0) > 0 ? `${(holdings.silver).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
-                        </span>
-                        <span style={{ textAlign: 'right', fontSize: '12px', color: '#c084fc' }}>
-                          {(holdings.platinum || 0) > 0 ? `${(holdings.platinum).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
-                        </span>
-                        <span style={{ textAlign: 'right', fontSize: '12px', color: '#fb923c' }}>
-                          {(holdings.iron || 0) > 0 ? `${(holdings.iron).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-            </div>
-
-            {/* Right Side: Visual Inspector Pane (5 Cols) */}
-            <div className="admin-col-5" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {!selectedClientId ? (
-                <div style={{ background: '#120524', border: '1px dashed rgba(255, 255, 255, 0.1)', borderRadius: '16px', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', minHeight: '400px' }}>
-                  <p style={{ color: '#9c93a8', textAlign: 'center', fontSize: '14px', lineHeight: '1.6' }}>Select <strong>"Inspect"</strong> on any client from the list<br/>to view their vault details.</p>
-                </div>
-              ) : (
-                <>
-                  {/* Customer Inspection Dashboard Card */}
-                  <div style={{ background: '#120524', border: '1px solid rgba(217, 175, 86, 0.2)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
-                <div style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '16px' }}>
-                  <span style={{ fontSize: '10px', color: '#d9af56', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Vault Client Inspector</span>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                    <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#ffffff', margin: 0 }}>{inspectedClient.name}</h2>
-                    <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 700 }}>ID: {inspectedClient.id}</span>
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#9c93a8', marginTop: '2px' }}>{inspectedClient.email} • {inspectedClient.phone}</div>
-                </div>
-
-                {/* Broker Partner VIP Status Panel in Inspector */}
-                <div style={{
-                  background: inspectedClient.isBroker ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(217, 175, 86, 0.12))' : 'rgba(255,255,255,0.02)',
-                  padding: '16px',
-                  borderRadius: '12px',
-                  border: '1px solid ' + (inspectedClient.isBroker ? 'rgba(217, 175, 86, 0.3)' : 'rgba(255,255,255,0.05)'),
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Broker Partnership Status</span>
-                      <strong style={{ 
-                        color: inspectedClient.isBroker ? '#f7df94' : '#9c93a8', 
-                        fontSize: '13px',
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <input
+                      type="text"
+                      placeholder="Search clients..."
+                      value={clientSearchQuery}
+                      onChange={(e) => setClientSearchQuery(e.target.value)}
+                      style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        color: '#fff',
+                        fontSize: '12px',
+                        width: '200px'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm('Are you sure you want to clear all client data? This action cannot be undone.')) {
+                          localStorage.removeItem('vb_clients');
+                          setClients([]);
+                          setSelectedClientId('');
+                          alert('All client data has been cleared successfully.');
+                        }
+                      }}
+                      style={{
+                        background: '#dc2626',
+                        color: '#ffffff',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px'
-                      }}>
-                        {inspectedClient.isBroker ? '👑 VERIFIED BROKER (CUST-B-)' : inspectedClient.brokerStatus === 'Pending' ? '⏳ APPLICATION PENDING' : 'STANDARD CUSTOMER'}
-                      </strong>
+                      }}
+                    >
+                      <X size={14} /> Clear All Data
+                    </button>
+                    <div style={{ background: '#1e0b36', padding: '4px 12px', borderRadius: '8px', fontSize: '12px', color: '#d9af56', fontWeight: 600 }}>
+                      {clients.filter(c => c.email.toLowerCase() !== 'sandeepkumar.pikili@vrpigroup.co.in').length} Clients
                     </div>
-                    {inspectedClient.isBroker ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <button
-                          type="button"
-                          onClick={() => setDistributeModal({ open: true, broker: inspectedClient, amount: '', note: '' })}
-                          style={{
-                            background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
-                            color: '#ffffff',
-                            border: 'none',
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            cursor: 'pointer'
-                          }}
-                        >
-                          + Distribute Profit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            const rawId = parseInt(String(inspectedClient.id).replace(/^CUST-(B-)?/, ''));
-                            await handleCancelBrokerSubscription(rawId, inspectedClient.name || inspectedClient.email);
-                            setInspectedClient(null);
-                          }}
-                          style={{
-                            background: 'rgba(239, 68, 68, 0.15)',
-                            color: '#f87171',
-                            border: '1px solid rgba(239, 68, 68, 0.35)',
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            cursor: 'pointer'
-                          }}
-                          title="Admin: Revoke and cancel broker partnership subscription"
-                        >
-                          Cancel Subscription
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          const rate = prompt("Enter guaranteed commission % for this broker (5% to 10%):", "7.5");
-                          if (!rate) return;
-                          const numUserId = parseInt(String(inspectedClient.id).replace(/^CUST-(B-)?/, ''));
-                          try {
-                            const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/reactivate`, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: numUserId, commissionRate: parseFloat(rate) })
-                            });
-                            const d = await res.json();
-                            if (d.success) {
-                              alert(d.message || 'Broker upgraded to CUST-B- successfully!');
-                            } else {
-                              alert(d.error || 'Failed to upgrade broker');
-                            }
-                          } catch (err) {
-                            console.error('Error upgrading broker:', err);
-                          }
-                          fetchAdminClientsData();
-                          fetchBrokerRequests();
-                          setInspectedClient(null);
-                        }}
-                        style={{
-                          background: 'rgba(217, 175, 86, 0.15)',
-                          color: '#f7df94',
-                          border: '1px solid rgba(217, 175, 86, 0.3)',
-                          padding: '6px 12px',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Upgrade to CUST-B-
-                      </button>
-                    )}
                   </div>
-
-                  {inspectedClient.isBroker && (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '4px' }}>
-                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Profit Rate</span>
-                        <strong style={{ fontSize: '13px', color: '#d9af56' }}>{inspectedClient.brokerCommissionRate || 7.5}%</strong>
-                      </div>
-                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Live Earnings</span>
-                        <strong style={{ fontSize: '13px', color: '#10b981' }}>₹{parseFloat(inspectedClient.brokerEarnings || 0).toFixed(2)}</strong>
-                      </div>
-                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Spent On Trades</span>
-                        <strong style={{ fontSize: '13px', color: '#ffffff' }}>₹{parseFloat(inspectedClient.totalBrokerSpent || 0).toFixed(2)}</strong>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
-                {/* KYC Interactive Toggle Panel */}
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>KYC Status Verification</span>
-                      <strong style={{ 
-                        color: inspectedClient.kycStatus === 'Verified' ? '#10b981' : inspectedClient.kycStatus === 'Submitted' ? '#f59e0b' : inspectedClient.kycStatus === 'Rejected' ? '#ef4444' : '#9c93a8', 
-                        fontSize: '13px',
-                        textTransform: 'uppercase'
-                      }}>
-                        {inspectedClient.kycStatus || 'Pending'}
-                      </strong>
-                    </div>
-                    
-                    <div className="admin-kyc-actions">
-                      {inspectedClient.kycStatus !== 'Verified' && (
-                        <button 
-                          onClick={async () => {
-                            try {
-                              const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Verified' })
-                              });
-                              if (!res.ok) throw new Error('Update failed');
-                              const updated = clients.map(c => {
-                                if (c.id === inspectedClient.id) {
-                                  return { ...c, kycStatus: 'Verified', kycRejectionReason: null };
-                                }
-                                return c;
-                              });
-                              setClients(updated);
-                              localStorage.setItem('vb_clients', JSON.stringify(updated));
-                            } catch (e) {
-                              alert('Failed to update KYC status.');
-                            }
-                          }}
-                          style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
-                        >
-                          Approve
-                        </button>
-                      )}
-                      {inspectedClient.kycStatus !== 'Rejected' && (
-                        <button 
-                          onClick={async () => {
-                            const reason = prompt("Enter KYC rejection reason:", "The uploaded document image was blurry. Please ensure all details are clearly readable.");
-                            if (reason === null) return; // cancelled
-                            try {
-                              const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Rejected' })
-                              });
-                              if (!res.ok) throw new Error('Update failed');
-                              const updated = clients.map(c => {
-                                if (c.id === inspectedClient.id) {
-                                  return { ...c, kycStatus: 'Rejected', kycRejectionReason: reason || 'Uploaded document details could not be verified.' };
-                                }
-                                return c;
-                              });
-                              setClients(updated);
-                              localStorage.setItem('vb_clients', JSON.stringify(updated));
-                            } catch (e) {
-                              alert('Failed to update KYC status.');
-                            }
-                          }}
-                          style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
-                        >
-                          Reject
-                        </button>
-                      )}
-                      {inspectedClient.kycStatus !== 'Pending' && (
-                        <button 
-                          onClick={async () => {
-                            try {
-                              const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Pending' })
-                              });
-                              if (!res.ok) throw new Error('Update failed');
-                              const updated = clients.map(c => {
-                                if (c.id === inspectedClient.id) {
-                                  return { ...c, kycStatus: 'Pending', kycRejectionReason: null };
-                                }
-                                return c;
-                              });
-                              setClients(updated);
-                              localStorage.setItem('vb_clients', JSON.stringify(updated));
-                            } catch (e) {
-                              alert('Failed to reset KYC status.');
-                            }
-                          }}
-                          style={{ background: 'rgba(255, 255, 255, 0.05)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
-                        >
-                          Reset to Pending
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                {/* Clients Roster Table */}
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                        <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700 }}>Client Profile</th>
+                        <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700 }}>Vault Wallet</th>
+                        <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700 }}>KYC Status</th>
+                        <th style={{ padding: '12px 10px', fontSize: '11px', color: '#9c93a8', textTransform: 'uppercase', fontWeight: 700, textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {clients
+                        .filter(c => c.email.toLowerCase() !== 'sandeepkumar.pikili@vrpigroup.co.in')
+                        .filter(c => {
+                          if (!clientSearchQuery) return true;
+                          const query = clientSearchQuery.toLowerCase();
+                          return (
+                            (c.name && c.name.toLowerCase().includes(query)) ||
+                            (c.email && c.email.toLowerCase().includes(query)) ||
+                            (c.referralCode && c.referralCode.toLowerCase().includes(query)) ||
+                            (c.phone && c.phone.toLowerCase().includes(query))
+                          );
+                        })
+                        .map(c => {
+                          const isSelected = selectedClientId === c.id;
+                          const matchedVal = (c.holdings?.gold || 0) * rates.gold.price + (c.holdings?.silver || 0) * rates.silver.price + (c.holdings?.platinum || 0) * rates.platinum.price + (c.holdings?.iron || 0) * rates.iron.price + (c.walletBalance || 0);
+                          return (
+                            <tr
+                              key={c.id}
+                              onClick={() => setSelectedClientId(c.id)}
+                              style={{
+                                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                                background: isSelected ? 'rgba(244, 63, 94, 0.05)' : 'transparent',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                              }}
+                              className="client-directory-row"
+                            >
+                              <td style={{ padding: '14px 10px' }}>
+                                <div style={{ fontWeight: '700', fontSize: '14px', color: isSelected ? '#f43f5e' : '#ffffff' }}>{c.name}</div>
+                                <div style={{ fontSize: '12px', color: '#9c93a8' }}>{c.email}</div>
+                                <div style={{ fontSize: '10px', color: '#d9af56', fontFamily: 'monospace', marginTop: '2px' }}>
+                                  Code: IH-{c.email?.split('@')[0].toUpperCase() || 'USER'}
+                                </div>
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <div style={{ fontWeight: '700', fontSize: '14px', color: '#ffffff' }}>₹{c.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                                <div style={{ fontSize: '11px', color: '#10b981' }}>Valuation: ₹{matchedVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
+                              </td>
+                              <td style={{ padding: '14px 10px' }}>
+                                <span style={{
+                                  fontSize: '10px',
+                                  fontWeight: 800,
+                                  letterSpacing: '0.5px',
+                                  textTransform: 'uppercase',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  background: c.kycStatus === 'Verified' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                                  color: c.kycStatus === 'Verified' ? '#10b981' : '#f59e0b',
+                                }}>
+                                  {c.kycStatus}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 10px', textAlign: 'right' }}>
+                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedClientId(c.id);
+                                    }}
+                                    style={{
+                                      padding: '6px 12px',
+                                      fontSize: '12px',
+                                      border: '1px solid',
+                                      borderColor: isSelected ? '#f43f5e' : 'rgba(255,255,255,0.15)',
+                                      background: isSelected ? '#f43f5e' : 'transparent',
+                                      color: '#ffffff',
+                                      borderRadius: '6px',
+                                      fontWeight: 600,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Inspect Portfolio
+                                  </button>
+                                  <button
+                                    onClick={async (e) => {
+                                      e.stopPropagation();
+                                      if (window.confirm(`Are you sure you want to delete ${c.name}'s account? This will permanently delete:\n- Client profile data\n- Authentication account\n- All transaction history\n\nThis action cannot be undone.`)) {
+                                        try {
+                                          // Call backend to delete user
+                                          const response = await fetch(`${VITE_BACKEND_URL}/api/admin/delete-user`, {
+                                            method: "POST",
+                                            headers: {
+                                              "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify({
+                                              email: c.email,
+                                              clientId: c.id
+                                            })
+                                          });
 
-                  {inspectedClient.kycDocument ? (
-                    <div style={{ marginTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '10px' }}>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block', marginBottom: '6px' }}>Uploaded Verification File:</span>
-                      <div className="kyc-file-preview">
-                        <div className="kyc-file-details">
-                          <FileText size={16} className="kyc-upload-icon" style={{ margin: 0 }} />
-                          <div className="kyc-file-info" style={{ textAlign: 'left' }}>
-                            <span className="kyc-file-name" style={{ fontSize: '12px', color: '#ffffff', wordBreak: 'break-all' }}>{inspectedClient.kycDocument.fileName}</span>
-                            <span className="kyc-file-size" style={{ fontSize: '10px', color: '#9c93a8' }}>{inspectedClient.kycDocument.type} • {inspectedClient.kycDocument.uploadedAt}</span>
+                                          const data = await response.json();
+
+                                          if (!response.ok) {
+                                            console.warn("Backend deletion warning:", data.message);
+                                          }
+
+                                          // Remove from local state and localStorage
+                                          const updatedClients = clients.filter(client => client.id !== c.id);
+                                          setClients(updatedClients);
+                                          localStorage.setItem('vb_clients', JSON.stringify(updatedClients));
+
+                                          // Update selected client if needed
+                                          if (selectedClientId === c.id) {
+                                            setSelectedClientId(updatedClients.length > 0 ? updatedClients[0].id : '');
+                                          }
+
+                                          alert(`${c.name}'s account has been deleted successfully from all systems.`);
+                                        } catch (error) {
+                                          console.error("Error deleting user:", error);
+                                          // Still delete locally even if backend fails
+                                          const updatedClients = clients.filter(client => client.id !== c.id);
+                                          setClients(updatedClients);
+                                          localStorage.setItem('vb_clients', JSON.stringify(updatedClients));
+
+                                          if (selectedClientId === c.id) {
+                                            setSelectedClientId(updatedClients.length > 0 ? updatedClients[0].id : '');
+                                          }
+
+                                          alert(`${c.name}'s local data has been deleted. Note: Backend account deletion may have failed. Error: ${error.message}`);
+                                        }
+                                      }
+                                    }}
+                                    style={{
+                                      padding: '6px 12px',
+                                      fontSize: '12px',
+                                      border: '1px solid #dc2626',
+                                      background: 'transparent',
+                                      color: '#dc2626',
+                                      borderRadius: '6px',
+                                      fontWeight: 600,
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '4px'
+                                    }}
+                                    title={`Delete ${c.name}'s account`}
+                                  >
+                                    <X size={14} /> Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Client Balances & Holdings Summary */}
+                <div style={{ display: 'none' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 style={{ fontSize: '15px', fontWeight: '800', margin: 0 }}>
+                      Client Balances &amp; Holdings
+                      <span style={{ fontSize: '11px', fontWeight: 400, color: '#9c93a8', marginLeft: '8px' }}>({clients.length} clients)</span>
+                    </h3>
+                  </div>
+                  <div style={{ maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '4px' }}>
+                    {/* Header row */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px 70px 70px 70px 70px', gap: '8px', padding: '6px 10px', fontSize: '10px', fontWeight: 700, color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                      <span>Client</span>
+                      <span style={{ textAlign: 'right' }}>Wallet</span>
+                      <span style={{ textAlign: 'right' }}>Gold</span>
+                      <span style={{ textAlign: 'right' }}>Silver</span>
+                      <span style={{ textAlign: 'right' }}>Platinum</span>
+                      <span style={{ textAlign: 'right' }}>Iron</span>
+                    </div>
+                    {clients.map((c) => {
+                      const holdings = c.holdings || {};
+                      return (
+                        <div
+                          key={c.id}
+                          style={{ display: 'grid', gridTemplateColumns: '1fr 90px 70px 70px 70px 70px', gap: '8px', padding: '8px 10px', borderRadius: '8px', background: selectedClientId === c.id ? 'rgba(217,175,86,0.08)' : 'rgba(255,255,255,0.02)', cursor: 'pointer', transition: 'background 0.15s' }}
+                          onClick={() => setSelectedClientId(c.id)}
+                          onMouseEnter={e => { if (selectedClientId !== c.id) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                          onMouseLeave={e => { if (selectedClientId !== c.id) e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: 700, fontSize: '12px', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name}</div>
+                            <div style={{ fontSize: '10px', color: '#9c93a8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.email}</div>
+                          </div>
+                          <span style={{ textAlign: 'right', fontWeight: 700, fontSize: '12px', color: '#10b981' }}>
+                            ₹{(c.walletBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                          </span>
+                          <span style={{ textAlign: 'right', fontSize: '12px', color: '#d9af56' }}>
+                            {(holdings.gold || 0) > 0 ? `${(holdings.gold).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
+                          </span>
+                          <span style={{ textAlign: 'right', fontSize: '12px', color: '#94a3b8' }}>
+                            {(holdings.silver || 0) > 0 ? `${(holdings.silver).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
+                          </span>
+                          <span style={{ textAlign: 'right', fontSize: '12px', color: '#c084fc' }}>
+                            {(holdings.platinum || 0) > 0 ? `${(holdings.platinum).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
+                          </span>
+                          <span style={{ textAlign: 'right', fontSize: '12px', color: '#fb923c' }}>
+                            {(holdings.iron || 0) > 0 ? `${(holdings.iron).toFixed(3)}g` : <span style={{ color: '#3d3650' }}>—</span>}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Right Side: Visual Inspector Pane (5 Cols) */}
+              <div className="admin-col-5" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {!selectedClientId ? (
+                  <div style={{ background: '#120524', border: '1px dashed rgba(255, 255, 255, 0.1)', borderRadius: '16px', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', minHeight: '400px' }}>
+                    <p style={{ color: '#9c93a8', textAlign: 'center', fontSize: '14px', lineHeight: '1.6' }}>Select <strong>"Inspect"</strong> on any client from the list<br />to view their vault details.</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Customer Inspection Dashboard Card */}
+                    <div style={{ background: '#120524', border: '1px solid rgba(217, 175, 86, 0.2)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+                      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '16px' }}>
+                        <span style={{ fontSize: '10px', color: '#d9af56', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Vault Client Inspector</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+                          <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#ffffff', margin: 0 }}>{inspectedClient.name}</h2>
+                          <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 700 }}>ID: {inspectedClient.id}</span>
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#9c93a8', marginTop: '2px' }}>{inspectedClient.email} • {inspectedClient.phone}</div>
+                      </div>
+
+                      {/* Broker Partner VIP Status Panel in Inspector */}
+                      <div style={{
+                        background: inspectedClient.isBroker ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(217, 175, 86, 0.12))' : 'rgba(255,255,255,0.02)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        border: '1px solid ' + (inspectedClient.isBroker ? 'rgba(217, 175, 86, 0.3)' : 'rgba(255,255,255,0.05)'),
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Broker Partnership Status</span>
+                            <strong style={{
+                              color: inspectedClient.isBroker ? '#f7df94' : '#9c93a8',
+                              fontSize: '13px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px'
+                            }}>
+                              {inspectedClient.isBroker ? '👑 VERIFIED BROKER (CUST-B-)' : inspectedClient.brokerStatus === 'Pending' ? '⏳ APPLICATION PENDING' : 'STANDARD CUSTOMER'}
+                            </strong>
+                          </div>
+                          {inspectedClient.isBroker ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <button
+                                type="button"
+                                onClick={() => setDistributeModal({ open: true, broker: inspectedClient, amount: '', note: '' })}
+                                style={{
+                                  background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+                                  color: '#ffffff',
+                                  border: 'none',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                + Distribute Profit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  const rawId = parseInt(String(inspectedClient.id).replace(/^CUST-(B-)?/, ''));
+                                  await handleCancelBrokerSubscription(rawId, inspectedClient.name || inspectedClient.email);
+                                  setInspectedClient(null);
+                                }}
+                                style={{
+                                  background: 'rgba(239, 68, 68, 0.15)',
+                                  color: '#f87171',
+                                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                                title="Admin: Revoke and cancel broker partnership subscription"
+                              >
+                                Cancel Subscription
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                const rate = prompt("Enter guaranteed commission % for this broker (5% to 10%):", "7.5");
+                                if (!rate) return;
+                                const numUserId = parseInt(String(inspectedClient.id).replace(/^CUST-(B-)?/, ''));
+                                try {
+                                  const res = await fetch(`${VITE_BACKEND_URL}/api/broker/admin/reactivate`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ userId: numUserId, commissionRate: parseFloat(rate) })
+                                  });
+                                  const d = await res.json();
+                                  if (d.success) {
+                                    alert(d.message || 'Broker upgraded to CUST-B- successfully!');
+                                  } else {
+                                    alert(d.error || 'Failed to upgrade broker');
+                                  }
+                                } catch (err) {
+                                  console.error('Error upgrading broker:', err);
+                                }
+                                fetchAdminClientsData();
+                                fetchBrokerRequests();
+                                setInspectedClient(null);
+                              }}
+                              style={{
+                                background: 'rgba(217, 175, 86, 0.15)',
+                                color: '#f7df94',
+                                border: '1px solid rgba(217, 175, 86, 0.3)',
+                                padding: '6px 12px',
+                                borderRadius: '6px',
+                                fontSize: '11px',
+                                fontWeight: 700,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              Upgrade to CUST-B-
+                            </button>
+                          )}
+                        </div>
+
+                        {inspectedClient.isBroker && (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '4px' }}>
+                            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
+                              <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Profit Rate</span>
+                              <strong style={{ fontSize: '13px', color: '#d9af56' }}>{inspectedClient.brokerCommissionRate || 7.5}%</strong>
+                            </div>
+                            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
+                              <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Live Earnings</span>
+                              <strong style={{ fontSize: '13px', color: '#10b981' }}>₹{parseFloat(inspectedClient.brokerEarnings || 0).toFixed(2)}</strong>
+                            </div>
+                            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
+                              <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Spent On Trades</span>
+                              <strong style={{ fontSize: '13px', color: '#ffffff' }}>₹{parseFloat(inspectedClient.totalBrokerSpent || 0).toFixed(2)}</strong>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* KYC Interactive Toggle Panel */}
+                      <div style={{ background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>KYC Status Verification</span>
+                            <strong style={{
+                              color: inspectedClient.kycStatus === 'Verified' ? '#10b981' : inspectedClient.kycStatus === 'Submitted' ? '#f59e0b' : inspectedClient.kycStatus === 'Rejected' ? '#ef4444' : '#9c93a8',
+                              fontSize: '13px',
+                              textTransform: 'uppercase'
+                            }}>
+                              {inspectedClient.kycStatus || 'Pending'}
+                            </strong>
+                          </div>
+
+                          <div className="admin-kyc-actions">
+                            {inspectedClient.kycStatus !== 'Verified' && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Verified' })
+                                    });
+                                    if (!res.ok) throw new Error('Update failed');
+                                    const updated = clients.map(c => {
+                                      if (c.id === inspectedClient.id) {
+                                        return { ...c, kycStatus: 'Verified', kycRejectionReason: null };
+                                      }
+                                      return c;
+                                    });
+                                    setClients(updated);
+                                    localStorage.setItem('vb_clients', JSON.stringify(updated));
+                                  } catch (e) {
+                                    alert('Failed to update KYC status.');
+                                  }
+                                }}
+                                style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                Approve
+                              </button>
+                            )}
+                            {inspectedClient.kycStatus !== 'Rejected' && (
+                              <button
+                                onClick={async () => {
+                                  const reason = prompt("Enter KYC rejection reason:", "The uploaded document image was blurry. Please ensure all details are clearly readable.");
+                                  if (reason === null) return; // cancelled
+                                  try {
+                                    const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Rejected' })
+                                    });
+                                    if (!res.ok) throw new Error('Update failed');
+                                    const updated = clients.map(c => {
+                                      if (c.id === inspectedClient.id) {
+                                        return { ...c, kycStatus: 'Rejected', kycRejectionReason: reason || 'Uploaded document details could not be verified.' };
+                                      }
+                                      return c;
+                                    });
+                                    setClients(updated);
+                                    localStorage.setItem('vb_clients', JSON.stringify(updated));
+                                  } catch (e) {
+                                    alert('Failed to update KYC status.');
+                                  }
+                                }}
+                                style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                Reject
+                              </button>
+                            )}
+                            {inspectedClient.kycStatus !== 'Pending' && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/update`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), status: 'Pending' })
+                                    });
+                                    if (!res.ok) throw new Error('Update failed');
+                                    const updated = clients.map(c => {
+                                      if (c.id === inspectedClient.id) {
+                                        return { ...c, kycStatus: 'Pending', kycRejectionReason: null };
+                                      }
+                                      return c;
+                                    });
+                                    setClients(updated);
+                                    localStorage.setItem('vb_clients', JSON.stringify(updated));
+                                  } catch (e) {
+                                    alert('Failed to reset KYC status.');
+                                  }
+                                }}
+                                style={{ background: 'rgba(255, 255, 255, 0.05)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                Reset to Pending
+                              </button>
+                            )}
                           </div>
                         </div>
-                        <div className="admin-kyc-file-actions">
-                          <button 
-                            onClick={() => {
-                              if (inspectedClient.kycDocument.fileData) {
-                                const newWindow = window.open();
-                                if (newWindow) {
-                                  newWindow.document.write(`<iframe src="${inspectedClient.kycDocument.fileData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
-                                }
-                              } else {
-                                alert('File data not available for this older upload. Please ask the user to re-upload.');
-                              }
-                            }}
-                            style={{ background: 'rgba(217, 175, 86, 0.1)', border: '1px solid rgba(217, 175, 86, 0.3)', color: '#d9af56', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(217, 175, 86, 0.2)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(217, 175, 86, 0.1)'; }}
-                          >
-                            View
-                          </button>
-                          
-                          <button 
-                            onClick={() => {
-                              document.getElementById('admin-kyc-replace-input').click();
-                            }}
-                            style={{ background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.3)', color: '#a855f7', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.2)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.1)'; }}
-                          >
-                            Replace
-                          </button>
-                          
-                          <button 
-                            onClick={async () => {
-                              if (!window.confirm("Are you sure you want to delete this user's KYC document? This will clear it from the database.")) return;
+
+                        {inspectedClient.kycDocument ? (
+                          <div style={{ marginTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '10px' }}>
+                            <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block', marginBottom: '6px' }}>Uploaded Verification File:</span>
+                            <div className="kyc-file-preview">
+                              <div className="kyc-file-details">
+                                <FileText size={16} className="kyc-upload-icon" style={{ margin: 0 }} />
+                                <div className="kyc-file-info" style={{ textAlign: 'left' }}>
+                                  <span className="kyc-file-name" style={{ fontSize: '12px', color: '#ffffff', wordBreak: 'break-all' }}>{inspectedClient.kycDocument.fileName}</span>
+                                  <span className="kyc-file-size" style={{ fontSize: '10px', color: '#9c93a8' }}>{inspectedClient.kycDocument.type} • {inspectedClient.kycDocument.uploadedAt}</span>
+                                </div>
+                              </div>
+                              <div className="admin-kyc-file-actions">
+                                <button
+                                  onClick={() => {
+                                    if (inspectedClient.kycDocument.fileData) {
+                                      const newWindow = window.open();
+                                      if (newWindow) {
+                                        newWindow.document.write(`<iframe src="${inspectedClient.kycDocument.fileData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                                      }
+                                    } else {
+                                      alert('File data not available for this older upload. Please ask the user to re-upload.');
+                                    }
+                                  }}
+                                  style={{ background: 'rgba(217, 175, 86, 0.1)', border: '1px solid rgba(217, 175, 86, 0.3)', color: '#d9af56', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
+                                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(217, 175, 86, 0.2)'; }}
+                                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(217, 175, 86, 0.1)'; }}
+                                >
+                                  View
+                                </button>
+
+                                <button
+                                  onClick={() => {
+                                    document.getElementById('admin-kyc-replace-input').click();
+                                  }}
+                                  style={{ background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.3)', color: '#a855f7', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
+                                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.2)'; }}
+                                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.1)'; }}
+                                >
+                                  Replace
+                                </button>
+
+                                <button
+                                  onClick={async () => {
+                                    if (!window.confirm("Are you sure you want to delete this user's KYC document? This will clear it from the database.")) return;
+                                    try {
+                                      const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/delete`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, '') })
+                                      });
+                                      if (!res.ok) throw new Error('Delete failed');
+                                      const updated = clients.map(c => {
+                                        if (c.id === inspectedClient.id) {
+                                          return { ...c, kycDocument: null, kycStatus: 'Pending', kycRejectionReason: null };
+                                        }
+                                        return c;
+                                      });
+                                      setClients(updated);
+                                      localStorage.setItem('vb_clients', JSON.stringify(updated));
+                                      alert("Document deleted successfully.");
+                                    } catch (e) {
+                                      alert("Failed to delete document.");
+                                    }
+                                  }}
+                                  style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
+                                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
+                                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ marginTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '10px' }}>
+                            <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block', marginBottom: '6px' }}>No verification document uploaded.</span>
+                            <button
+                              onClick={() => {
+                                document.getElementById('admin-kyc-replace-input').click();
+                              }}
+                              style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#10b981', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <Plus size={12} /> Upload / Add Document
+                            </button>
+                          </div>
+                        )}
+
+                        <input
+                          type="file"
+                          id="admin-kyc-replace-input"
+                          accept="image/*,application/pdf"
+                          style={{ display: 'none' }}
+                          onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            if (file.size > 5 * 1024 * 1024) {
+                              alert("File size exceeds 5MB limit.");
+                              return;
+                            }
+
+                            const reader = new FileReader();
+                            reader.onload = async () => {
                               try {
-                                const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/delete`, {
+                                const base64Data = reader.result;
+                                const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/replace`, {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, '') })
+                                  body: JSON.stringify({
+                                    userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''),
+                                    document: base64Data,
+                                    fileName: file.name,
+                                    fileType: file.type
+                                  })
                                 });
-                                if (!res.ok) throw new Error('Delete failed');
+                                if (!res.ok) throw new Error('Replacement failed');
+
                                 const updated = clients.map(c => {
                                   if (c.id === inspectedClient.id) {
-                                    return { ...c, kycDocument: null, kycStatus: 'Pending', kycRejectionReason: null };
+                                    return {
+                                      ...c,
+                                      kycStatus: 'Submitted',
+                                      kycDocument: {
+                                        type: file.type,
+                                        fileName: file.name,
+                                        fileSize: 'Uploaded',
+                                        uploadedAt: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                                        fileData: base64Data
+                                      },
+                                      kycRejectionReason: null
+                                    };
                                   }
                                   return c;
                                 });
                                 setClients(updated);
                                 localStorage.setItem('vb_clients', JSON.stringify(updated));
-                                alert("Document deleted successfully.");
-                              } catch (e) {
-                                alert("Failed to delete document.");
+                                alert("Document uploaded/replaced successfully.");
+                              } catch (err) {
+                                alert("Failed to upload/replace document.");
                               }
-                            }}
-                            style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{ marginTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '10px' }}>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block', marginBottom: '6px' }}>No verification document uploaded.</span>
-                      <button 
-                        onClick={() => {
-                          document.getElementById('admin-kyc-replace-input').click();
-                        }}
-                        style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#10b981', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                      >
-                        <Plus size={12} /> Upload / Add Document
-                      </button>
-                    </div>
-                  )}
-
-                  <input 
-                    type="file" 
-                    id="admin-kyc-replace-input" 
-                    accept="image/*,application/pdf"
-                    style={{ display: 'none' }}
-                    onChange={async (e) => {
-                      const file = e.target.files[0];
-                      if (!file) return;
-                      if (file.size > 5 * 1024 * 1024) {
-                        alert("File size exceeds 5MB limit.");
-                        return;
-                      }
-                      
-                      const reader = new FileReader();
-                      reader.onload = async () => {
-                        try {
-                          const base64Data = reader.result;
-                          const res = await fetch(`${VITE_BACKEND_URL}/api/admin/kyc/replace`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                              userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''),
-                              document: base64Data,
-                              fileName: file.name,
-                              fileType: file.type
-                            })
-                          });
-                          if (!res.ok) throw new Error('Replacement failed');
-                          
-                          const updated = clients.map(c => {
-                            if (c.id === inspectedClient.id) {
-                              return { 
-                                ...c, 
-                                kycStatus: 'Submitted', 
-                                kycDocument: {
-                                  type: file.type,
-                                  fileName: file.name,
-                                  fileSize: 'Uploaded',
-                                  uploadedAt: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                                  fileData: base64Data
-                                },
-                                kycRejectionReason: null
-                              };
-                            }
-                            return c;
-                          });
-                          setClients(updated);
-                          localStorage.setItem('vb_clients', JSON.stringify(updated));
-                          alert("Document uploaded/replaced successfully.");
-                        } catch (err) {
-                          alert("Failed to upload/replace document.");
-                        }
-                      };
-                      reader.readAsDataURL(file);
-                    }}
-                  />
-
-                  {inspectedClient.kycStatus === 'Rejected' && inspectedClient.kycRejectionReason && (
-                    <div className="kyc-rejection-reason" style={{ marginTop: '4px', padding: '10px' }}>
-                      <strong>Rejection Reason:</strong> {inspectedClient.kycRejectionReason}
-                    </div>
-                  )}
-                </div>
-
-                {/* Manual Account Open Panel */}
-                {(() => {
-                  const accountIsOpen = inspectedClient.isUnlocked || (inspectedClient.referralCount >= 4);
-                  return (
-                    <div style={{ background: accountIsOpen ? 'rgba(255, 255, 255, 0.02)' : 'rgba(16, 185, 129, 0.05)', padding: '16px', borderRadius: '12px', border: '1px solid ' + (accountIsOpen ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.2)'), display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
-                      <div>
-                        <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Account Status</span>
-                        <strong style={{ color: accountIsOpen ? '#10b981' : '#ef4444', fontSize: '13px', textTransform: 'uppercase' }}>{accountIsOpen ? 'OPEN' : 'LOCKED'}</strong>
-                      </div>
-                      <button
-                        onClick={async () => {
-                          if (accountIsOpen) return;
-                          if (!window.confirm("Are you sure you want to manually open this account without referrals or fees?")) return;
-                          try {
-                            const res = await fetch(`${VITE_BACKEND_URL}/api/admin/users/unlock`, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, '') })
-                            });
-                            if (!res.ok) throw new Error('Unlock failed');
-                            const updated = clients.map(c => {
-                              if (c.id === inspectedClient.id) {
-                                return { ...c, isUnlocked: true };
-                              }
-                              return c;
-                            });
-                            setClients(updated);
-                            localStorage.setItem('vb_clients', JSON.stringify(updated));
-                            setInspectedClient(prev => ({ ...prev, isUnlocked: true }));
-                            alert("Account successfully unlocked!");
-                          } catch (e) {
-                            alert('Failed to unlock account.');
-                          }
-                        }}
-                        disabled={accountIsOpen}
-                        style={{ 
-                          background: accountIsOpen ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.1)', 
-                          color: accountIsOpen ? '#9c93a8' : '#10b981', 
-                          border: '1px solid ' + (accountIsOpen ? 'transparent' : 'rgba(16, 185, 129, 0.3)'), 
-                          padding: '8px 16px', 
-                          borderRadius: '8px', 
-                          fontSize: '12px', 
-                          fontWeight: 700, 
-                          cursor: accountIsOpen ? 'not-allowed' : 'pointer', 
-                          transition: 'all 0.2s',
-                          opacity: accountIsOpen ? 0.6 : 1
-                        }}
-                        onMouseEnter={e => { if(!accountIsOpen) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'; }}
-                        onMouseLeave={e => { if(!accountIsOpen) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'; }}
-                      >
-                        Direct Account Open
-                      </button>
-                    </div>
-                  );
-                })()}
-
-                {/* Inspected Customer Wallet & Assets Grid */}
-                <div>
-                  <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 10px' }}>Vault Assets & Balances</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    
-                    <div style={{ background: '#1e0b36', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.03)', gridColumn: 'span 2' }}>
-                      <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Wallet Balance</span>
-                      <strong style={{ fontSize: '15px', color: '#ffffff' }}>₹{inspectedClient.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
-                    </div>
-
-                    {metals.map((metal) => {
-                      const weight = inspectedClient.holdings?.[metal.assetId] || 0;
-                      const price = rates[metal.assetId]?.price || 0;
-                      const value = weight * price;
-                      
-                      // Only show if weight > 0 (bought metals)
-                      if (weight <= 0) return null;
-
-                      let bgColor = 'rgba(100,100,100,0.06)';
-                      let borderColor = 'rgba(100,100,100,0.15)';
-                      let textColor = '#9ca3af';
-
-                      if (metal.group === 'gold') {
-                        bgColor = 'rgba(217,175,86,0.06)';
-                        borderColor = 'rgba(217,175,86,0.15)';
-                        textColor = '#d9af56';
-                      } else if (metal.group === 'silver') {
-                        bgColor = 'rgba(192,192,192,0.06)';
-                        borderColor = 'rgba(192,192,192,0.15)';
-                        textColor = '#c0c0c0';
-                      } else if (metal.group === 'bronze') {
-                        bgColor = 'rgba(245,158,11,0.06)';
-                        borderColor = 'rgba(245,158,11,0.15)';
-                        textColor = '#f59e0b';
-                      } else if (metal.group === 'blue') {
-                        bgColor = 'rgba(59,130,246,0.06)';
-                        borderColor = 'rgba(59,130,246,0.15)';
-                        textColor = '#3b82f6';
-                      } else if (metal.group === 'cyan') {
-                        bgColor = 'rgba(6,182,212,0.06)';
-                        borderColor = 'rgba(6,182,212,0.15)';
-                        textColor = '#06b6d4';
-                      } else if (metal.group === 'green') {
-                        bgColor = 'rgba(16,185,129,0.06)';
-                        borderColor = 'rgba(16,185,129,0.15)';
-                        textColor = '#10b981';
-                      } else if (metal.group === 'liquid') {
-                        bgColor = 'rgba(167,139,250,0.06)';
-                        borderColor = 'rgba(167,139,250,0.15)';
-                        textColor = '#a78bfa';
-                      }
-
-                      return (
-                        <div key={metal.assetId} style={{ background: bgColor, padding: '12px', borderRadius: '10px', border: `1px solid ${borderColor}` }}>
-                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>{metal.name} Holdings</span>
-                          <strong style={{ fontSize: '15px', color: textColor }}>{weight.toFixed(4)} g</strong>
-                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block' }}>₹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Visual Portfolio Allocation Chart Segment Bar */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                    <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Asset Allocation Breakdown</h4>
-                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>Total: ₹{clientTotalVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                  </div>
-                  
-                  {/* Progress bar allocations */}
-                  <div style={{ display: 'flex', height: '14px', borderRadius: '7px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)', margin: '10px 0' }}>
-                    {clientAllocations.map(alloc => (
-                      alloc.value > 0 && (
-                        <div 
-                          key={alloc.id} 
-                          style={{ 
-                            width: `${alloc.pct}%`, 
-                            background: alloc.id === 'cash' ? '#10b981' :
-                                        alloc.colorClass === 'gold' ? '#d9af56' :
-                                        alloc.colorClass === 'silver' ? '#c0c0c0' :
-                                        alloc.colorClass === 'bronze' ? '#b45309' :
-                                        alloc.colorClass === 'blue' ? '#3b82f6' :
-                                        alloc.colorClass === 'cyan' ? '#06b6d4' :
-                                        alloc.colorClass === 'green' ? '#10b981' :
-                                        alloc.colorClass === 'liquid' ? '#a78bfa' : '#4b5563', 
-                            transition: 'width 0.4s' 
-                          }} 
-                          title={`${alloc.name}: ${alloc.pct.toFixed(1)}%`}
-                        ></div>
-                      )
-                    ))}
-                  </div>
-
-                  {/* Allocation Legends */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '10px', color: '#9c93a8', marginTop: '8px' }}>
-                    {clientAllocations.map(alloc => {
-                      const color = alloc.id === 'cash' ? '#10b981' :
-                                    alloc.colorClass === 'gold' ? '#d9af56' :
-                                    alloc.colorClass === 'silver' ? '#c0c0c0' :
-                                    alloc.colorClass === 'bronze' ? '#b45309' :
-                                    alloc.colorClass === 'blue' ? '#3b82f6' :
-                                    alloc.colorClass === 'cyan' ? '#06b6d4' :
-                                    alloc.colorClass === 'green' ? '#10b981' :
-                                    alloc.colorClass === 'liquid' ? '#a78bfa' : '#4b5563';
-                      
-                      return (
-                        <span key={alloc.id} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }}></span> 
-                          {alloc.name} ({alloc.pct.toFixed(0)}%)
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Client Referral Details */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Client Referral Details</h4>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '11px', color: '#ec4899', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Gift size={12} /> {inspectedClient.referralCount !== undefined ? inspectedClient.referralCount : (user && inspectedClient.email?.toLowerCase() === user.email?.toLowerCase() ? successfulReferralsCount : Math.floor((inspectedClient.name?.charCodeAt(0) || 0) * 12) % 1550)} Referrals
-                      </span>
-                      <button
-                        onClick={() => {
-                          const currentCount = inspectedClient.referralCount !== undefined ? inspectedClient.referralCount : (user && inspectedClient.email?.toLowerCase() === user.email?.toLowerCase() ? successfulReferralsCount : Math.floor((inspectedClient.name?.charCodeAt(0) || 0) * 12) % 1550);
-                          const newCount = prompt(`Enter new referral count for ${inspectedClient.name}:`, currentCount);
-                          if (newCount !== null) {
-                            const parsed = parseInt(newCount, 10);
-                            if (isNaN(parsed) || parsed < 0) return alert("Please enter a valid non-negative number.");
-                            
-                            const updated = clients.map(client => {
-                              if (client.id === inspectedClient.id) {
-                                return { ...client, referralCount: parsed };
-                              }
-                              return client;
-                            });
-                            setClients(updated);
-                            localStorage.setItem('vb_clients', JSON.stringify(updated));
-                            
-                            if (user && inspectedClient.email?.toLowerCase() === user.email?.toLowerCase()) {
-                              setSuccessfulReferralsCount(parsed);
-                            }
-                            
-                            alert(`Successfully updated referral count for ${inspectedClient.name} to ${parsed}.`);
-                          }
-                        }}
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', cursor: 'pointer', transition: 'all 0.2s' }}
-                      >
-                        Edit Count
-                      </button>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '12px' }}>
-                    <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span style={{ fontSize: '10px', color: '#9c93a8' }}>Unique Code</span>
-                      <strong style={{ fontSize: '13px', color: '#d9af56', fontFamily: 'monospace', letterSpacing: '0.5px' }}>
-                        IH-{inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}
-                      </strong>
-                    </div>
-
-                    <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative' }}>
-                      <span style={{ fontSize: '10px', color: '#9c93a8' }}>Account Registration URL</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                        <input 
-                          type="text" 
-                          readOnly 
-                          value={`https://invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`} 
-                          style={{ width: '100%', background: 'transparent', border: 'none', color: '#ffffff', fontSize: '11px', outline: 'none', padding: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                        />
-                        <button 
-                          onClick={() => {
-                            const link = `https://invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`;
-                            navigator.clipboard.writeText(link);
-                            setCopiedInspectedReferralLink(true);
-                            setTimeout(() => setCopiedInspectedReferralLink(false), 2000);
+                            };
+                            reader.readAsDataURL(file);
                           }}
-                          style={{ background: 'transparent', border: 'none', color: copiedInspectedReferralLink ? '#10b981' : '#9c93a8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2px', transition: 'color 0.2s' }}
-                          title="Copy Link"
-                        >
-                          {copiedInspectedReferralLink ? <Check size={14} /> : <Copy size={14} />}
-                        </button>
+                        />
+
+                        {inspectedClient.kycStatus === 'Rejected' && inspectedClient.kycRejectionReason && (
+                          <div className="kyc-rejection-reason" style={{ marginTop: '4px', padding: '10px' }}>
+                            <strong>Rejection Reason:</strong> {inspectedClient.kycRejectionReason}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Interactive Credit / Adjustments Controls */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Wallet Vault Ledger Adjuster</h4>
-                  
-                  <div className="admin-ledger-adjuster-row">
-                    <div className="admin-ledger-adjuster-group">
-                      <input 
-                        type="number" 
-                        placeholder="Amt (₹)" 
-                        value={adminCreditAmount}
-                        onChange={(e) => setAdminCreditAmount(e.target.value)}
-                        style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '8px 10px', color: '#ffffff', fontSize: '13px' }}
-                      />
-                      <button 
-                        onClick={async () => {
-                          const val = parseFloat(adminCreditAmount);
-                          if (isNaN(val) || val <= 0) return alert("Please enter a valid credit amount.");
-                          try {
-                            const res = await fetch(`${VITE_BACKEND_URL}/api/admin/wallet/adjust`, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), amount: val, action: 'credit' })
-                            });
-                            const data = await res.json();
-                            if (!data.success) {
-                              return alert(data.message || 'Failed to credit wallet');
-                            }
-                            const updated = clients.map(c => {
-                              if (c.id === inspectedClient.id) {
-                                const newTx = {
-                                  id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
-                                  type: 'deposit',
-                                  asset: 'wallet',
-                                  amount: val,
-                                  weight: 0,
-                                  date: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                                  status: 'Completed'
-                                };
-                                return {
-                                  ...c,
-                                  walletBalance: parseFloat(((c.walletBalance || 0) + val).toFixed(2)),
-                                  transactions: [newTx, ...(c.transactions || [])]
-                                };
-                              }
-                              return c;
-                            });
-                            setClients(updated);
-                            localStorage.setItem('vb_clients', JSON.stringify(updated));
-                            setAdminCreditAmount('');
-                            alert(`Successfully credited ₹${val.toLocaleString()} to ${inspectedClient.name}'s wallet.`);
-                          } catch (error) {
-                            console.error("Error adjusting wallet:", error);
-                            alert("An error occurred while crediting the wallet.");
-                          }
-                        }}
-                        style={{ background: '#10b981', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '8px 12px', fontWeight: 600, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                      >
-                        <Plus size={14} /> Credit
-                      </button>
-                    </div>
+                      {/* Manual Account Open Panel */}
+                      {(() => {
+                        const accountIsOpen = inspectedClient.isUnlocked || (inspectedClient.referralCount >= 4);
+                        return (
+                          <div style={{ background: accountIsOpen ? 'rgba(255, 255, 255, 0.02)' : 'rgba(16, 185, 129, 0.05)', padding: '16px', borderRadius: '12px', border: '1px solid ' + (accountIsOpen ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.2)'), display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+                            <div>
+                              <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Account Status</span>
+                              <strong style={{ color: accountIsOpen ? '#10b981' : '#ef4444', fontSize: '13px', textTransform: 'uppercase' }}>{accountIsOpen ? 'OPEN' : 'LOCKED'}</strong>
+                            </div>
+                            <button
+                              onClick={async () => {
+                                if (accountIsOpen) return;
+                                if (!window.confirm("Are you sure you want to manually open this account without referrals or fees?")) return;
+                                try {
+                                  const res = await fetch(`${VITE_BACKEND_URL}/api/admin/users/unlock`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, '') })
+                                  });
+                                  if (!res.ok) throw new Error('Unlock failed');
+                                  const updated = clients.map(c => {
+                                    if (c.id === inspectedClient.id) {
+                                      return { ...c, isUnlocked: true };
+                                    }
+                                    return c;
+                                  });
+                                  setClients(updated);
+                                  localStorage.setItem('vb_clients', JSON.stringify(updated));
+                                  setInspectedClient(prev => ({ ...prev, isUnlocked: true }));
+                                  alert("Account successfully unlocked!");
+                                } catch (e) {
+                                  alert('Failed to unlock account.');
+                                }
+                              }}
+                              disabled={accountIsOpen}
+                              style={{
+                                background: accountIsOpen ? 'rgba(255, 255, 255, 0.05)' : 'rgba(16, 185, 129, 0.1)',
+                                color: accountIsOpen ? '#9c93a8' : '#10b981',
+                                border: '1px solid ' + (accountIsOpen ? 'transparent' : 'rgba(16, 185, 129, 0.3)'),
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                cursor: accountIsOpen ? 'not-allowed' : 'pointer',
+                                transition: 'all 0.2s',
+                                opacity: accountIsOpen ? 0.6 : 1
+                              }}
+                              onMouseEnter={e => { if (!accountIsOpen) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'; }}
+                              onMouseLeave={e => { if (!accountIsOpen) e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'; }}
+                            >
+                              Direct Account Open
+                            </button>
+                          </div>
+                        );
+                      })()}
 
-                    <div className="admin-ledger-adjuster-group">
-                      <input 
-                        type="number" 
-                        placeholder="Amt (₹)" 
-                        value={adminDeductAmount}
-                        onChange={(e) => setAdminDeductAmount(e.target.value)}
-                        style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '8px 10px', color: '#ffffff', fontSize: '13px' }}
-                      />
-                      <button 
-                        onClick={async () => {
-                          const val = parseFloat(adminDeductAmount);
-                          if (isNaN(val) || val <= 0) return alert("Please enter a valid deduction amount.");
-                          if (inspectedClient.walletBalance < val) return alert("Deduction value exceeds customer's active wallet balance.");
-                          try {
-                            const res = await fetch(`${VITE_BACKEND_URL}/api/admin/wallet/adjust`, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), amount: val, action: 'deduct' })
-                            });
-                            const data = await res.json();
-                            if (!data.success) {
-                              return alert(data.message || 'Failed to deduct wallet');
-                            }
-                            const updated = clients.map(c => {
-                              if (c.id === inspectedClient.id) {
-                                const newTx = {
-                                  id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
-                                  type: 'withdrawal',
-                                  asset: 'wallet',
-                                  amount: val,
-                                  weight: 0,
-                                  date: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                                  status: 'Completed'
-                                };
-                                return {
-                                  ...c,
-                                  walletBalance: parseFloat(((c.walletBalance || 0) - val).toFixed(2)),
-                                  transactions: [newTx, ...(c.transactions || [])]
-                                };
-                              }
-                              return c;
-                            });
-                            setClients(updated);
-                            localStorage.setItem('vb_clients', JSON.stringify(updated));
-                            setAdminDeductAmount('');
-                            alert(`Successfully deducted ₹${val.toLocaleString()} from ${inspectedClient.name}'s wallet.`);
-                          } catch (error) {
-                            console.error("Error adjusting wallet:", error);
-                            alert("An error occurred while deducting from the wallet.");
-                          }
-                        }}
-                        style={{ background: '#f43f5e', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '8px 12px', fontWeight: 600, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                      >
-                        <Minus size={14} /> Deduct
-                      </button>
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Inspected client specific scrollable transaction history */}
-              <div style={{ background: '#120524', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h4 style={{ fontSize: '14px', fontWeight: '800', margin: 0 }}>Client Personal Ledger</h4>
-                  <span style={{ fontSize: '11px', color: '#9c93a8' }}>{inspectedClient.transactions?.length || 0} Records</span>
-                </div>
-
-                <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '300px' }}>
-                  {inspectedClient.transactions?.map((tx, idx) => (
-                    <div key={`${tx.id}-${idx}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '8px' }}>
+                      {/* Inspected Customer Wallet & Assets Grid */}
                       <div>
-                        <strong style={{ fontSize: '13px', color: tx.type === 'buy' ? '#a855f7' : tx.type === 'sell' ? '#d9af56' : tx.type === 'deposit' ? '#10b981' : tx.type === 'referral' ? '#38a3fd' : tx.type === 'refund' ? '#10b981' : '#f43f5e' }}>
-                          {tx.type === 'deposit' ? 'Added Funds' : tx.type === 'referral' ? 'Referral Bonus' : tx.type === 'refund' ? 'Refund (Rejected)' : tx.type === 'withdrawal' ? 'Withdrew Cash' : tx.type === 'buy' ? `Bought ${getAssetLabel(tx.asset)}` : `Sold ${getAssetLabel(tx.asset)}`}
-                        </strong>
-                        <div style={{ fontSize: '11px', color: '#9c93a8', marginTop: '2px' }}>{tx.date} • ID: {tx.id}</div>
+                        <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 10px' }}>Vault Assets & Balances</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+
+                          <div style={{ background: '#1e0b36', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.03)', gridColumn: 'span 2' }}>
+                            <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Wallet Balance</span>
+                            <strong style={{ fontSize: '15px', color: '#ffffff' }}>₹{inspectedClient.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                          </div>
+
+                          {metals.map((metal) => {
+                            const weight = inspectedClient.holdings?.[metal.assetId] || 0;
+                            const price = rates[metal.assetId]?.price || 0;
+                            const value = weight * price;
+
+                            // Only show if weight > 0 (bought metals)
+                            if (weight <= 0) return null;
+
+                            let bgColor = 'rgba(100,100,100,0.06)';
+                            let borderColor = 'rgba(100,100,100,0.15)';
+                            let textColor = '#9ca3af';
+
+                            if (metal.group === 'gold') {
+                              bgColor = 'rgba(217,175,86,0.06)';
+                              borderColor = 'rgba(217,175,86,0.15)';
+                              textColor = '#d9af56';
+                            } else if (metal.group === 'silver') {
+                              bgColor = 'rgba(192,192,192,0.06)';
+                              borderColor = 'rgba(192,192,192,0.15)';
+                              textColor = '#c0c0c0';
+                            } else if (metal.group === 'bronze') {
+                              bgColor = 'rgba(245,158,11,0.06)';
+                              borderColor = 'rgba(245,158,11,0.15)';
+                              textColor = '#f59e0b';
+                            } else if (metal.group === 'blue') {
+                              bgColor = 'rgba(59,130,246,0.06)';
+                              borderColor = 'rgba(59,130,246,0.15)';
+                              textColor = '#3b82f6';
+                            } else if (metal.group === 'cyan') {
+                              bgColor = 'rgba(6,182,212,0.06)';
+                              borderColor = 'rgba(6,182,212,0.15)';
+                              textColor = '#06b6d4';
+                            } else if (metal.group === 'green') {
+                              bgColor = 'rgba(16,185,129,0.06)';
+                              borderColor = 'rgba(16,185,129,0.15)';
+                              textColor = '#10b981';
+                            } else if (metal.group === 'liquid') {
+                              bgColor = 'rgba(167,139,250,0.06)';
+                              borderColor = 'rgba(167,139,250,0.15)';
+                              textColor = '#a78bfa';
+                            }
+
+                            return (
+                              <div key={metal.assetId} style={{ background: bgColor, padding: '12px', borderRadius: '10px', border: `1px solid ${borderColor}` }}>
+                                <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>{metal.name} Holdings</span>
+                                <strong style={{ fontSize: '15px', color: textColor }}>{weight.toFixed(4)} g</strong>
+                                <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block' }}>₹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontWeight: 800, fontSize: '13px' }}>₹{tx.amount.toLocaleString()}</span>
-                        {tx.weight > 0 && <div style={{ fontSize: '10px', color: '#d9af56' }}>{tx.weight.toFixed(4)} g</div>}
+
+                      {/* Visual Portfolio Allocation Chart Segment Bar */}
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                          <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Asset Allocation Breakdown</h4>
+                          <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>Total: ₹{clientTotalVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                        </div>
+
+                        {/* Progress bar allocations */}
+                        <div style={{ display: 'flex', height: '14px', borderRadius: '7px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)', margin: '10px 0' }}>
+                          {clientAllocations.map(alloc => (
+                            alloc.value > 0 && (
+                              <div
+                                key={alloc.id}
+                                style={{
+                                  width: `${alloc.pct}%`,
+                                  background: alloc.id === 'cash' ? '#10b981' :
+                                    alloc.colorClass === 'gold' ? '#d9af56' :
+                                      alloc.colorClass === 'silver' ? '#c0c0c0' :
+                                        alloc.colorClass === 'bronze' ? '#b45309' :
+                                          alloc.colorClass === 'blue' ? '#3b82f6' :
+                                            alloc.colorClass === 'cyan' ? '#06b6d4' :
+                                              alloc.colorClass === 'green' ? '#10b981' :
+                                                alloc.colorClass === 'liquid' ? '#a78bfa' : '#4b5563',
+                                  transition: 'width 0.4s'
+                                }}
+                                title={`${alloc.name}: ${alloc.pct.toFixed(1)}%`}
+                              ></div>
+                            )
+                          ))}
+                        </div>
+
+                        {/* Allocation Legends */}
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '10px', color: '#9c93a8', marginTop: '8px' }}>
+                          {clientAllocations.map(alloc => {
+                            const color = alloc.id === 'cash' ? '#10b981' :
+                              alloc.colorClass === 'gold' ? '#d9af56' :
+                                alloc.colorClass === 'silver' ? '#c0c0c0' :
+                                  alloc.colorClass === 'bronze' ? '#b45309' :
+                                    alloc.colorClass === 'blue' ? '#3b82f6' :
+                                      alloc.colorClass === 'cyan' ? '#06b6d4' :
+                                        alloc.colorClass === 'green' ? '#10b981' :
+                                          alloc.colorClass === 'liquid' ? '#a78bfa' : '#4b5563';
+
+                            return (
+                              <span key={alloc.id} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }}></span>
+                                {alloc.name} ({alloc.pct.toFixed(0)}%)
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Client Referral Details */}
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Client Referral Details</h4>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '11px', color: '#ec4899', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Gift size={12} /> {inspectedClient.referralCount !== undefined ? inspectedClient.referralCount : (user && inspectedClient.email?.toLowerCase() === user.email?.toLowerCase() ? successfulReferralsCount : Math.floor((inspectedClient.name?.charCodeAt(0) || 0) * 12) % 1550)} Referrals
+                            </span>
+                            <button
+                              onClick={() => {
+                                const currentCount = inspectedClient.referralCount !== undefined ? inspectedClient.referralCount : (user && inspectedClient.email?.toLowerCase() === user.email?.toLowerCase() ? successfulReferralsCount : Math.floor((inspectedClient.name?.charCodeAt(0) || 0) * 12) % 1550);
+                                const newCount = prompt(`Enter new referral count for ${inspectedClient.name}:`, currentCount);
+                                if (newCount !== null) {
+                                  const parsed = parseInt(newCount, 10);
+                                  if (isNaN(parsed) || parsed < 0) return alert("Please enter a valid non-negative number.");
+
+                                  const updated = clients.map(client => {
+                                    if (client.id === inspectedClient.id) {
+                                      return { ...client, referralCount: parsed };
+                                    }
+                                    return client;
+                                  });
+                                  setClients(updated);
+                                  localStorage.setItem('vb_clients', JSON.stringify(updated));
+
+                                  if (user && inspectedClient.email?.toLowerCase() === user.email?.toLowerCase()) {
+                                    setSuccessfulReferralsCount(parsed);
+                                  }
+
+                                  alert(`Successfully updated referral count for ${inspectedClient.name} to ${parsed}.`);
+                                }
+                              }}
+                              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', cursor: 'pointer', transition: 'all 0.2s' }}
+                            >
+                              Edit Count
+                            </button>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '12px' }}>
+                          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <span style={{ fontSize: '10px', color: '#9c93a8' }}>Unique Code</span>
+                            <strong style={{ fontSize: '13px', color: '#d9af56', fontFamily: 'monospace', letterSpacing: '0.5px' }}>
+                              IH-{inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}
+                            </strong>
+                          </div>
+
+                          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative' }}>
+                            <span style={{ fontSize: '10px', color: '#9c93a8' }}>Account Registration URL</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                              <input
+                                type="text"
+                                readOnly
+                                value={`https://invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`}
+                                style={{ width: '100%', background: 'transparent', border: 'none', color: '#ffffff', fontSize: '11px', outline: 'none', padding: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                              />
+                              <button
+                                onClick={() => {
+                                  const link = `https://invest-hour.com?ref=IH-${inspectedClient.email?.split('@')[0].toUpperCase() || 'USER'}`;
+                                  navigator.clipboard.writeText(link);
+                                  setCopiedInspectedReferralLink(true);
+                                  setTimeout(() => setCopiedInspectedReferralLink(false), 2000);
+                                }}
+                                style={{ background: 'transparent', border: 'none', color: copiedInspectedReferralLink ? '#10b981' : '#9c93a8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2px', transition: 'color 0.2s' }}
+                                title="Copy Link"
+                              >
+                                {copiedInspectedReferralLink ? <Check size={14} /> : <Copy size={14} />}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Interactive Credit / Adjustments Controls */}
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <h4 style={{ fontSize: '12px', color: '#9c93a8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Wallet Vault Ledger Adjuster</h4>
+
+                        <div className="admin-ledger-adjuster-row">
+                          <div className="admin-ledger-adjuster-group">
+                            <input
+                              type="number"
+                              placeholder="Amt (₹)"
+                              value={adminCreditAmount}
+                              onChange={(e) => setAdminCreditAmount(e.target.value)}
+                              style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '8px 10px', color: '#ffffff', fontSize: '13px' }}
+                            />
+                            <button
+                              onClick={async () => {
+                                const val = parseFloat(adminCreditAmount);
+                                if (isNaN(val) || val <= 0) return alert("Please enter a valid credit amount.");
+                                try {
+                                  const res = await fetch(`${VITE_BACKEND_URL}/api/admin/wallet/adjust`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), amount: val, action: 'credit' })
+                                  });
+                                  const data = await res.json();
+                                  if (!data.success) {
+                                    return alert(data.message || 'Failed to credit wallet');
+                                  }
+                                  const updated = clients.map(c => {
+                                    if (c.id === inspectedClient.id) {
+                                      const newTx = {
+                                        id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+                                        type: 'deposit',
+                                        asset: 'wallet',
+                                        amount: val,
+                                        weight: 0,
+                                        date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                                        status: 'Completed'
+                                      };
+                                      return {
+                                        ...c,
+                                        walletBalance: parseFloat(((c.walletBalance || 0) + val).toFixed(2)),
+                                        transactions: [newTx, ...(c.transactions || [])]
+                                      };
+                                    }
+                                    return c;
+                                  });
+                                  setClients(updated);
+                                  localStorage.setItem('vb_clients', JSON.stringify(updated));
+                                  setAdminCreditAmount('');
+                                  alert(`Successfully credited ₹${val.toLocaleString()} to ${inspectedClient.name}'s wallet.`);
+                                } catch (error) {
+                                  console.error("Error adjusting wallet:", error);
+                                  alert("An error occurred while crediting the wallet.");
+                                }
+                              }}
+                              style={{ background: '#10b981', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '8px 12px', fontWeight: 600, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <Plus size={14} /> Credit
+                            </button>
+                          </div>
+
+                          <div className="admin-ledger-adjuster-group">
+                            <input
+                              type="number"
+                              placeholder="Amt (₹)"
+                              value={adminDeductAmount}
+                              onChange={(e) => setAdminDeductAmount(e.target.value)}
+                              style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '8px 10px', color: '#ffffff', fontSize: '13px' }}
+                            />
+                            <button
+                              onClick={async () => {
+                                const val = parseFloat(adminDeductAmount);
+                                if (isNaN(val) || val <= 0) return alert("Please enter a valid deduction amount.");
+                                if (inspectedClient.walletBalance < val) return alert("Deduction value exceeds customer's active wallet balance.");
+                                try {
+                                  const res = await fetch(`${VITE_BACKEND_URL}/api/admin/wallet/adjust`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ userId: inspectedClient.id.replace(/^CUST-(B-)?/, ''), amount: val, action: 'deduct' })
+                                  });
+                                  const data = await res.json();
+                                  if (!data.success) {
+                                    return alert(data.message || 'Failed to deduct wallet');
+                                  }
+                                  const updated = clients.map(c => {
+                                    if (c.id === inspectedClient.id) {
+                                      const newTx = {
+                                        id: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
+                                        type: 'withdrawal',
+                                        asset: 'wallet',
+                                        amount: val,
+                                        weight: 0,
+                                        date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                                        status: 'Completed'
+                                      };
+                                      return {
+                                        ...c,
+                                        walletBalance: parseFloat(((c.walletBalance || 0) - val).toFixed(2)),
+                                        transactions: [newTx, ...(c.transactions || [])]
+                                      };
+                                    }
+                                    return c;
+                                  });
+                                  setClients(updated);
+                                  localStorage.setItem('vb_clients', JSON.stringify(updated));
+                                  setAdminDeductAmount('');
+                                  alert(`Successfully deducted ₹${val.toLocaleString()} from ${inspectedClient.name}'s wallet.`);
+                                } catch (error) {
+                                  console.error("Error adjusting wallet:", error);
+                                  alert("An error occurred while deducting from the wallet.");
+                                }
+                              }}
+                              style={{ background: '#f43f5e', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '8px 12px', fontWeight: 600, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <Minus size={14} /> Deduct
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    {/* Inspected client specific scrollable transaction history */}
+                    <div style={{ background: '#120524', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h4 style={{ fontSize: '14px', fontWeight: '800', margin: 0 }}>Client Personal Ledger</h4>
+                        <span style={{ fontSize: '11px', color: '#9c93a8' }}>{inspectedClient.transactions?.length || 0} Records</span>
+                      </div>
+
+                      <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '300px' }}>
+                        {inspectedClient.transactions?.map((tx, idx) => (
+                          <div key={`${tx.id}-${idx}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '8px' }}>
+                            <div>
+                              <strong style={{ fontSize: '13px', color: tx.type === 'buy' ? '#a855f7' : tx.type === 'sell' ? '#d9af56' : tx.type === 'deposit' ? '#10b981' : tx.type === 'referral' ? '#38a3fd' : tx.type === 'refund' ? '#10b981' : '#f43f5e' }}>
+                                {tx.type === 'deposit' ? 'Added Funds' : tx.type === 'referral' ? 'Referral Bonus' : tx.type === 'refund' ? 'Refund (Rejected)' : tx.type === 'withdrawal' ? 'Withdrew Cash' : tx.type === 'buy' ? `Bought ${getAssetLabel(tx.asset)}` : `Sold ${getAssetLabel(tx.asset)}`}
+                              </strong>
+                              <div style={{ fontSize: '11px', color: '#9c93a8', marginTop: '2px' }}>{tx.date} • ID: {tx.id}</div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <span style={{ fontWeight: 800, fontSize: '13px' }}>₹{tx.amount.toLocaleString()}</span>
+                              {tx.weight > 0 && <div style={{ fontSize: '10px', color: '#d9af56' }}>{tx.weight.toFixed(4)} g</div>}
+                            </div>
+                          </div>
+                        ))}
+                        {(!inspectedClient.transactions || inspectedClient.transactions.length === 0) && (
+                          <div style={{ textAlign: 'center', padding: '20px 0', color: '#9c93a8', fontSize: '12px' }}>No transactions recorded yet.</div>
+                        )}
                       </div>
                     </div>
-                  ))}
-                  {(!inspectedClient.transactions || inspectedClient.transactions.length === 0) && (
-                    <div style={{ textAlign: 'center', padding: '20px 0', color: '#9c93a8', fontSize: '12px' }}>No transactions recorded yet.</div>
-                  )}
-                </div>
+                  </>
+                )}
               </div>
-                </>
-              )}
-            </div>
 
-          </div>
+            </div>
           )}
 
           {/* Contest Management Tab content */}
@@ -5652,14 +5680,14 @@ function App() {
                     <p style={{ fontSize: '12px', color: '#9c93a8', margin: '4px 0 0' }}>Inspect contestant metrics, success rates, overrides, and logs</p>
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
-                    <button 
+                    <button
                       type="button"
                       onClick={handleAdminGenerateMockContestants}
                       style={{ background: '#f43f5e', color: '#ffffff', border: 'none', padding: '8px 14px', borderRadius: '6px', fontSize: '12.5px', fontWeight: 'bold', cursor: 'pointer' }}
                     >
                       🏆 Seed Tournament Data
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={handleAdminClearMockContestants}
                       style={{ background: '#4b366a', color: '#ffffff', border: 'none', padding: '8px 14px', borderRadius: '6px', fontSize: '12.5px', fontWeight: 'bold', cursor: 'pointer' }}
@@ -5669,9 +5697,9 @@ function App() {
                   </div>
                 </div>
 
-                <input 
-                  type="text" 
-                  placeholder="Search participants by name or email..." 
+                <input
+                  type="text"
+                  placeholder="Search participants by name or email..."
                   value={contestSearchQuery}
                   onChange={(e) => setContestSearchQuery(e.target.value)}
                   style={{
@@ -5702,14 +5730,14 @@ function App() {
                         .map(p => {
                           const isSelected = selectedContestParticipant?.email === p.email;
                           return (
-                            <tr 
+                            <tr
                               key={p.email}
                               onClick={() => {
                                 setSelectedContestParticipant(p);
                                 fetchParticipantTrades(p.email);
                               }}
-                              style={{ 
-                                borderBottom: '1px solid rgba(255,255,255,0.04)', 
+                              style={{
+                                borderBottom: '1px solid rgba(255,255,255,0.04)',
                                 background: isSelected ? 'rgba(244, 63, 94, 0.05)' : 'transparent',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
@@ -5881,18 +5909,18 @@ function App() {
 
               {/* Settings & Analytics Section */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginBottom: '10px' }}>
-                
+
                 {/* Configuration Panel */}
                 <div style={{ background: '#120524', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>⚙️ Referral Configuration</h3>
                   <p style={{ margin: 0, fontSize: '12px', color: '#9c93a8' }}>Define the system-wide default invitation code. Users signing up with this code are tracked as public default invitees.</p>
-                  
+
                   <div style={{ marginTop: '10px' }}>
                     <label style={{ fontSize: '11px', color: '#d9af56', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Default Referral Code</label>
-                    <input 
-                      type="text" 
-                      readOnly 
-                      value={defaultReferralCode} 
+                    <input
+                      type="text"
+                      readOnly
+                      value={defaultReferralCode}
                       style={{ width: '100%', background: '#1e0b36', border: '1px solid rgba(217, 175, 86, 0.2)', padding: '10px 14px', borderRadius: '8px', color: '#9c93a8', fontSize: '14px', fontWeight: '700', cursor: 'not-allowed' }}
                     />
                   </div>
@@ -5920,7 +5948,7 @@ function App() {
                 {/* Analytics Panel */}
                 <div style={{ background: '#120524', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#ffffff' }}>📊 Referral Network Analytics</h3>
-                  
+
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginTop: '5px' }}>
                     <div style={{ background: '#1a0832', padding: '12px', borderRadius: '10px', textAlign: 'center' }}>
                       <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', textTransform: 'uppercase' }}>Default Code</span>
@@ -5967,7 +5995,7 @@ function App() {
                         const count = c.referralCount !== undefined ? c.referralCount : (user && c.email.toLowerCase() === user.email.toLowerCase() ? successfulReferralsCount : Math.floor((c.name.charCodeAt(0) || 0) * 12) % 1550);
                         const pct = Math.min(100, (count / 1500) * 100);
                         const isEligible = count >= 1500;
-                        
+
                         return (
                           <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }}>
                             <td style={{ padding: '14px 10px' }}>
@@ -6001,13 +6029,13 @@ function App() {
                               )}
                             </td>
                             <td style={{ padding: '14px 10px', textAlign: 'right' }}>
-                              <button 
+                              <button
                                 onClick={() => {
                                   const newCount = prompt(`Enter new referral count for ${c.name}:`, count);
                                   if (newCount !== null) {
                                     const parsed = parseInt(newCount, 10);
                                     if (isNaN(parsed) || parsed < 0) return alert("Please enter a valid non-negative number.");
-                                    
+
                                     const updated = clients.map(client => {
                                       if (client.id === c.id) {
                                         return { ...client, referralCount: parsed };
@@ -6016,11 +6044,11 @@ function App() {
                                     });
                                     setClients(updated);
                                     localStorage.setItem('vb_clients', JSON.stringify(updated));
-                                    
+
                                     if (user && c.email.toLowerCase() === user.email.toLowerCase()) {
                                       setSuccessfulReferralsCount(parsed);
                                     }
-                                    
+
                                     alert(`Successfully updated referral count for ${c.name} to ${parsed}.`);
                                   }
                                 }}
@@ -6130,16 +6158,16 @@ function App() {
                           const isSuccess = wd.status === 'successful';
                           const isFailed = wd.status === 'failed';
                           const methodLabel = wd.paymentMethod === 'upi_withdrawal' ? 'UPI (Live)' :
-                                             wd.paymentMethod === 'upi_withdrawal_sim' ? 'UPI (Simulated)' :
-                                             wd.paymentMethod === 'bank_withdrawal' ? 'Bank (Live)' :
-                                             wd.paymentMethod === 'bank_withdrawal_sim' ? 'Bank (Simulated)' : wd.paymentMethod;
+                            wd.paymentMethod === 'upi_withdrawal_sim' ? 'UPI (Simulated)' :
+                              wd.paymentMethod === 'bank_withdrawal' ? 'Bank (Live)' :
+                                wd.paymentMethod === 'bank_withdrawal_sim' ? 'Bank (Simulated)' : wd.paymentMethod;
                           return (
                             <tr
                               key={wd.id}
                               style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
                               className="client-directory-row"
                             >
-                               <td style={{ padding: '14px 10px' }}>
+                              <td style={{ padding: '14px 10px' }}>
                                 <div style={{ fontWeight: 700, fontSize: '14px', color: '#ffffff' }}>{wd.user?.name || wd.user?.email?.split('@')[0]}</div>
                                 <div style={{ fontSize: '11px', color: '#9c93a8', marginTop: '2px' }}>{wd.user?.email}</div>
                                 {wd.availableBalanceAfter !== null && wd.availableBalanceAfter !== undefined && (
@@ -6307,11 +6335,11 @@ function App() {
                               <div style={{ fontSize: '11px', color: '#9c93a8' }}>{new Date(dep.updatedAt).toLocaleDateString()}</div>
                             </td>
                             <td style={{ padding: '14px 10px' }}>
-                              <div style={{ 
-                                display: 'inline-block', 
-                                padding: '4px 10px', 
-                                borderRadius: '4px', 
-                                fontSize: '11px', 
+                              <div style={{
+                                display: 'inline-block',
+                                padding: '4px 10px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
                                 fontWeight: 800,
                                 background: dep.status === 'Approved' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
                                 color: dep.status === 'Approved' ? '#10b981' : '#ef4444',
@@ -7103,6 +7131,10 @@ function App() {
             </div>
           )}
 
+          {adminTab === 'devices' && (
+            <AdminDeviceRequests />
+          )}
+
         </main>
 
         <footer style={{ background: '#120524', borderTop: '1px solid rgba(255,255,255,0.05)', padding: '15px', textAlign: 'center', fontSize: '12px', color: '#9c93a8', marginTop: 'auto' }}>
@@ -7185,43 +7217,43 @@ function App() {
               <form onSubmit={handleFirstTimePasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '12px', color: '#a78bfa', fontWeight: 600 }}>Temporary Password *</label>
-                  <input 
-                    type="password" 
-                    required 
-                    value={firstTimePassword.currentPassword} 
-                    onChange={e => setFirstTimePassword({...firstTimePassword, currentPassword: e.target.value})} 
-                    style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#ffffff', fontSize: '14px', outline: 'none' }} 
+                  <input
+                    type="password"
+                    required
+                    value={firstTimePassword.currentPassword}
+                    onChange={e => setFirstTimePassword({ ...firstTimePassword, currentPassword: e.target.value })}
+                    style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#ffffff', fontSize: '14px', outline: 'none' }}
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '12px', color: '#a78bfa', fontWeight: 600 }}>New Password *</label>
-                  <input 
-                    type="password" 
-                    required 
-                    value={firstTimePassword.newPassword} 
-                    onChange={e => setFirstTimePassword({...firstTimePassword, newPassword: e.target.value})} 
-                    style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#ffffff', fontSize: '14px', outline: 'none' }} 
+                  <input
+                    type="password"
+                    required
+                    value={firstTimePassword.newPassword}
+                    onChange={e => setFirstTimePassword({ ...firstTimePassword, newPassword: e.target.value })}
+                    style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#ffffff', fontSize: '14px', outline: 'none' }}
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '12px', color: '#a78bfa', fontWeight: 600 }}>Confirm New Password *</label>
-                  <input 
-                    type="password" 
-                    required 
-                    value={firstTimePassword.confirmPassword} 
-                    onChange={e => setFirstTimePassword({...firstTimePassword, confirmPassword: e.target.value})} 
-                    style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#ffffff', fontSize: '14px', outline: 'none' }} 
+                  <input
+                    type="password"
+                    required
+                    value={firstTimePassword.confirmPassword}
+                    onChange={e => setFirstTimePassword({ ...firstTimePassword, confirmPassword: e.target.value })}
+                    style={{ background: '#1e0b36', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#ffffff', fontSize: '14px', outline: 'none' }}
                   />
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={firstTimeSaving}
-                  style={{ 
-                    background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)', 
-                    border: 'none', color: '#ffffff', padding: '12px', borderRadius: '8px', 
-                    fontWeight: 700, cursor: firstTimeSaving ? 'not-allowed' : 'pointer', fontSize: '14px', 
-                    marginTop: '8px', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.3)', opacity: firstTimeSaving ? 0.7 : 1 
+                  style={{
+                    background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)',
+                    border: 'none', color: '#ffffff', padding: '12px', borderRadius: '8px',
+                    fontWeight: 700, cursor: firstTimeSaving ? 'not-allowed' : 'pointer', fontSize: '14px',
+                    marginTop: '8px', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.3)', opacity: firstTimeSaving ? 0.7 : 1
                   }}
                 >
                   {firstTimeSaving ? 'Saving Changes...' : 'Update Password & Enter'}
@@ -7253,9 +7285,9 @@ function App() {
                   <div style={{ fontSize: '12px', color: '#a78bfa', fontWeight: 500 }}>{execProfile?.role} Support • {execProfile?.shift} Shift</div>
                 </div>
               </div>
-              <button 
-                className="btn-sec-signout" 
-                onClick={handleSignOut} 
+              <button
+                className="btn-sec-signout"
+                onClick={handleSignOut}
                 style={{ background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', transition: 'all 0.2s', fontSize: '13px', fontWeight: 600 }}
               >
                 Logout
@@ -7266,10 +7298,10 @@ function App() {
 
         {/* Dashboard Content */}
         <main style={{ flex: 1, padding: '24px 30px', display: 'grid', gridTemplateColumns: '280px 1fr', gap: '24px', width: '100%', maxWidth: '1600px', margin: '0 auto' }}>
-          
+
           {/* Left Sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            
+
             {/* Profile Card */}
             <div style={{ background: 'linear-gradient(145deg, #7c3aed, #6366f1)', padding: '24px 20px', borderRadius: '16px', textAlign: 'center', color: '#ffffff', position: 'relative', boxShadow: '0 10px 25px -5px rgba(124, 58, 237, 0.4)' }}>
               <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 16px' }}>
@@ -7283,7 +7315,7 @@ function App() {
               <h3 style={{ margin: '0 0 4px', fontSize: '18px', fontWeight: 700 }}>{execProfile?.name}</h3>
               <p style={{ margin: '0 0 4px', fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>{execProfile?.email}</p>
               <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#a78bfa', fontWeight: 700 }}>Executive ID: {execProfile?.id}</p>
-              
+
               <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
                 <span style={{ fontSize: '10px', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   ★ {execProfile?.rating ? execProfile.rating.toFixed(1) : '5.0'} Rating
@@ -7343,7 +7375,7 @@ function App() {
                   {todayLog?.status || 'No Log'}
                 </span>
               </div>
-              <button 
+              <button
                 onClick={() => setExecTab('attendance')}
                 style={{ width: '100%', padding: '10px', background: '#f9fafb', color: '#4f46e5', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
               >
@@ -7361,7 +7393,7 @@ function App() {
               const shiftStart = new Date(now); shiftStart.setHours(9, 0, 0, 0);
               const shiftEnd = new Date(now); shiftEnd.setHours(18, 0, 0, 0);
               const totalMs = shiftEnd - shiftStart;
-              
+
               let elapsedMs = 0;
               if (isClockedIn && todayLog?.clockIn) {
                 const startTime = new Date(todayLog.clockIn).getTime();
@@ -7448,13 +7480,13 @@ function App() {
                     {/* Segments definition */}
                     {(() => {
                       const segs = [
-                        { label: 'Work Block 1', start: '9:00 AM',  end: '11:00 AM', dur: '2h 00m',  color: '#6366f1', bg: '#eef0ff', flex: 2,    type: 'work'  },
-                        { label: 'Tea Break',    start: '11:00 AM', end: '11:15 AM', dur: '15m',     color: '#f59e0b', bg: '#fef3c7', flex: 0.25,  type: 'tea'   },
-                        { label: 'Work Block 2', start: '11:15 AM', end: '1:00 PM',  dur: '1h 45m',  color: '#6366f1', bg: '#eef0ff', flex: 1.75,  type: 'work'  },
-                        { label: 'Lunch Break',  start: '1:00 PM',  end: '2:00 PM',  dur: '1h 00m',  color: '#10b981', bg: '#dcfce7', flex: 1,     type: 'lunch' },
-                        { label: 'Work Block 3', start: '2:00 PM',  end: '4:00 PM',  dur: '2h 00m',  color: '#6366f1', bg: '#eef0ff', flex: 2,     type: 'work'  },
-                        { label: 'Tea Break',    start: '4:00 PM',  end: '4:15 PM',  dur: '15m',     color: '#f59e0b', bg: '#fef3c7', flex: 0.25,  type: 'tea'   },
-                        { label: 'Work Block 4', start: '4:15 PM',  end: '6:00 PM',  dur: '1h 45m',  color: '#6366f1', bg: '#eef0ff', flex: 1.75,  type: 'work'  },
+                        { label: 'Work Block 1', start: '9:00 AM', end: '11:00 AM', dur: '2h 00m', color: '#6366f1', bg: '#eef0ff', flex: 2, type: 'work' },
+                        { label: 'Tea Break', start: '11:00 AM', end: '11:15 AM', dur: '15m', color: '#f59e0b', bg: '#fef3c7', flex: 0.25, type: 'tea' },
+                        { label: 'Work Block 2', start: '11:15 AM', end: '1:00 PM', dur: '1h 45m', color: '#6366f1', bg: '#eef0ff', flex: 1.75, type: 'work' },
+                        { label: 'Lunch Break', start: '1:00 PM', end: '2:00 PM', dur: '1h 00m', color: '#10b981', bg: '#dcfce7', flex: 1, type: 'lunch' },
+                        { label: 'Work Block 3', start: '2:00 PM', end: '4:00 PM', dur: '2h 00m', color: '#6366f1', bg: '#eef0ff', flex: 2, type: 'work' },
+                        { label: 'Tea Break', start: '4:00 PM', end: '4:15 PM', dur: '15m', color: '#f59e0b', bg: '#fef3c7', flex: 0.25, type: 'tea' },
+                        { label: 'Work Block 4', start: '4:15 PM', end: '6:00 PM', dur: '1h 45m', color: '#6366f1', bg: '#eef0ff', flex: 1.75, type: 'work' },
                       ];
                       const totalFlex = segs.reduce((a, s) => a + s.flex, 0);
                       return (
@@ -7529,7 +7561,7 @@ function App() {
                       </div>
                       <div>
                         <div style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Work Time</div>
-                        <div style={{ fontSize: '22px', fontWeight: 800, color: '#111827', lineHeight: 1.1 }}>{workH}h {workM < 10 ? '0'+workM : workM}m</div>
+                        <div style={{ fontSize: '22px', fontWeight: 800, color: '#111827', lineHeight: 1.1 }}>{workH}h {workM < 10 ? '0' + workM : workM}m</div>
                         <div style={{ fontSize: '11px', color: '#6366f1', fontWeight: 600, marginTop: '2px' }}>{Math.round((workMs / totalMs) * 100)}% of shift</div>
                       </div>
                     </div>
@@ -7540,7 +7572,7 @@ function App() {
                       </div>
                       <div>
                         <div style={{ fontSize: '11px', color: '#92400e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Break Time</div>
-                        <div style={{ fontSize: '22px', fontWeight: 800, color: '#b45309', lineHeight: 1.1 }}>{breakH}h {breakM < 10 ? '0'+breakM : breakM}m</div>
+                        <div style={{ fontSize: '22px', fontWeight: 800, color: '#b45309', lineHeight: 1.1 }}>{breakH}h {breakM < 10 ? '0' + breakM : breakM}m</div>
                         <div style={{ fontSize: '11px', color: '#d97706', fontWeight: 600, marginTop: '2px' }}>{Math.round((Math.min(elapsedMs, breakMs) / totalMs) * 100)}% of shift</div>
                       </div>
                     </div>
@@ -7551,7 +7583,7 @@ function App() {
                       </div>
                       <div>
                         <div style={{ fontSize: '11px', color: '#166534', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Remaining Time</div>
-                        <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669', lineHeight: 1.1 }}>{remH}h {remM < 10 ? '0'+remM : remM}m {remS < 10 ? '0'+remS : remS}s</div>
+                        <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669', lineHeight: 1.1 }}>{remH}h {remM < 10 ? '0' + remM : remM}m {remS < 10 ? '0' + remS : remS}s</div>
                         <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 600, marginTop: '2px' }}>{100 - pct}% of shift</div>
                       </div>
                     </div>
@@ -7631,719 +7663,373 @@ function App() {
 
             {/* Middle Row: Attendance & Chat Threads */}
             {(execTab === 'dashboard' || execTab === 'attendance' || execTab === 'chats' || execTab === 'callbacks' || execTab === 'deposits' || execTab === 'pending') && (
-            <div style={{ display: 'grid', gridTemplateColumns: (execTab === 'attendance' || execTab === 'chats' || execTab === 'callbacks' || execTab === 'deposits' || execTab === 'pending') ? '1fr' : '1fr 2fr', gap: '24px' }}>
-              
-              {/* Shift Attendance - Full width on dashboard (same design as attendance tab) */}
-              {execTab === 'dashboard' && (() => {
-                const now = realTimeClock;
-                const shiftStart = new Date(now); shiftStart.setHours(9, 0, 0, 0);
-                const shiftEnd = new Date(now); shiftEnd.setHours(18, 0, 0, 0);
-                const totalMs = shiftEnd - shiftStart;
-                
-                let elapsedMs = 0;
-                if (isClockedIn && todayLog?.clockIn) {
-                  const startTime = new Date(todayLog.clockIn).getTime();
-                  const endTime = todayLog.clockOut ? new Date(todayLog.clockOut).getTime() : now.getTime();
-                  elapsedMs = Math.max(0, Math.min(endTime - startTime, totalMs));
-                }
+              <div style={{ display: 'grid', gridTemplateColumns: (execTab === 'attendance' || execTab === 'chats' || execTab === 'callbacks' || execTab === 'deposits' || execTab === 'pending') ? '1fr' : '1fr 2fr', gap: '24px' }}>
 
-                const pct = Math.round((elapsedMs / totalMs) * 100);
-                const hrsWorked = Math.floor(elapsedMs / 3600000);
-                const minsWorked = Math.floor((elapsedMs % 3600000) / 60000);
-                const secsWorked = Math.floor((elapsedMs % 60000) / 1000);
-                const remainMs = Math.max(0, totalMs - elapsedMs);
-                const remH = Math.floor(remainMs / 3600000);
-                const remM = Math.floor((remainMs % 3600000) / 60000);
-                const remS = Math.floor((remainMs % 60000) / 1000);
-                const breakMs = 90 * 60 * 1000;
-                const workMs = Math.max(0, elapsedMs - Math.min(elapsedMs, breakMs));
-                const workH = Math.floor(workMs / 3600000);
-                const workM = Math.floor((workMs % 3600000) / 60000);
-                const breakH = Math.floor(Math.min(elapsedMs, breakMs) / 3600000);
-                const breakM = Math.floor((Math.min(elapsedMs, breakMs) % 3600000) / 60000);
-                const estEnd = new Date(isClockedIn && todayLog?.clockIn ? new Date(todayLog.clockIn).getTime() + 9 * 3600000 : shiftEnd);
-                const startedAt = todayLog?.clockIn ? new Date(todayLog.clockIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--';
-                const segs = [
-                  { label: 'Work Block 1', start: '9:00 AM',  end: '11:00 AM', dur: '2h 00m', color: '#6366f1', bg: '#eef0ff', flex: 2,    type: 'work'  },
-                  { label: 'Tea Break',    start: '11:00 AM', end: '11:15 AM', dur: '15m',    color: '#f59e0b', bg: '#fef3c7', flex: 0.25,  type: 'tea'   },
-                  { label: 'Work Block 2', start: '11:15 AM', end: '1:00 PM',  dur: '1h 45m', color: '#6366f1', bg: '#eef0ff', flex: 1.75,  type: 'work'  },
-                  { label: 'Lunch Break', start: '1:00 PM',  end: '2:00 PM',  dur: '1h 00m', color: '#10b981', bg: '#dcfce7', flex: 1,     type: 'lunch' },
-                  { label: 'Work Block 3', start: '2:00 PM',  end: '4:00 PM',  dur: '2h 00m', color: '#6366f1', bg: '#eef0ff', flex: 2,     type: 'work'  },
-                  { label: 'Tea Break',    start: '4:00 PM',  end: '4:15 PM',  dur: '15m',    color: '#f59e0b', bg: '#fef3c7', flex: 0.25,  type: 'tea'   },
-                  { label: 'Work Block 4', start: '4:15 PM',  end: '6:00 PM',  dur: '1h 45m', color: '#6366f1', bg: '#eef0ff', flex: 1.75,  type: 'work'  },
-                ];
-                return (
-                  <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Shift Attendance - Full width on dashboard (same design as attendance tab) */}
+                {execTab === 'dashboard' && (() => {
+                  const now = realTimeClock;
+                  const shiftStart = new Date(now); shiftStart.setHours(9, 0, 0, 0);
+                  const shiftEnd = new Date(now); shiftEnd.setHours(18, 0, 0, 0);
+                  const totalMs = shiftEnd - shiftStart;
 
-                    {/* Row 1: Shift Progress + Today's Timeline side by side */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '16px' }}>
+                  let elapsedMs = 0;
+                  if (isClockedIn && todayLog?.clockIn) {
+                    const startTime = new Date(todayLog.clockIn).getTime();
+                    const endTime = todayLog.clockOut ? new Date(todayLog.clockOut).getTime() : now.getTime();
+                    elapsedMs = Math.max(0, Math.min(endTime - startTime, totalMs));
+                  }
 
-                      {/* Shift Progress Card */}
-                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid #f0f0f5', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                        {/* Header */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ width: '36px', height: '36px', background: '#eef0ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <TrendingUp size={18} color="#6366f1" />
-                            </div>
-                            <div>
-                              <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827' }}>Shift Progress</div>
-                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: isClockedIn ? (isClockedOut ? '#fff1f2' : '#f0fdf4') : '#f9fafb', color: isClockedIn ? (isClockedOut ? '#e11d48' : '#16a34a') : '#6b7280', border: `1px solid ${isClockedIn ? (isClockedOut ? '#fecdd3' : '#bbf7d0') : '#e5e7eb'}`, fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '20px' }}>
-                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: isClockedIn ? (isClockedOut ? '#e11d48' : '#16a34a') : '#9ca3af', display: 'inline-block' }}></span>
-                                {isClockedIn ? (isClockedOut ? 'Shift Ended' : 'On Duty') : 'Off Duty'}
-                              </span>
-                            </div>
-                          </div>
-                          <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '15px', fontWeight: 800, color: '#6366f1' }}>{hrsWorked}h {minsWorked}m {secsWorked}s</div>
-                            <div style={{ fontSize: '11px', color: '#9ca3af' }}>of 9h · {pct}% done</div>
-                          </div>
-                        </div>
+                  const pct = Math.round((elapsedMs / totalMs) * 100);
+                  const hrsWorked = Math.floor(elapsedMs / 3600000);
+                  const minsWorked = Math.floor((elapsedMs % 3600000) / 60000);
+                  const secsWorked = Math.floor((elapsedMs % 60000) / 1000);
+                  const remainMs = Math.max(0, totalMs - elapsedMs);
+                  const remH = Math.floor(remainMs / 3600000);
+                  const remM = Math.floor((remainMs % 3600000) / 60000);
+                  const remS = Math.floor((remainMs % 60000) / 1000);
+                  const breakMs = 90 * 60 * 1000;
+                  const workMs = Math.max(0, elapsedMs - Math.min(elapsedMs, breakMs));
+                  const workH = Math.floor(workMs / 3600000);
+                  const workM = Math.floor((workMs % 3600000) / 60000);
+                  const breakH = Math.floor(Math.min(elapsedMs, breakMs) / 3600000);
+                  const breakM = Math.floor((Math.min(elapsedMs, breakMs) % 3600000) / 60000);
+                  const estEnd = new Date(isClockedIn && todayLog?.clockIn ? new Date(todayLog.clockIn).getTime() + 9 * 3600000 : shiftEnd);
+                  const startedAt = todayLog?.clockIn ? new Date(todayLog.clockIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--';
+                  const segs = [
+                    { label: 'Work Block 1', start: '9:00 AM', end: '11:00 AM', dur: '2h 00m', color: '#6366f1', bg: '#eef0ff', flex: 2, type: 'work' },
+                    { label: 'Tea Break', start: '11:00 AM', end: '11:15 AM', dur: '15m', color: '#f59e0b', bg: '#fef3c7', flex: 0.25, type: 'tea' },
+                    { label: 'Work Block 2', start: '11:15 AM', end: '1:00 PM', dur: '1h 45m', color: '#6366f1', bg: '#eef0ff', flex: 1.75, type: 'work' },
+                    { label: 'Lunch Break', start: '1:00 PM', end: '2:00 PM', dur: '1h 00m', color: '#10b981', bg: '#dcfce7', flex: 1, type: 'lunch' },
+                    { label: 'Work Block 3', start: '2:00 PM', end: '4:00 PM', dur: '2h 00m', color: '#6366f1', bg: '#eef0ff', flex: 2, type: 'work' },
+                    { label: 'Tea Break', start: '4:00 PM', end: '4:15 PM', dur: '15m', color: '#f59e0b', bg: '#fef3c7', flex: 0.25, type: 'tea' },
+                    { label: 'Work Block 4', start: '4:15 PM', end: '6:00 PM', dur: '1h 45m', color: '#6366f1', bg: '#eef0ff', flex: 1.75, type: 'work' },
+                  ];
+                  return (
+                    <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-                        {/* Progress bar with tooltip */}
-                        <div style={{ position: 'relative', paddingTop: '22px' }}>
-                          <div style={{ position: 'absolute', left: `calc(${Math.min(pct, 95)}% - 16px)`, top: '0px', background: '#6366f1', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '3px 7px', borderRadius: '5px', whiteSpace: 'nowrap', zIndex: 2 }}>
-                            {pct}%
-                            <div style={{ position: 'absolute', bottom: '-4px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid #6366f1' }}></div>
-                          </div>
-                          <div style={{ width: '100%', height: '10px', background: '#e0e7ff', borderRadius: '99px', overflow: 'hidden' }}>
-                            <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', borderRadius: '99px', transition: 'width 0.5s ease' }}></div>
-                          </div>
-                        </div>
+                      {/* Row 1: Shift Progress + Today's Timeline side by side */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '16px' }}>
 
-                        {/* Start / End */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-                          <div><div style={{ color: '#9ca3af', fontWeight: 600 }}>Started at</div><div style={{ color: '#111827', fontWeight: 700, fontSize: '13px' }}>{startedAt}</div></div>
-                          <div style={{ textAlign: 'right' }}><div style={{ color: '#9ca3af', fontWeight: 600 }}>Estimated End</div><div style={{ color: '#111827', fontWeight: 700, fontSize: '13px' }}>{estEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div></div>
-                        </div>
-
-                        {/* Divider */}
-                        <div style={{ borderTop: '1px solid #f3f4f6' }}></div>
-
-                        {/* Clock In / Out buttons */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                          <button onClick={handleClockIn} disabled={isClockedIn} style={{ background: isClockedIn ? '#f3f4f6' : '#f0f0ff', color: isClockedIn ? '#9ca3af' : '#4f46e5', border: `1.5px solid ${isClockedIn ? '#e5e7eb' : '#c7d2fe'}`, padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: isClockedIn ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}>
-                            <LogOut size={14} style={{ transform: 'scaleX(-1)' }} /> Clock In
-                          </button>
-                          <button onClick={handleClockOut} disabled={!isClockedIn || isClockedOut} style={{ background: (!isClockedIn || isClockedOut) ? '#f3f4f6' : '#fff1f2', color: (!isClockedIn || isClockedOut) ? '#9ca3af' : '#e11d48', border: `1.5px solid ${(!isClockedIn || isClockedOut) ? '#e5e7eb' : '#fecdd3'}`, padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: (!isClockedIn || isClockedOut) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}>
-                            <LogOut size={14} /> Clock Out
-                          </button>
-                        </div>
-
-                        {/* In / Out / Status footer */}
-                        {todayLog && (
-                          <div style={{ background: '#f8f9fa', borderRadius: '10px', display: 'flex', justifyContent: 'space-around', alignItems: 'center', padding: '8px 12px', border: '1px solid #f0f0f5' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <CheckCircle2 size={13} color="#16a34a" />
-                              <div><div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600 }}>In</div><div style={{ fontSize: '11px', fontWeight: 700, color: '#16a34a' }}>{todayLog.clockIn ? new Date(todayLog.clockIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}</div></div>
-                            </div>
-                            <div style={{ width: '1px', height: '24px', background: '#e5e7eb' }}></div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <Activity size={13} color="#e11d48" />
-                              <div><div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600 }}>Out</div><div style={{ fontSize: '11px', fontWeight: 700, color: '#e11d48' }}>{todayLog.clockOut ? new Date(todayLog.clockOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Active'}</div></div>
-                            </div>
-                            <div style={{ width: '1px', height: '24px', background: '#e5e7eb' }}></div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <Shield size={13} color="#6366f1" />
-                              <div><div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600 }}>Status</div><div style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1' }}>{todayLog?.status || 'On Time'}</div></div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Today's Timeline Card */}
-                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid #f0f0f5' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                          <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827' }}>Today's Timeline</div>
-                          <button style={{ background: '#f8f9fe', border: '1px solid #e0e7ff', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', fontWeight: 600, color: '#6366f1', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Calendar size={12} /> View Full Schedule
-                          </button>
-                        </div>
-
-                        {/* Colored bar */}
-                        <div style={{ display: 'flex', height: '12px', borderRadius: '99px', overflow: 'hidden', marginBottom: '0' }}>
-                          {segs.map((s, i) => (
-                            <div key={i} style={{ flex: s.flex, background: s.color, borderRadius: i === 0 ? '99px 0 0 99px' : i === segs.length - 1 ? '0 99px 99px 0' : '0' }} />
-                          ))}
-                        </div>
-
-                        {/* Dot + time ruler */}
-                        <div style={{ display: 'flex', marginTop: '6px', marginBottom: '12px' }}>
-                          {segs.map((s, i) => (
-                            <div key={i} style={{ flex: s.flex, display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: s.color, border: '2px solid #fff', boxShadow: `0 0 0 2px ${s.color}44` }}></div>
-                                <div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600, marginTop: '2px', whiteSpace: 'nowrap' }}>{s.start}</div>
-                              </div>
-                            </div>
-                          ))}
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f43f5e', border: '2px solid #fff', boxShadow: '0 0 0 2px #f43f5e44' }}></div>
-                            <div style={{ fontSize: '9px', color: '#f43f5e', fontWeight: 700, marginTop: '2px', whiteSpace: 'nowrap' }}>6:00 PM</div>
-                          </div>
-                        </div>
-
-                        {/* Segment cards */}
-                        <div style={{ display: 'flex', gap: '5px' }}>
-                          {segs.map((s, i) => {
-                            const isTea = s.type === 'tea';
-                            return (
-                              <div key={i} style={{ flex: s.flex, minWidth: isTea ? '90px' : '0', background: s.bg, border: `1px solid ${s.color}55`, borderRadius: '8px', padding: isTea ? '6px 8px' : '7px 9px', overflow: 'hidden', flexShrink: isTea ? 0 : 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginBottom: '2px' }}>
-                                  <span style={{ fontSize: '11px' }}>{isTea ? '☕' : s.type === 'lunch' ? '🍽️' : '🖥️'}</span>
-                                  <div style={{ fontSize: '10px', fontWeight: 800, color: s.color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.label}</div>
-                                </div>
-                                <div style={{ fontSize: '9px', color: '#374151', fontWeight: 600, whiteSpace: 'nowrap' }}>{s.start} – {s.end}</div>
-                                <div style={{ fontSize: '9px', color: '#9ca3af' }}>{s.dur}</div>
-                              </div>
-                            );
-                          })}
-                          <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', padding: '7px 9px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
-                            <span style={{ fontSize: '11px' }}>🏁</span>
-                            <div style={{ fontSize: '10px', fontWeight: 800, color: '#e11d48', whiteSpace: 'nowrap' }}>Shift End</div>
-                            <div style={{ fontSize: '9px', color: '#e11d48', fontWeight: 600 }}>6:00 PM</div>
-                          </div>
-                        </div>
-
-                        {/* Divider */}
-                        <div style={{ borderTop: '1px solid #f3f4f6', margin: '14px 0 12px' }}></div>
-
-                        {/* 4 stat mini cards */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
-                          <div style={{ background: '#f8f9fe', borderRadius: '10px', padding: '10px', border: '1px solid #e0e7ff', textAlign: 'center' }}>
-                            <div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>Work</div>
-                            <div style={{ fontSize: '16px', fontWeight: 800, color: '#4f46e5', lineHeight: 1.1 }}>{workH}h {workM < 10 ? '0'+workM : workM}m</div>
-                            <div style={{ fontSize: '9px', color: '#6366f1', fontWeight: 600 }}>{Math.round((workMs / totalMs) * 100)}% of shift</div>
-                          </div>
-                          <div style={{ background: '#fffbeb', borderRadius: '10px', padding: '10px', border: '1px solid #fde68a', textAlign: 'center' }}>
-                            <div style={{ fontSize: '9px', color: '#92400e', fontWeight: 600, textTransform: 'uppercase' }}>Break</div>
-                            <div style={{ fontSize: '16px', fontWeight: 800, color: '#b45309', lineHeight: 1.1 }}>{breakH}h {breakM < 10 ? '0'+breakM : breakM}m</div>
-                            <div style={{ fontSize: '9px', color: '#d97706', fontWeight: 600 }}>{Math.round((Math.min(elapsedMs, breakMs) / totalMs) * 100)}% of shift</div>
-                          </div>
-                          <div style={{ background: '#f0fdf4', borderRadius: '10px', padding: '10px', border: '1px solid #bbf7d0', textAlign: 'center' }}>
-                            <div style={{ fontSize: '9px', color: '#166534', fontWeight: 600, textTransform: 'uppercase' }}>Remaining</div>
-                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#059669', lineHeight: 1.1 }}>{remH}h {remM < 10 ? '0'+remM : remM}m {remS < 10 ? '0'+remS : remS}s</div>
-                            <div style={{ fontSize: '9px', color: '#10b981', fontWeight: 600 }}>{100 - pct}% of shift</div>
-                          </div>
-                          <div style={{ background: '#f8f9fe', borderRadius: '10px', padding: '10px', border: '1px solid #e0e7ff', textAlign: 'center' }}>
-                            <div style={{ fontSize: '9px', color: '#4338ca', fontWeight: 600, textTransform: 'uppercase' }}>Status</div>
-                            <div style={{ fontSize: '16px', fontWeight: 800, color: '#4f46e5', lineHeight: 1.1 }}>{isClockedIn ? (isClockedOut ? 'Ended' : 'Active') : 'Idle'}</div>
-                            <div style={{ fontSize: '9px', color: '#6366f1', fontWeight: 600 }}>{isClockedIn ? (isClockedOut ? 'Shift complete' : 'On duty') : 'Not clocked in'}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Attendance Logs History Card */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px 28px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #f0f0f5', marginTop: '16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <div style={{ fontSize: '15px', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <History size={18} color="#6366f1" /> Attendance History Logs
-                        </div>
-                      </div>
-                      <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                          <thead>
-                            <tr style={{ borderBottom: '1px solid #f0f0f5' }}>
-                              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</th>
-                              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Clock In Time</th>
-                              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Clock Out Time</th>
-                              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Work Duration</th>
-                              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {execProfile?.attendance && execProfile.attendance.length > 0 ? (
-                              [...execProfile.attendance].reverse().map((log, idx) => {
-                                const clockInTime = log.clockIn ? new Date(log.clockIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--';
-                                const clockOutTime = log.clockOut ? new Date(log.clockOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : (log.date === todayStr && !isClockedOut ? 'Active' : '--:--');
-                                
-                                let durationStr = '--:--';
-                                if (log.clockIn && log.clockOut) {
-                                  const diffMs = new Date(log.clockOut) - new Date(log.clockIn);
-                                  const hrs = Math.floor(diffMs / 3600000);
-                                  const mins = Math.floor((diffMs % 3600000) / 60000);
-                                  durationStr = `${hrs}h ${mins}m`;
-                                } else if (log.clockIn && log.date === todayStr && !isClockedOut) {
-                                  const diffMs = realTimeClock - new Date(log.clockIn);
-                                  const hrs = Math.floor(diffMs / 3600000);
-                                  const mins = Math.floor((diffMs % 3600000) / 60000);
-                                  durationStr = `${hrs}h ${mins}m (Active)`;
-                                }
-
-                                let statusColor = '#10b981';
-                                let statusBg = '#ecfdf5';
-                                if (log.status === 'Late') {
-                                  statusColor = '#f59e0b';
-                                  statusBg = '#fffbeb';
-                                } else if (log.status === 'Absent') {
-                                  statusColor = '#ef4444';
-                                  statusBg = '#fef2f2';
-                                }
-
-                                return (
-                                  <tr key={idx} style={{ borderBottom: '1px solid #f9fafb' }}>
-                                    <td style={{ padding: '14px 16px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{log.date}</td>
-                                    <td style={{ padding: '14px 16px', fontSize: '13px', color: '#4b5563' }}>{clockInTime}</td>
-                                    <td style={{ padding: '14px 16px', fontSize: '13px', color: '#4b5563' }}>{clockOutTime}</td>
-                                    <td style={{ padding: '14px 16px', fontSize: '13px', color: '#4b5563', fontWeight: 600 }}>{durationStr}</td>
-                                    <td style={{ padding: '14px 16px' }}>
-                                      <span style={{ fontSize: '11px', fontWeight: 700, color: statusColor, background: statusBg, padding: '4px 10px', borderRadius: '20px' }}>
-                                        {log.status || 'On Time'}
-                                      </span>
-                                    </td>
-                                  </tr>
-                                );
-                              })
-                            ) : (
-                              <tr>
-                                <td colSpan="5" style={{ padding: '30px', textAlign: 'center', color: '#9ca3af', fontSize: '13px' }}>No attendance logs found.</td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-
-                  </div>
-                );
-              })()}
-
-              {/* ================= PENDING REQUESTS QUEUE ================= */}
-              {execTab === 'pending' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div>
-                      <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Pending Requests Queue</h2>
-                      <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Manually claim incoming chat and call requests</p>
-                    </div>
-                    <button 
-                      onClick={fetchPendingRequests}
-                      style={{ padding: '8px 16px', background: '#4f46e5', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}
-                    >
-                      <History size={16} /> Refresh
-                    </button>
-                  </div>
-                  <div style={{ background: themeCardBg, borderRadius: '16px', border: themeCardBorder, overflow: 'hidden' }}>
-                    <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb', background: '#f9fafb', fontWeight: 600, color: '#374151' }}>
-                      {pendingRequests.length === 0 ? 'No Pending Requests' : `${pendingRequests.length} Pending Request${pendingRequests.length > 1 ? 's' : ''}`}
-                    </div>
-                    <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      {(!isClockedIn || isClockedOut) ? (
-                        <div style={{ textAlign: 'center', color: '#9ca3af', padding: '40px 0' }}>
-                          <LogOut size={48} style={{ opacity: 0.2, marginBottom: '16px' }} />
-                          <div style={{ fontSize: '16px', fontWeight: 500 }}>Please clock in</div>
-                          <div style={{ fontSize: '14px', marginTop: '4px' }}>You must be clocked in to view and claim pending requests.</div>
-                        </div>
-                      ) : pendingRequests.length === 0 ? (
-                        <div style={{ textAlign: 'center', color: '#9ca3af', padding: '40px 0' }}>
-                          <Bell size={48} style={{ opacity: 0.2, marginBottom: '16px' }} />
-                          <div style={{ fontSize: '16px', fontWeight: 500 }}>All caught up!</div>
-                          <div style={{ fontSize: '14px', marginTop: '4px' }}>There are no unassigned requests in the queue right now.</div>
-                        </div>
-                      ) : (
-                        pendingRequests.map((req, idx) => (
-                          <div key={idx} style={{ 
-                            display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-                            padding: '16px', border: '1px solid #e5e7eb', borderRadius: '12px', background: '#fff'
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: req.type === 'chat' ? '#eff6ff' : req.type === 'deposit' ? '#fffbeb' : '#f0fdf4', color: req.type === 'chat' ? '#3b82f6' : req.type === 'deposit' ? '#d97706' : '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {req.type === 'chat' ? <MessageSquare size={24} /> : req.type === 'deposit' ? <Wallet size={24} /> : <Phone size={24} />}
+                        {/* Shift Progress Card */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid #f0f0f5', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                          {/* Header */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <div style={{ width: '36px', height: '36px', background: '#eef0ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <TrendingUp size={18} color="#6366f1" />
                               </div>
                               <div>
-                                <div style={{ fontSize: '16px', fontWeight: 700, color: '#111827', marginBottom: '2px' }}>
-                                  {req.userName || req.userEmail}
-                                </div>
-                                <div style={{ fontSize: '13px', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                  <span style={{ fontWeight: 600, color: req.type === 'chat' ? '#3b82f6' : req.type === 'deposit' ? '#d97706' : '#22c55e' }}>{req.type === 'chat' ? 'LIVE CHAT' : req.type === 'deposit' ? `DEPOSIT: ₹${req.amount}` : 'CALLBACK'}</span>
-                                  &bull; {new Date(req.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </div>
+                                <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827' }}>Shift Progress</div>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: isClockedIn ? (isClockedOut ? '#fff1f2' : '#f0fdf4') : '#f9fafb', color: isClockedIn ? (isClockedOut ? '#e11d48' : '#16a34a') : '#6b7280', border: `1px solid ${isClockedIn ? (isClockedOut ? '#fecdd3' : '#bbf7d0') : '#e5e7eb'}`, fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '20px' }}>
+                                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: isClockedIn ? (isClockedOut ? '#e11d48' : '#16a34a') : '#9ca3af', display: 'inline-block' }}></span>
+                                  {isClockedIn ? (isClockedOut ? 'Shift Ended' : 'On Duty') : 'Off Duty'}
+                                </span>
                               </div>
                             </div>
-                            <button 
-                              onClick={() => handleClaimRequest(req.type, req.id, req.userEmail)}
-                              style={{ 
-                                padding: '10px 24px', background: req.type === 'chat' ? '#3b82f6' : req.type === 'deposit' ? '#d97706' : '#22c55e', color: '#fff', 
-                                border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '14px',
-                                transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
-                              }}
-                              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                            >
-                              Claim {req.type === 'chat' ? 'Chat' : req.type === 'deposit' ? 'Deposit' : 'Call'}
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontSize: '15px', fontWeight: 800, color: '#6366f1' }}>{hrsWorked}h {minsWorked}m {secsWorked}s</div>
+                              <div style={{ fontSize: '11px', color: '#9ca3af' }}>of 9h · {pct}% done</div>
+                            </div>
+                          </div>
+
+                          {/* Progress bar with tooltip */}
+                          <div style={{ position: 'relative', paddingTop: '22px' }}>
+                            <div style={{ position: 'absolute', left: `calc(${Math.min(pct, 95)}% - 16px)`, top: '0px', background: '#6366f1', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '3px 7px', borderRadius: '5px', whiteSpace: 'nowrap', zIndex: 2 }}>
+                              {pct}%
+                              <div style={{ position: 'absolute', bottom: '-4px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid #6366f1' }}></div>
+                            </div>
+                            <div style={{ width: '100%', height: '10px', background: '#e0e7ff', borderRadius: '99px', overflow: 'hidden' }}>
+                              <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', borderRadius: '99px', transition: 'width 0.5s ease' }}></div>
+                            </div>
+                          </div>
+
+                          {/* Start / End */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                            <div><div style={{ color: '#9ca3af', fontWeight: 600 }}>Started at</div><div style={{ color: '#111827', fontWeight: 700, fontSize: '13px' }}>{startedAt}</div></div>
+                            <div style={{ textAlign: 'right' }}><div style={{ color: '#9ca3af', fontWeight: 600 }}>Estimated End</div><div style={{ color: '#111827', fontWeight: 700, fontSize: '13px' }}>{estEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div></div>
+                          </div>
+
+                          {/* Divider */}
+                          <div style={{ borderTop: '1px solid #f3f4f6' }}></div>
+
+                          {/* Clock In / Out buttons */}
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                            <button onClick={handleClockIn} disabled={isClockedIn} style={{ background: isClockedIn ? '#f3f4f6' : '#f0f0ff', color: isClockedIn ? '#9ca3af' : '#4f46e5', border: `1.5px solid ${isClockedIn ? '#e5e7eb' : '#c7d2fe'}`, padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: isClockedIn ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}>
+                              <LogOut size={14} style={{ transform: 'scaleX(-1)' }} /> Clock In
+                            </button>
+                            <button onClick={handleClockOut} disabled={!isClockedIn || isClockedOut} style={{ background: (!isClockedIn || isClockedOut) ? '#f3f4f6' : '#fff1f2', color: (!isClockedIn || isClockedOut) ? '#9ca3af' : '#e11d48', border: `1.5px solid ${(!isClockedIn || isClockedOut) ? '#e5e7eb' : '#fecdd3'}`, padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: (!isClockedIn || isClockedOut) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}>
+                              <LogOut size={14} /> Clock Out
                             </button>
                           </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
 
-
-              {/* ================= CALLBACK REQUESTS PAGE ================= */}
-              {execTab === 'callbacks' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  {/* Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div>
-                      <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Callback Requests</h2>
-                      <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Manage and track all customer callback requests</p>
-                    </div>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                      <button style={{ background: '#ffffff', border: '1px solid #f0f0f5', borderRadius: '10px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-                        <Calendar size={15} color="#9ca3af" /> 17 Jun 2026
-                      </button>
-                      <button style={{ background: '#ffffff', border: '1px solid #f0f0f5', borderRadius: '10px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-                        <Download size={15} color="#9ca3af" /> Export Report
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Top KPI Cards */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
-                    {/* Total Requests */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', flexShrink: 0 }}><PhoneCall size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Total Requests</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{totalCalls}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Lifetime requests</div>
-                      </div>
-                    </div>
-                    {/* Pending */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', flexShrink: 0 }}><Clock size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Pending</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{pendingCalls}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Awaiting connection</div>
-                      </div>
-                    </div>
-                    {/* Completed */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#fffbeb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0 }}><Phone size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Completed</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{completedCalls}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Closed requests</div>
-                      </div>
-                    </div>
-                    {/* Answered */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#ecfdf5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}><CheckCircle2 size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Answered</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{answeredCalls}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Currently connected</div>
-                      </div>
-                    </div>
-                    {/* Missed */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#fff1f2', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e11d48', flexShrink: 0 }}><PhoneMissed size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Missed</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{missedCalls}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Failed connection</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Main Grid: Data Table and Sidebar */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', alignItems: 'start' }}>
-                    
-                    {/* Data Table Column */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
-                      {/* Filters Row */}
-                      <div style={{ padding: '20px', borderBottom: '1px solid #f0f0f5', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                        <div style={{ position: 'relative', flex: '1 1 200px' }}>
-                          <Search size={16} color="#9ca3af" style={{ position: 'absolute', left: '12px', top: '10px' }} />
-                          <input type="text" placeholder="Search by name, phone number..." style={{ width: '100%', padding: '10px 10px 10px 36px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none' }} />
+                          {/* In / Out / Status footer */}
+                          {todayLog && (
+                            <div style={{ background: '#f8f9fa', borderRadius: '10px', display: 'flex', justifyContent: 'space-around', alignItems: 'center', padding: '8px 12px', border: '1px solid #f0f0f5' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <CheckCircle2 size={13} color="#16a34a" />
+                                <div><div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600 }}>In</div><div style={{ fontSize: '11px', fontWeight: 700, color: '#16a34a' }}>{todayLog.clockIn ? new Date(todayLog.clockIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}</div></div>
+                              </div>
+                              <div style={{ width: '1px', height: '24px', background: '#e5e7eb' }}></div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Activity size={13} color="#e11d48" />
+                                <div><div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600 }}>Out</div><div style={{ fontSize: '11px', fontWeight: 700, color: '#e11d48' }}>{todayLog.clockOut ? new Date(todayLog.clockOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Active'}</div></div>
+                              </div>
+                              <div style={{ width: '1px', height: '24px', background: '#e5e7eb' }}></div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Shield size={13} color="#6366f1" />
+                                <div><div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600 }}>Status</div><div style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1' }}>{todayLog?.status || 'On Time'}</div></div>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div style={{ position: 'relative', flex: '0 0 140px' }}>
-                          <select style={{ width: '100%', padding: '10px 30px 10px 14px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', appearance: 'none', color: '#4b5563', fontWeight: 600 }}>
-                            <option>All Status</option>
-                          </select>
-                          <ChevronDown size={14} color="#9ca3af" style={{ position: 'absolute', right: '12px', top: '11px', pointerEvents: 'none' }} />
+
+                        {/* Today's Timeline Card */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px 22px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', border: '1px solid #f0f0f5' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827' }}>Today's Timeline</div>
+                            <button style={{ background: '#f8f9fe', border: '1px solid #e0e7ff', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', fontWeight: 600, color: '#6366f1', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Calendar size={12} /> View Full Schedule
+                            </button>
+                          </div>
+
+                          {/* Colored bar */}
+                          <div style={{ display: 'flex', height: '12px', borderRadius: '99px', overflow: 'hidden', marginBottom: '0' }}>
+                            {segs.map((s, i) => (
+                              <div key={i} style={{ flex: s.flex, background: s.color, borderRadius: i === 0 ? '99px 0 0 99px' : i === segs.length - 1 ? '0 99px 99px 0' : '0' }} />
+                            ))}
+                          </div>
+
+                          {/* Dot + time ruler */}
+                          <div style={{ display: 'flex', marginTop: '6px', marginBottom: '12px' }}>
+                            {segs.map((s, i) => (
+                              <div key={i} style={{ flex: s.flex, display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: s.color, border: '2px solid #fff', boxShadow: `0 0 0 2px ${s.color}44` }}></div>
+                                  <div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600, marginTop: '2px', whiteSpace: 'nowrap' }}>{s.start}</div>
+                                </div>
+                              </div>
+                            ))}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f43f5e', border: '2px solid #fff', boxShadow: '0 0 0 2px #f43f5e44' }}></div>
+                              <div style={{ fontSize: '9px', color: '#f43f5e', fontWeight: 700, marginTop: '2px', whiteSpace: 'nowrap' }}>6:00 PM</div>
+                            </div>
+                          </div>
+
+                          {/* Segment cards */}
+                          <div style={{ display: 'flex', gap: '5px' }}>
+                            {segs.map((s, i) => {
+                              const isTea = s.type === 'tea';
+                              return (
+                                <div key={i} style={{ flex: s.flex, minWidth: isTea ? '90px' : '0', background: s.bg, border: `1px solid ${s.color}55`, borderRadius: '8px', padding: isTea ? '6px 8px' : '7px 9px', overflow: 'hidden', flexShrink: isTea ? 0 : 1 }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginBottom: '2px' }}>
+                                    <span style={{ fontSize: '11px' }}>{isTea ? '☕' : s.type === 'lunch' ? '🍽️' : '🖥️'}</span>
+                                    <div style={{ fontSize: '10px', fontWeight: 800, color: s.color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.label}</div>
+                                  </div>
+                                  <div style={{ fontSize: '9px', color: '#374151', fontWeight: 600, whiteSpace: 'nowrap' }}>{s.start} – {s.end}</div>
+                                  <div style={{ fontSize: '9px', color: '#9ca3af' }}>{s.dur}</div>
+                                </div>
+                              );
+                            })}
+                            <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', padding: '7px 9px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
+                              <span style={{ fontSize: '11px' }}>🏁</span>
+                              <div style={{ fontSize: '10px', fontWeight: 800, color: '#e11d48', whiteSpace: 'nowrap' }}>Shift End</div>
+                              <div style={{ fontSize: '9px', color: '#e11d48', fontWeight: 600 }}>6:00 PM</div>
+                            </div>
+                          </div>
+
+                          {/* Divider */}
+                          <div style={{ borderTop: '1px solid #f3f4f6', margin: '14px 0 12px' }}></div>
+
+                          {/* 4 stat mini cards */}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                            <div style={{ background: '#f8f9fe', borderRadius: '10px', padding: '10px', border: '1px solid #e0e7ff', textAlign: 'center' }}>
+                              <div style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>Work</div>
+                              <div style={{ fontSize: '16px', fontWeight: 800, color: '#4f46e5', lineHeight: 1.1 }}>{workH}h {workM < 10 ? '0' + workM : workM}m</div>
+                              <div style={{ fontSize: '9px', color: '#6366f1', fontWeight: 600 }}>{Math.round((workMs / totalMs) * 100)}% of shift</div>
+                            </div>
+                            <div style={{ background: '#fffbeb', borderRadius: '10px', padding: '10px', border: '1px solid #fde68a', textAlign: 'center' }}>
+                              <div style={{ fontSize: '9px', color: '#92400e', fontWeight: 600, textTransform: 'uppercase' }}>Break</div>
+                              <div style={{ fontSize: '16px', fontWeight: 800, color: '#b45309', lineHeight: 1.1 }}>{breakH}h {breakM < 10 ? '0' + breakM : breakM}m</div>
+                              <div style={{ fontSize: '9px', color: '#d97706', fontWeight: 600 }}>{Math.round((Math.min(elapsedMs, breakMs) / totalMs) * 100)}% of shift</div>
+                            </div>
+                            <div style={{ background: '#f0fdf4', borderRadius: '10px', padding: '10px', border: '1px solid #bbf7d0', textAlign: 'center' }}>
+                              <div style={{ fontSize: '9px', color: '#166534', fontWeight: 600, textTransform: 'uppercase' }}>Remaining</div>
+                              <div style={{ fontSize: '14px', fontWeight: 800, color: '#059669', lineHeight: 1.1 }}>{remH}h {remM < 10 ? '0' + remM : remM}m {remS < 10 ? '0' + remS : remS}s</div>
+                              <div style={{ fontSize: '9px', color: '#10b981', fontWeight: 600 }}>{100 - pct}% of shift</div>
+                            </div>
+                            <div style={{ background: '#f8f9fe', borderRadius: '10px', padding: '10px', border: '1px solid #e0e7ff', textAlign: 'center' }}>
+                              <div style={{ fontSize: '9px', color: '#4338ca', fontWeight: 600, textTransform: 'uppercase' }}>Status</div>
+                              <div style={{ fontSize: '16px', fontWeight: 800, color: '#4f46e5', lineHeight: 1.1 }}>{isClockedIn ? (isClockedOut ? 'Ended' : 'Active') : 'Idle'}</div>
+                              <div style={{ fontSize: '9px', color: '#6366f1', fontWeight: 600 }}>{isClockedIn ? (isClockedOut ? 'Shift complete' : 'On duty') : 'Not clocked in'}</div>
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ position: 'relative', flex: '0 0 140px' }}>
-                          <select style={{ width: '100%', padding: '10px 30px 10px 14px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', appearance: 'none', color: '#4b5563', fontWeight: 600 }}>
-                            <option>All Priority</option>
-                          </select>
-                              <ChevronDown size={14} color="#9ca3af" style={{ position: 'absolute', right: '12px', top: '11px', pointerEvents: 'none' }} />
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563' }}>
-                          17 Jun 2026 <span style={{ color: '#9ca3af' }}>-</span> 17 Jun 2026
-                        </div>
-                        <button style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                          <Filter size={14} color="#7c3aed" /> Filter
-                        </button>
                       </div>
 
-                      {/* Table */}
-                      <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                          <thead>
-                            <tr style={{ borderBottom: '1px solid #f0f0f5' }}>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer Details</th>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer ID</th>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Preferred Time</th>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Request Time</th>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Status</th>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Priority</th>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Assigned To</th>
-                              <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {callRequests.length > 0 ? (
-                              callRequests.map(req => {
-                                const initials = req.userName ? req.userName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'U';
-                                const reqDate = new Date(req.createdAt);
-                                const dateStr = reqDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-                                const timeStr = reqDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-                                let statusColor = '#3b82f6';
-                                let statusBg = '#eff6ff';
-                                if (req.status === 'Connected') {
-                                  statusColor = '#fbbf24';
-                                  statusBg = '#fffbeb';
-                                } else if (req.status === 'Closed') {
-                                  statusColor = '#10b981';
-                                  statusBg = '#ecfdf5';
-                                } else if (req.status === 'Missed') {
-                                  statusColor = '#e11d48';
-                                  statusBg = '#fff1f2';
-                                }
-
-                                return (
-                                  <tr key={req.id} style={{ borderBottom: '1px solid #f0f0f5' }}>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#f3e8ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px' }}>
-                                          {initials}
-                                        </div>
-                                        <div>
-                                          <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{req.userName}</div>
-                                          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{req.phone}</div>
-                                        </div>
-                                      </div>
-                                    </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#4f46e5' }}>{req.uniqueId || 'N/A'}</div>
-                                    </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <div style={{ fontSize: '12px', color: '#4b5563' }}><Calendar size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> {dateStr}</div>
-                                      <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>Anytime</div>
-                                    </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <div style={{ fontSize: '12px', color: '#4b5563' }}><Clock size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> {dateStr}</div>
-                                      <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{timeStr}</div>
-                                    </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <span style={{ fontSize: '11px', fontWeight: 700, color: statusColor, background: statusBg, padding: '4px 10px', borderRadius: '20px' }}>{req.status}</span>
-                                    </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#f59e0b', background: '#fffbeb', padding: '4px 10px', borderRadius: '20px' }}>Medium</span>
-                                    </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500 }}>Support Team</div>
-                                    </td>
-                                    <td style={{ padding: '16px 20px' }}>
-                                      <div style={{ display: 'flex', gap: '8px' }}>
-                                        {req.status === 'Pending' ? (
-                                          <button onClick={() => handleUpdateCallStatus(req.id, 'Connected')} style={{ background: '#10b981', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>Connect</button>
-                                        ) : req.status === 'Connected' ? (
-                                          <button onClick={() => handleUpdateCallStatus(req.id, 'Closed')} style={{ background: '#f43f5e', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>End Call</button>
-                                        ) : (
-                                          <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600 }}>Completed</span>
-                                        )}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })
-                            ) : (
-                              <tr>
-                                <td colSpan="7" style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>
-                                  <CheckCircle2 size={24} color="#10b981" style={{ display: 'block', margin: '0 auto 8px' }} />
-                                  No callback requests found in database.
-                                </td>
+                      {/* Attendance Logs History Card */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px 28px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #f0f0f5', marginTop: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                          <div style={{ fontSize: '15px', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <History size={18} color="#6366f1" /> Attendance History Logs
+                          </div>
+                        </div>
+                        <div style={{ overflowX: 'auto' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                            <thead>
+                              <tr style={{ borderBottom: '1px solid #f0f0f5' }}>
+                                <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</th>
+                                <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Clock In Time</th>
+                                <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Clock Out Time</th>
+                                <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Work Duration</th>
+                                <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
                               </tr>
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
+                            </thead>
+                            <tbody>
+                              {execProfile?.attendance && execProfile.attendance.length > 0 ? (
+                                [...execProfile.attendance].reverse().map((log, idx) => {
+                                  const clockInTime = log.clockIn ? new Date(log.clockIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--';
+                                  const clockOutTime = log.clockOut ? new Date(log.clockOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : (log.date === todayStr && !isClockedOut ? 'Active' : '--:--');
 
-                      <div style={{ padding: '16px 20px', borderTop: '1px solid #f0f0f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: 500 }}>Showing {callRequests.length > 0 ? 1 : 0} to {callRequests.length} of {totalCalls} entries</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ display: 'flex', gap: '4px' }}>
-                            <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><ChevronLeft size={16} /></button>
-                            <button style={{ width: '32px', height: '32px', background: '#7c3aed', border: 'none', borderRadius: '6px', color: '#ffffff', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>1</button>
-                            <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>2</button>
-                            <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>3</button>
-                            <button style={{ width: '32px', height: '32px', background: 'transparent', border: 'none', color: '#9ca3af', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>...</button>
-                            <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>36</button>
-                            <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><ChevronRight size={16} /></button>
-                          </div>
-                          <div style={{ position: 'relative' }}>
-                            <select style={{ padding: '8px 30px 8px 12px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '13px', color: '#4b5563', fontWeight: 600, appearance: 'none' }}>
-                              <option>10 / page</option>
-                            </select>
-                            <ChevronDown size={14} color="#9ca3af" style={{ position: 'absolute', right: '10px', top: '10px', pointerEvents: 'none' }} />
-                          </div>
+                                  let durationStr = '--:--';
+                                  if (log.clockIn && log.clockOut) {
+                                    const diffMs = new Date(log.clockOut) - new Date(log.clockIn);
+                                    const hrs = Math.floor(diffMs / 3600000);
+                                    const mins = Math.floor((diffMs % 3600000) / 60000);
+                                    durationStr = `${hrs}h ${mins}m`;
+                                  } else if (log.clockIn && log.date === todayStr && !isClockedOut) {
+                                    const diffMs = realTimeClock - new Date(log.clockIn);
+                                    const hrs = Math.floor(diffMs / 3600000);
+                                    const mins = Math.floor((diffMs % 3600000) / 60000);
+                                    durationStr = `${hrs}h ${mins}m (Active)`;
+                                  }
+
+                                  let statusColor = '#10b981';
+                                  let statusBg = '#ecfdf5';
+                                  if (log.status === 'Late') {
+                                    statusColor = '#f59e0b';
+                                    statusBg = '#fffbeb';
+                                  } else if (log.status === 'Absent') {
+                                    statusColor = '#ef4444';
+                                    statusBg = '#fef2f2';
+                                  }
+
+                                  return (
+                                    <tr key={idx} style={{ borderBottom: '1px solid #f9fafb' }}>
+                                      <td style={{ padding: '14px 16px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{log.date}</td>
+                                      <td style={{ padding: '14px 16px', fontSize: '13px', color: '#4b5563' }}>{clockInTime}</td>
+                                      <td style={{ padding: '14px 16px', fontSize: '13px', color: '#4b5563' }}>{clockOutTime}</td>
+                                      <td style={{ padding: '14px 16px', fontSize: '13px', color: '#4b5563', fontWeight: 600 }}>{durationStr}</td>
+                                      <td style={{ padding: '14px 16px' }}>
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: statusColor, background: statusBg, padding: '4px 10px', borderRadius: '20px' }}>
+                                          {log.status || 'On Time'}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  );
+                                })
+                              ) : (
+                                <tr>
+                                  <td colSpan="5" style={{ padding: '30px', textAlign: 'center', color: '#9ca3af', fontSize: '13px' }}>No attendance logs found.</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
                         </div>
                       </div>
+
                     </div>
+                  );
+                })()}
 
-                    {/* Sidebar Analytics Column */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                      
-                      {/* Callback Overview Donut Chart */}
-                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #f0f0f5' }}>
-                        <h3 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#111827' }}>Callback Overview</h3>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                          <div style={{ width: '130px', height: '130px', position: 'relative' }}>
-                            <svg viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
-                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f0f0f5" strokeWidth="18" />
-                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="#3b82f6" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - pendingPct / 100)} strokeLinecap="butt" /> {/* Pending */}
-                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f43f5e" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - missedPct / 100)} strokeLinecap="butt" style={{ transform: `rotate(${360 * (pendingPct / 100)}deg)`, transformOrigin: 'center' }} /> {/* Missed */}
-                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="#10b981" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - completedPct / 100)} strokeLinecap="butt" style={{ transform: `rotate(${360 * ((pendingPct + missedPct) / 100)}deg)`, transformOrigin: 'center' }} /> {/* Completed */}
-                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="#fbbf24" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - answeredPct / 100)} strokeLinecap="butt" style={{ transform: `rotate(${360 * ((pendingPct + missedPct + completedPct) / 100)}deg)`, transformOrigin: 'center' }} /> {/* Answered */}
-                            </svg>
-                            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                              <div style={{ fontSize: '18px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{totalCalls}</div>
-                              <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 500 }}>Total</div>
-                            </div>
-                          </div>
-                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span> Completed</div>
-                              <div style={{ color: '#111827' }}>{completedCalls} ({completedPct}%)</div>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6' }}></span> Pending</div>
-                              <div style={{ color: '#111827' }}>{pendingCalls} ({pendingPct}%)</div>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f43f5e' }}></span> Missed</div>
-                              <div style={{ color: '#111827' }}>{missedCalls} ({missedPct}%)</div>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fbbf24' }}></span> Answered</div>
-                              <div style={{ color: '#111827' }}>{answeredCalls} ({answeredPct}%)</div>
-                            </div>
-                          </div>
-                        </div>
+                {/* ================= PENDING REQUESTS QUEUE ================= */}
+                {execTab === 'pending' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <div>
+                        <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Pending Requests Queue</h2>
+                        <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Manually claim incoming chat and call requests</p>
                       </div>
-
-                      {/* Response Time Gauge */}
-                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #f0f0f5' }}>
-                        <h3 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#111827' }}>Response Time (Avg.)</h3>
-                        <div style={{ position: 'relative', height: '110px', display: 'flex', justifyContent: 'center' }}>
-                          <svg viewBox="0 0 200 100" style={{ width: '200px' }}>
-                            <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#f3f4f6" strokeWidth="12" strokeLinecap="round" />
-                            <path d="M 20 90 A 80 80 0 0 1 140 30" fill="none" stroke="#7c3aed" strokeWidth="12" strokeLinecap="round" />
-                          </svg>
-                          <div style={{ position: 'absolute', bottom: '15px', textAlign: 'center' }}>
-                            <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>01m 24s</div>
-                            <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500, marginTop: '4px' }}>Average Response Time</div>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', borderTop: '1px solid #f0f0f5', paddingTop: '16px' }}>
-                          <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginBottom: '4px' }}>Best</div>
-                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#10b981' }}>32s</div>
-                          </div>
-                          <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginBottom: '4px' }}>Average</div>
-                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#7c3aed' }}>01m 24s</div>
-                          </div>
-                          <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginBottom: '4px' }}>Worst</div>
-                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#e11d48' }}>05m 16s</div>
-                          </div>
-                        </div>
+                      <button
+                        onClick={fetchPendingRequests}
+                        style={{ padding: '8px 16px', background: '#4f46e5', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}
+                      >
+                        <History size={16} /> Refresh
+                      </button>
+                    </div>
+                    <div style={{ background: themeCardBg, borderRadius: '16px', border: themeCardBorder, overflow: 'hidden' }}>
+                      <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb', background: '#f9fafb', fontWeight: 600, color: '#374151' }}>
+                        {pendingRequests.length === 0 ? 'No Pending Requests' : `${pendingRequests.length} Pending Request${pendingRequests.length > 1 ? 's' : ''}`}
                       </div>
-
-                      {/* Peak Callback Hours Line Chart */}
-                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #f0f0f5' }}>
-                        <h3 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#111827' }}>Peak Callback Hours</h3>
-                        <div style={{ height: '140px', position: 'relative', marginTop: '10px' }}>
-                          <svg viewBox="0 0 400 120" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-                            {/* Grid Lines */}
-                            <line x1="0" y1="0" x2="400" y2="0" stroke="#f3f4f6" strokeWidth="1" />
-                            <line x1="0" y1="40" x2="400" y2="40" stroke="#f3f4f6" strokeWidth="1" />
-                            <line x1="0" y1="80" x2="400" y2="80" stroke="#f3f4f6" strokeWidth="1" />
-                            <line x1="0" y1="120" x2="400" y2="120" stroke="#f3f4f6" strokeWidth="1" />
-                            
-                            {/* Y Axis Labels */}
-                            <text x="-10" y="5" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">60</text>
-                            <text x="-10" y="45" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">40</text>
-                            <text x="-10" y="85" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">20</text>
-                            <text x="-10" y="125" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">0</text>
-
-                            {/* X Axis Labels */}
-                            <text x="0" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">6 AM</text>
-                            <text x="66" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">9 AM</text>
-                            <text x="133" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">12 PM</text>
-                            <text x="200" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">3 PM</text>
-                            <text x="266" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">6 PM</text>
-                            <text x="333" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">9 PM</text>
-                            
-                            {/* Area Fill */}
-                            <linearGradient id="gradientCall" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.3" />
-                              <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
-                            </linearGradient>
-                            <path d="M 0 110 L 33 105 L 66 70 L 100 65 L 133 65 L 166 40 L 200 65 L 233 50 L 266 80 L 300 110 L 333 115 L 333 120 L 0 120 Z" fill="url(#gradientCall)" />
-                            
-                            {/* Line */}
-                            <path d="M 0 110 L 33 105 L 66 70 L 100 65 L 133 65 L 166 40 L 200 65 L 233 50 L 266 80 L 300 110 L 333 115" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinejoin="round" />
-                            
-                            {/* Data Points */}
-                            <circle cx="66" cy="70" r="3" fill="#ffffff" stroke="#8b5cf6" strokeWidth="2" />
-                            <circle cx="166" cy="40" r="3" fill="#ffffff" stroke="#8b5cf6" strokeWidth="2" />
-                            <circle cx="233" cy="50" r="3" fill="#ffffff" stroke="#8b5cf6" strokeWidth="2" />
-                          </svg>
-
-                          {/* Tooltip Mock */}
-                          <div style={{ position: 'absolute', top: '-15px', left: '166px', transform: 'translateX(-50%)', background: '#ffffff', border: '1px solid #f0f0f5', borderRadius: '8px', padding: '8px 12px', boxShadow: '0 4px 10px rgba(0,0,0,0.08)', zIndex: 10 }}>
-                            <div style={{ fontSize: '11px', fontWeight: 800, color: '#111827', textAlign: 'center' }}>3 PM</div>
-                            <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>48 Requests</div>
+                      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {(!isClockedIn || isClockedOut) ? (
+                          <div style={{ textAlign: 'center', color: '#9ca3af', padding: '40px 0' }}>
+                            <LogOut size={48} style={{ opacity: 0.2, marginBottom: '16px' }} />
+                            <div style={{ fontSize: '16px', fontWeight: 500 }}>Please clock in</div>
+                            <div style={{ fontSize: '14px', marginTop: '4px' }}>You must be clocked in to view and claim pending requests.</div>
                           </div>
-                        </div>
+                        ) : pendingRequests.length === 0 ? (
+                          <div style={{ textAlign: 'center', color: '#9ca3af', padding: '40px 0' }}>
+                            <Bell size={48} style={{ opacity: 0.2, marginBottom: '16px' }} />
+                            <div style={{ fontSize: '16px', fontWeight: 500 }}>All caught up!</div>
+                            <div style={{ fontSize: '14px', marginTop: '4px' }}>There are no unassigned requests in the queue right now.</div>
+                          </div>
+                        ) : (
+                          pendingRequests.map((req, idx) => (
+                            <div key={idx} style={{
+                              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                              padding: '16px', border: '1px solid #e5e7eb', borderRadius: '12px', background: '#fff'
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: req.type === 'chat' ? '#eff6ff' : req.type === 'deposit' ? '#fffbeb' : '#f0fdf4', color: req.type === 'chat' ? '#3b82f6' : req.type === 'deposit' ? '#d97706' : '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  {req.type === 'chat' ? <MessageSquare size={24} /> : req.type === 'deposit' ? <Wallet size={24} /> : <Phone size={24} />}
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: '16px', fontWeight: 700, color: '#111827', marginBottom: '2px' }}>
+                                    {req.userName || req.userEmail}
+                                  </div>
+                                  <div style={{ fontSize: '13px', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span style={{ fontWeight: 600, color: req.type === 'chat' ? '#3b82f6' : req.type === 'deposit' ? '#d97706' : '#22c55e' }}>{req.type === 'chat' ? 'LIVE CHAT' : req.type === 'deposit' ? `DEPOSIT: ₹${req.amount}` : 'CALLBACK'}</span>
+                                    &bull; {new Date(req.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </div>
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => handleClaimRequest(req.type, req.id, req.userEmail)}
+                                style={{
+                                  padding: '10px 24px', background: req.type === 'chat' ? '#3b82f6' : req.type === 'deposit' ? '#d97706' : '#22c55e', color: '#fff',
+                                  border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '14px',
+                                  transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                              >
+                                Claim {req.type === 'chat' ? 'Chat' : req.type === 'deposit' ? 'Deposit' : 'Call'}
+                              </button>
+                            </div>
+                          ))
+                        )}
                       </div>
-
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* ================= MANUAL DEPOSITS PAGE ================= */}
-              {execTab === 'deposits' && (() => {
-                const totalAmtAll = depositMetrics.totalAmountApproved + depositMetrics.totalAmountPending + depositMetrics.totalAmountRejected;
-                const appPct = totalAmtAll > 0 ? Math.round((depositMetrics.totalAmountApproved / totalAmtAll) * 100) : 0;
-                const penPct = totalAmtAll > 0 ? Math.round((depositMetrics.totalAmountPending / totalAmtAll) * 100) : 0;
-                const rejPct = totalAmtAll > 0 ? Math.round((depositMetrics.totalAmountRejected / totalAmtAll) * 100) : 0;
 
-                const methodSummary = depositMetrics.methodSummary || { 'UPI': 0, 'Bank Transfer': 0, 'Net Banking': 0, 'Wallet': 0, 'Others': 0 };
-                const methodTotal = Object.values(methodSummary).reduce((sum, val) => sum + val, 0) || 1;
-                const upiPct = Math.round((methodSummary['UPI'] / methodTotal) * 100);
-                const btPct = Math.round((methodSummary['Bank Transfer'] / methodTotal) * 100);
-                const nbPct = Math.round((methodSummary['Net Banking'] / methodTotal) * 100);
-                const walPct = Math.round((methodSummary['Wallet'] / methodTotal) * 100);
-                const othPct = Math.round((methodSummary['Others'] / methodTotal) * 100);
-
-                return (
+                {/* ================= CALLBACK REQUESTS PAGE ================= */}
+                {execTab === 'callbacks' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     {/* Header */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <div>
-                        <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Manual Deposits</h2>
-                        <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Review and manage all manual deposit requests</p>
+                        <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Callback Requests</h2>
+                        <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Manage and track all customer callback requests</p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button style={{ background: '#ffffff', border: '1px solid #f0f0f5', borderRadius: '10px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+                          <Calendar size={15} color="#9ca3af" /> 17 Jun 2026
+                        </button>
+                        <button style={{ background: '#ffffff', border: '1px solid #f0f0f5', borderRadius: '10px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+                          <Download size={15} color="#9ca3af" /> Export Report
+                        </button>
                       </div>
                     </div>
 
@@ -8351,11 +8037,11 @@ function App() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
                       {/* Total Requests */}
                       <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', flexShrink: 0 }}><Activity size={22} /></div>
+                        <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', flexShrink: 0 }}><PhoneCall size={22} /></div>
                         <div>
                           <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Total Requests</div>
-                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.totalRequests}</div>
-                          <div style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280' }}>All time submissions</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{totalCalls}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Lifetime requests</div>
                         </div>
                       </div>
                       {/* Pending */}
@@ -8363,159 +8049,147 @@ function App() {
                         <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', flexShrink: 0 }}><Clock size={22} /></div>
                         <div>
                           <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Pending</div>
-                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.pendingCount}</div>
-                          <div style={{ fontSize: '11px', fontWeight: 600, color: '#3b82f6' }}>Awaiting review</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{pendingCalls}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Awaiting connection</div>
                         </div>
                       </div>
-                      {/* Approved */}
+                      {/* Completed */}
                       <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '48px', height: '48px', background: '#f0fdf4', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}><CheckCircle2 size={22} /></div>
+                        <div style={{ width: '48px', height: '48px', background: '#fffbeb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0 }}><Phone size={22} /></div>
                         <div>
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Approved</div>
-                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.approvedCount}</div>
-                          <div style={{ fontSize: '11px', fontWeight: 600, color: '#10b981' }}>Credited to wallets</div>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Completed</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{completedCalls}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Closed requests</div>
                         </div>
                       </div>
-                      {/* Rejected */}
+                      {/* Answered */}
                       <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '48px', height: '48px', background: '#fff1f2', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', flexShrink: 0 }}><AlertCircle size={22} /></div>
+                        <div style={{ width: '48px', height: '48px', background: '#ecfdf5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}><CheckCircle2 size={22} /></div>
                         <div>
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Rejected</div>
-                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.rejectedCount}</div>
-                          <div style={{ fontSize: '11px', fontWeight: 600, color: '#ef4444' }}>Declined requests</div>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Answered</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{answeredCalls}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Currently connected</div>
                         </div>
                       </div>
-                      {/* Total Amount */}
+                      {/* Missed */}
                       <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '48px', height: '48px', background: '#fdf2f8', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ec4899', flexShrink: 0 }}><CreditCard size={22} /></div>
+                        <div style={{ width: '48px', height: '48px', background: '#fff1f2', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e11d48', flexShrink: 0 }}><PhoneMissed size={22} /></div>
                         <div>
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Total Funded</div>
-                          <div style={{ fontSize: '18px', fontWeight: 800, color: '#111827', margin: '6px 0' }}>₹{depositMetrics.totalAmountApproved.toLocaleString('en-IN')}</div>
-                          <div style={{ fontSize: '11px', fontWeight: 600, color: '#ec4899' }}>Approved volume</div>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Missed</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{missedCalls}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Failed connection</div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Main Grid: Table (2fr) + Sidebar (1fr) */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-                      
-                      {/* Left Column: Filters + Table */}
-                      <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column' }}>
-                        
-                        {/* Filter Bar */}
-                        <div style={{ padding: '20px', borderBottom: '1px solid #f0f0f5', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                          <div style={{ flex: 1, position: 'relative' }}>
+                    {/* Main Grid: Data Table and Sidebar */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', alignItems: 'start' }}>
+
+                      {/* Data Table Column */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+                        {/* Filters Row */}
+                        <div style={{ padding: '20px', borderBottom: '1px solid #f0f0f5', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                          <div style={{ position: 'relative', flex: '1 1 200px' }}>
                             <Search size={16} color="#9ca3af" style={{ position: 'absolute', left: '12px', top: '10px' }} />
-                            <input 
-                              type="text" 
-                              value={depositSearch}
-                              onChange={(e) => { setDepositSearch(e.target.value); setDepositPage(1); }}
-                              placeholder="Search by email, name, UTR number..." 
-                              style={{ width: '100%', padding: '10px 12px 10px 36px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }} 
-                            />
+                            <input type="text" placeholder="Search by name, phone number..." style={{ width: '100%', padding: '10px 10px 10px 36px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none' }} />
                           </div>
-                          <select 
-                            value={depositFilterStatus}
-                            onChange={(e) => { setDepositFilterStatus(e.target.value); setDepositPage(1); }}
-                            style={{ padding: '10px 12px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '13px', color: '#4b5563', outline: 'none', cursor: 'pointer', background: '#fff' }}
-                          >
-                            <option value="All Status">All Status</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Rejected">Rejected</option>
-                          </select>
+                          <div style={{ position: 'relative', flex: '0 0 140px' }}>
+                            <select style={{ width: '100%', padding: '10px 30px 10px 14px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', appearance: 'none', color: '#4b5563', fontWeight: 600 }}>
+                              <option>All Status</option>
+                            </select>
+                            <ChevronDown size={14} color="#9ca3af" style={{ position: 'absolute', right: '12px', top: '11px', pointerEvents: 'none' }} />
+                          </div>
+                          <div style={{ position: 'relative', flex: '0 0 140px' }}>
+                            <select style={{ width: '100%', padding: '10px 30px 10px 14px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', appearance: 'none', color: '#4b5563', fontWeight: 600 }}>
+                              <option>All Priority</option>
+                            </select>
+                            <ChevronDown size={14} color="#9ca3af" style={{ position: 'absolute', right: '12px', top: '11px', pointerEvents: 'none' }} />
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563' }}>
+                            17 Jun 2026 <span style={{ color: '#9ca3af' }}>-</span> 17 Jun 2026
+                          </div>
+                          <button style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '10px 16px', fontSize: '13px', fontWeight: 600, color: '#4b5563', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <Filter size={14} color="#7c3aed" /> Filter
+                          </button>
                         </div>
 
-                        {/* Data Table */}
-                        <div style={{ padding: '0 20px', overflowX: 'auto' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 0', borderBottom: '1px solid #f0f0f5' }}>
-                            <CreditCard size={18} color="#4f46e5" />
-                            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#111827' }}>Deposit Requests</h3>
-                          </div>
-                          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '8px' }}>
+                        {/* Table */}
+                        <div style={{ overflowX: 'auto' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                             <thead>
-                              <tr>
-                                <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Customer Details</th>
-                                <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Transaction UTR</th>
-                                <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Amount</th>
-                                <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Method</th>
-                                <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Requested On</th>
-                                <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Status</th>
-                                <th style={{ textAlign: 'center', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Action</th>
+                              <tr style={{ borderBottom: '1px solid #f0f0f5' }}>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer Details</th>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer ID</th>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Preferred Time</th>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Request Time</th>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Status</th>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Priority</th>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Assigned To</th>
+                                <th style={{ padding: '16px 20px', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Actions</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {manualDeposits.length > 0 ? (
-                                manualDeposits.map(dep => {
-                                  const initials = dep.user?.name ? dep.user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : (dep.user?.email ? dep.user.email.slice(0, 2).toUpperCase() : 'U');
-                                  const reqDate = new Date(dep.createdAt);
+                              {callRequests.length > 0 ? (
+                                callRequests.map(req => {
+                                  const initials = req.userName ? req.userName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'U';
+                                  const reqDate = new Date(req.createdAt);
                                   const dateStr = reqDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
                                   const timeStr = reqDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
                                   let statusColor = '#3b82f6';
                                   let statusBg = '#eff6ff';
-                                  let displayStatus = dep.status;
-                                  if (dep.status === 'Approved') {
+                                  if (req.status === 'Connected') {
+                                    statusColor = '#fbbf24';
+                                    statusBg = '#fffbeb';
+                                  } else if (req.status === 'Closed') {
                                     statusColor = '#10b981';
                                     statusBg = '#ecfdf5';
-                                  } else if (dep.status === 'Rejected') {
-                                    statusColor = '#ef4444';
-                                    statusBg = '#fef2f2';
-                                  } else if (dep.status === 'ForwardedToSuperAdmin') {
-                                    statusColor = '#8b5cf6';
-                                    statusBg = '#f5f3ff';
-                                    displayStatus = 'Forwarded';
+                                  } else if (req.status === 'Missed') {
+                                    statusColor = '#e11d48';
+                                    statusBg = '#fff1f2';
                                   }
 
                                   return (
-                                    <tr key={dep.id}>
-                                      <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}>
+                                    <tr key={req.id} style={{ borderBottom: '1px solid #f0f0f5' }}>
+                                      <td style={{ padding: '16px 20px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>{initials}</div>
+                                          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#f3e8ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px' }}>
+                                            {initials}
+                                          </div>
                                           <div>
-                                            <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{dep.user?.name || 'Customer'}</div>
-                                            <div style={{ fontSize: '11px', color: '#6b7280' }}>{dep.user?.email}</div>
-                                            {dep.user?.phone && <div style={{ fontSize: '11px', color: '#6b7280' }}>{dep.user.phone}</div>}
+                                            <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{req.userName}</div>
+                                            <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{req.phone}</div>
                                           </div>
                                         </div>
                                       </td>
-                                      <td style={{ padding: '16px 0', fontSize: '13px', fontWeight: 500, color: '#4b5563', borderBottom: '1px solid #f9fafb' }}>{dep.utrNumber}</td>
-                                      <td style={{ padding: '16px 0', fontSize: '13px', fontWeight: 600, color: '#111827', borderBottom: '1px solid #f9fafb' }}>₹{dep.amount.toLocaleString('en-IN')}</td>
-                                      <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}><span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600 }}>{dep.paymentMethod || 'UPI'}</span></td>
-                                      <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}>
-                                        <div style={{ fontSize: '13px', fontWeight: 500, color: '#111827' }}>{dateStr}</div>
-                                        <div style={{ fontSize: '11px', color: '#6b7280' }}>{timeStr}</div>
+                                      <td style={{ padding: '16px 20px' }}>
+                                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#4f46e5' }}>{req.uniqueId || 'N/A'}</div>
                                       </td>
-                                      <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}><span style={{ background: statusBg, color: statusColor, padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 600 }}>{displayStatus}</span></td>
-                                      <td style={{ padding: '16px 0', textAlign: 'center', borderBottom: '1px solid #f9fafb' }}>
-                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
-                                          {dep.screenshotUrl && (() => {
-                                             const imgUrl = getMediaUrl(dep.screenshotUrl);
-                                             return (
-                                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                 <img 
-                                                   src={imgUrl} 
-                                                   alt="Receipt" 
-                                                   style={{ width: '32px', height: '32px', borderRadius: '4px', objectFit: 'cover', cursor: 'pointer', border: '1px solid #d1d5db' }} 
-                                                   onClick={() => setPreviewImageUrl(imgUrl)}
-                                                   title="Click to zoom screenshot"
-                                                 />
-                                                 <button 
-                                                   type="button"
-                                                   onClick={() => setPreviewImageUrl(imgUrl)}
-                                                   style={{ background: 'transparent', border: '1px solid #e5e7eb', borderRadius: '6px', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4f46e5', cursor: 'pointer' }} 
-                                                   title="View Full Screenshot"
-                                                 >
-                                                   <Eye size={14} />
-                                                 </button>
-                                               </div>
-                                             );
-                                           })()}
-                                          {dep.status === 'Pending' && (
-                                            <>
-                                              <button onClick={() => handleDepositAction(dep.id, 'approve')} style={{ background: '#8b5cf6', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>Forward</button>
-                                              <button onClick={() => handleDepositAction(dep.id, 'reject')} style={{ background: '#ef4444', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>Reject</button>
-                                            </>
+                                      <td style={{ padding: '16px 20px' }}>
+                                        <div style={{ fontSize: '12px', color: '#4b5563' }}><Calendar size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> {dateStr}</div>
+                                        <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>Anytime</div>
+                                      </td>
+                                      <td style={{ padding: '16px 20px' }}>
+                                        <div style={{ fontSize: '12px', color: '#4b5563' }}><Clock size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> {dateStr}</div>
+                                        <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{timeStr}</div>
+                                      </td>
+                                      <td style={{ padding: '16px 20px' }}>
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: statusColor, background: statusBg, padding: '4px 10px', borderRadius: '20px' }}>{req.status}</span>
+                                      </td>
+                                      <td style={{ padding: '16px 20px' }}>
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#f59e0b', background: '#fffbeb', padding: '4px 10px', borderRadius: '20px' }}>Medium</span>
+                                      </td>
+                                      <td style={{ padding: '16px 20px' }}>
+                                        <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500 }}>Support Team</div>
+                                      </td>
+                                      <td style={{ padding: '16px 20px' }}>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                          {req.status === 'Pending' ? (
+                                            <button onClick={() => handleUpdateCallStatus(req.id, 'Connected')} style={{ background: '#10b981', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>Connect</button>
+                                          ) : req.status === 'Connected' ? (
+                                            <button onClick={() => handleUpdateCallStatus(req.id, 'Closed')} style={{ background: '#f43f5e', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>End Call</button>
+                                          ) : (
+                                            <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600 }}>Completed</span>
                                           )}
                                         </div>
                                       </td>
@@ -8524,231 +8198,589 @@ function App() {
                                 })
                               ) : (
                                 <tr>
-                                  <td colSpan={7} style={{ textAlign: 'center', padding: '30px 0', color: '#9ca3af', fontSize: '13px' }}>No manual deposit requests found.</td>
+                                  <td colSpan="7" style={{ padding: '40px 20px', textAlign: 'center', color: '#9ca3af', fontSize: '14px', fontWeight: 500 }}>
+                                    <CheckCircle2 size={24} color="#10b981" style={{ display: 'block', margin: '0 auto 8px' }} />
+                                    No callback requests found in database.
+                                  </td>
                                 </tr>
                               )}
                             </tbody>
                           </table>
                         </div>
 
-                        {/* Pagination Footer */}
-                        <div style={{ padding: '16px 20px', borderTop: '1px solid #f0f0f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fafafa', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
-                          <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: 500 }}>
-                            Showing {manualDeposits.length > 0 ? (depositPage - 1) * depositLimit + 1 : 0} to {Math.min(depositPage * depositLimit, depositTotal)} of {depositTotal} entries
+                        <div style={{ padding: '16px 20px', borderTop: '1px solid #f0f0f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: 500 }}>Showing {callRequests.length > 0 ? 1 : 0} to {callRequests.length} of {totalCalls} entries</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ display: 'flex', gap: '4px' }}>
+                              <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><ChevronLeft size={16} /></button>
+                              <button style={{ width: '32px', height: '32px', background: '#7c3aed', border: 'none', borderRadius: '6px', color: '#ffffff', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>1</button>
+                              <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>2</button>
+                              <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>3</button>
+                              <button style={{ width: '32px', height: '32px', background: 'transparent', border: 'none', color: '#9ca3af', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>...</button>
+                              <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>36</button>
+                              <button style={{ width: '32px', height: '32px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#4b5563', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><ChevronRight size={16} /></button>
+                            </div>
+                            <div style={{ position: 'relative' }}>
+                              <select style={{ padding: '8px 30px 8px 12px', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '13px', color: '#4b5563', fontWeight: 600, appearance: 'none' }}>
+                                <option>10 / page</option>
+                              </select>
+                              <ChevronDown size={14} color="#9ca3af" style={{ position: 'absolute', right: '10px', top: '10px', pointerEvents: 'none' }} />
+                            </div>
                           </div>
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <button 
-                              disabled={depositPage === 1}
-                              onClick={() => setDepositPage(prev => Math.max(1, prev - 1))}
-                              style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px', cursor: depositPage === 1 ? 'not-allowed' : 'pointer', color: '#9ca3af' }}
-                            >
-                              <ChevronLeft size={16} />
-                            </button>
-                            <span style={{ fontSize: '13px', fontWeight: 600, color: '#4b5563', padding: '0 8px' }}>
-                              Page {depositPage} of {Math.ceil(depositTotal / depositLimit) || 1}
-                            </span>
-                            <button 
-                              disabled={depositPage >= Math.ceil(depositTotal / depositLimit)}
-                              onClick={() => setDepositPage(prev => prev + 1)}
-                              style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px', cursor: depositPage >= Math.ceil(depositTotal / depositLimit) ? 'not-allowed' : 'pointer', color: '#4b5563' }}
-                            >
-                              <ChevronRight size={16} />
-                            </button>
-                          </div>
-                          <select 
-                            value={depositLimit}
-                            onChange={(e) => { setDepositLimit(parseInt(e.target.value)); setDepositPage(1); }}
-                            style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px', color: '#4b5563', outline: 'none', cursor: 'pointer', background: '#fff' }}
-                          >
-                            <option value={5}>5 / page</option>
-                            <option value={10}>10 / page</option>
-                            <option value={20}>20 / page</option>
-                            <option value={50}>50 / page</option>
-                          </select>
                         </div>
                       </div>
 
-                      {/* Right Column: Sidebar Analytics */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        
-                        {/* Amount Summary (Today) */}
-                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
-                          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#111827', margin: '0 0 16px 0' }}>Amount Summary (Today)</h3>
+                      {/* Sidebar Analytics Column */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+                        {/* Callback Overview Donut Chart */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #f0f0f5' }}>
+                          <h3 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#111827' }}>Callback Overview</h3>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                            {/* Donut Chart */}
-                            <div style={{ position: 'relative', width: '120px', height: '120px' }}>
-                              <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
-                                <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#f3f4f6" strokeWidth="6" />
-                                <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#10b981" strokeWidth="6" strokeDasharray={`${appPct} ${100 - appPct}`} strokeDashoffset="0" />
-                                <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#3b82f6" strokeWidth="6" strokeDasharray={`${penPct} ${100 - penPct}`} strokeDashoffset={-appPct} />
-                                <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#ec4899" strokeWidth="6" strokeDasharray={`${rejPct} ${100 - rejPct}`} strokeDashoffset={-(appPct + penPct)} />
+                            <div style={{ width: '130px', height: '130px', position: 'relative' }}>
+                              <svg viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
+                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f0f0f5" strokeWidth="18" />
+                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#3b82f6" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - pendingPct / 100)} strokeLinecap="butt" /> {/* Pending */}
+                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f43f5e" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - missedPct / 100)} strokeLinecap="butt" style={{ transform: `rotate(${360 * (pendingPct / 100)}deg)`, transformOrigin: 'center' }} /> {/* Missed */}
+                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#10b981" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - completedPct / 100)} strokeLinecap="butt" style={{ transform: `rotate(${360 * ((pendingPct + missedPct) / 100)}deg)`, transformOrigin: 'center' }} /> {/* Completed */}
+                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#fbbf24" strokeWidth="18" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - answeredPct / 100)} strokeLinecap="butt" style={{ transform: `rotate(${360 * ((pendingPct + missedPct + completedPct) / 100)}deg)`, transformOrigin: 'center' }} /> {/* Answered */}
                               </svg>
-                              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                <div style={{ fontSize: '11px', fontWeight: 800, color: '#111827', textAlign: 'center' }}>₹{depositMetrics.totalAmountApproved.toLocaleString('en-IN')}</div>
-                                <div style={{ fontSize: '9px', color: '#6b7280', fontWeight: 500 }}>Total</div>
+                              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                <div style={{ fontSize: '18px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{totalCalls}</div>
+                                <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 500 }}>Total</div>
                               </div>
                             </div>
-                            {/* Legend */}
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                              <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4b5563', fontWeight: 600 }}>
-                                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div> Approved
-                                </div>
-                                <div style={{ fontSize: '10px', color: '#6b7280', marginLeft: '14px', marginTop: '2px' }}>₹{depositMetrics.totalAmountApproved.toLocaleString('en-IN')} ({appPct}%)</div>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span> Completed</div>
+                                <div style={{ color: '#111827' }}>{completedCalls} ({completedPct}%)</div>
                               </div>
-                              <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4b5563', fontWeight: 600 }}>
-                                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6' }}></div> Pending
-                                </div>
-                                <div style={{ fontSize: '10px', color: '#6b7280', marginLeft: '14px', marginTop: '2px' }}>₹{depositMetrics.totalAmountPending.toLocaleString('en-IN')} ({penPct}%)</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6' }}></span> Pending</div>
+                                <div style={{ color: '#111827' }}>{pendingCalls} ({pendingPct}%)</div>
                               </div>
-                              <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4b5563', fontWeight: 600 }}>
-                                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ec4899' }}></div> Rejected
-                                </div>
-                                <div style={{ fontSize: '10px', color: '#6b7280', marginLeft: '14px', marginTop: '2px' }}>₹{depositMetrics.totalAmountRejected.toLocaleString('en-IN')} ({rejPct}%)</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f43f5e' }}></span> Missed</div>
+                                <div style={{ color: '#111827' }}>{missedCalls} ({missedPct}%)</div>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4b5563' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fbbf24' }}></span> Answered</div>
+                                <div style={{ color: '#111827' }}>{answeredCalls} ({answeredPct}%)</div>
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Payment Method Distribution */}
-                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
-                          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#111827', margin: '0 0 16px 0' }}>Payment Method Distribution</h3>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                            <div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
-                                <span>UPI</span><span>₹{methodSummary['UPI'].toLocaleString('en-IN')} ({upiPct}%)</span>
-                              </div>
-                              <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
-                                <div style={{ width: `${upiPct}%`, height: '100%', background: '#7c3aed', borderRadius: '4px' }}></div>
-                              </div>
+                        {/* Response Time Gauge */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #f0f0f5' }}>
+                          <h3 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#111827' }}>Response Time (Avg.)</h3>
+                          <div style={{ position: 'relative', height: '110px', display: 'flex', justifyContent: 'center' }}>
+                            <svg viewBox="0 0 200 100" style={{ width: '200px' }}>
+                              <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#f3f4f6" strokeWidth="12" strokeLinecap="round" />
+                              <path d="M 20 90 A 80 80 0 0 1 140 30" fill="none" stroke="#7c3aed" strokeWidth="12" strokeLinecap="round" />
+                            </svg>
+                            <div style={{ position: 'absolute', bottom: '15px', textAlign: 'center' }}>
+                              <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>01m 24s</div>
+                              <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500, marginTop: '4px' }}>Average Response Time</div>
                             </div>
-                            <div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
-                                <span>Bank Transfer</span><span>₹{methodSummary['Bank Transfer'].toLocaleString('en-IN')} ({btPct}%)</span>
-                              </div>
-                              <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
-                                <div style={{ width: `${btPct}%`, height: '100%', background: '#3b82f6', borderRadius: '4px' }}></div>
-                              </div>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', borderTop: '1px solid #f0f0f5', paddingTop: '16px' }}>
+                            <div style={{ textAlign: 'center' }}>
+                              <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginBottom: '4px' }}>Best</div>
+                              <div style={{ fontSize: '14px', fontWeight: 800, color: '#10b981' }}>32s</div>
                             </div>
-                            <div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
-                                <span>Net Banking</span><span>₹{methodSummary['Net Banking'].toLocaleString('en-IN')} ({nbPct}%)</span>
-                              </div>
-                              <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
-                                <div style={{ width: `${nbPct}%`, height: '100%', background: '#10b981', borderRadius: '4px' }}></div>
-                              </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginBottom: '4px' }}>Average</div>
+                              <div style={{ fontSize: '14px', fontWeight: 800, color: '#7c3aed' }}>01m 24s</div>
                             </div>
-                            <div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
-                                <span>Wallet</span><span>₹{methodSummary['Wallet'].toLocaleString('en-IN')} ({walPct}%)</span>
-                              </div>
-                              <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
-                                <div style={{ width: `${walPct}%`, height: '100%', background: '#f59e0b', borderRadius: '4px' }}></div>
-                              </div>
-                            </div>
-                            <div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
-                                <span>Others</span><span>₹{methodSummary['Others'].toLocaleString('en-IN')} ({othPct}%)</span>
-                              </div>
-                              <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
-                                <div style={{ width: `${othPct}%`, height: '100%', background: '#ef4444', borderRadius: '4px' }}></div>
-                              </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginBottom: '4px' }}>Worst</div>
+                              <div style={{ fontSize: '14px', fontWeight: 800, color: '#e11d48' }}>05m 16s</div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Recent Activity */}
-                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
-                          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#111827', margin: '0 0 16px 0' }}>Recent Activity</h3>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            {depositMetrics.recentActivity && depositMetrics.recentActivity.length > 0 ? (
-                              depositMetrics.recentActivity.map((act, idx) => {
-                                const actDate = new Date(act.time);
-                                const actTimeStr = actDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                                let actColor = '#7c3aed';
-                                if (act.status === 'Approved') actColor = '#10b981';
-                                else if (act.status === 'Rejected') actColor = '#ef4444';
+                        {/* Peak Callback Hours Line Chart */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #f0f0f5' }}>
+                          <h3 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#111827' }}>Peak Callback Hours</h3>
+                          <div style={{ height: '140px', position: 'relative', marginTop: '10px' }}>
+                            <svg viewBox="0 0 400 120" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+                              {/* Grid Lines */}
+                              <line x1="0" y1="0" x2="400" y2="0" stroke="#f3f4f6" strokeWidth="1" />
+                              <line x1="0" y1="40" x2="400" y2="40" stroke="#f3f4f6" strokeWidth="1" />
+                              <line x1="0" y1="80" x2="400" y2="80" stroke="#f3f4f6" strokeWidth="1" />
+                              <line x1="0" y1="120" x2="400" y2="120" stroke="#f3f4f6" strokeWidth="1" />
 
-                                return (
-                                  <div key={act.id || idx} style={{ display: 'flex', gap: '12px' }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: actColor, marginTop: '5px' }}></div>
-                                    <div style={{ flex: 1 }}>
-                                      <div style={{ fontSize: '12px', color: '#4b5563', lineHeight: 1.4 }}>
-                                        <span style={{ fontWeight: 600, color: '#111827' }}>{act.name}</span> deposit of <span style={{ fontWeight: 600, color: '#111827' }}>₹{act.amount.toLocaleString()}</span> is <span style={{ color: actColor, fontWeight: 600 }}>{act.status.toLowerCase()}</span>
-                                      </div>
-                                    </div>
-                                    <div style={{ fontSize: '11px', color: '#9ca3af', whiteSpace: 'nowrap' }}>{actTimeStr}</div>
+                              {/* Y Axis Labels */}
+                              <text x="-10" y="5" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">60</text>
+                              <text x="-10" y="45" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">40</text>
+                              <text x="-10" y="85" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">20</text>
+                              <text x="-10" y="125" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="end">0</text>
+
+                              {/* X Axis Labels */}
+                              <text x="0" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">6 AM</text>
+                              <text x="66" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">9 AM</text>
+                              <text x="133" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">12 PM</text>
+                              <text x="200" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">3 PM</text>
+                              <text x="266" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">6 PM</text>
+                              <text x="333" y="140" fontSize="10" fill="#9ca3af" fontWeight="600" textAnchor="middle">9 PM</text>
+
+                              {/* Area Fill */}
+                              <linearGradient id="gradientCall" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+                              </linearGradient>
+                              <path d="M 0 110 L 33 105 L 66 70 L 100 65 L 133 65 L 166 40 L 200 65 L 233 50 L 266 80 L 300 110 L 333 115 L 333 120 L 0 120 Z" fill="url(#gradientCall)" />
+
+                              {/* Line */}
+                              <path d="M 0 110 L 33 105 L 66 70 L 100 65 L 133 65 L 166 40 L 200 65 L 233 50 L 266 80 L 300 110 L 333 115" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinejoin="round" />
+
+                              {/* Data Points */}
+                              <circle cx="66" cy="70" r="3" fill="#ffffff" stroke="#8b5cf6" strokeWidth="2" />
+                              <circle cx="166" cy="40" r="3" fill="#ffffff" stroke="#8b5cf6" strokeWidth="2" />
+                              <circle cx="233" cy="50" r="3" fill="#ffffff" stroke="#8b5cf6" strokeWidth="2" />
+                            </svg>
+
+                            {/* Tooltip Mock */}
+                            <div style={{ position: 'absolute', top: '-15px', left: '166px', transform: 'translateX(-50%)', background: '#ffffff', border: '1px solid #f0f0f5', borderRadius: '8px', padding: '8px 12px', boxShadow: '0 4px 10px rgba(0,0,0,0.08)', zIndex: 10 }}>
+                              <div style={{ fontSize: '11px', fontWeight: 800, color: '#111827', textAlign: 'center' }}>3 PM</div>
+                              <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>48 Requests</div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ================= MANUAL DEPOSITS PAGE ================= */}
+                {execTab === 'deposits' && (() => {
+                  const totalAmtAll = depositMetrics.totalAmountApproved + depositMetrics.totalAmountPending + depositMetrics.totalAmountRejected;
+                  const appPct = totalAmtAll > 0 ? Math.round((depositMetrics.totalAmountApproved / totalAmtAll) * 100) : 0;
+                  const penPct = totalAmtAll > 0 ? Math.round((depositMetrics.totalAmountPending / totalAmtAll) * 100) : 0;
+                  const rejPct = totalAmtAll > 0 ? Math.round((depositMetrics.totalAmountRejected / totalAmtAll) * 100) : 0;
+
+                  const methodSummary = depositMetrics.methodSummary || { 'UPI': 0, 'Bank Transfer': 0, 'Net Banking': 0, 'Wallet': 0, 'Others': 0 };
+                  const methodTotal = Object.values(methodSummary).reduce((sum, val) => sum + val, 0) || 1;
+                  const upiPct = Math.round((methodSummary['UPI'] / methodTotal) * 100);
+                  const btPct = Math.round((methodSummary['Bank Transfer'] / methodTotal) * 100);
+                  const nbPct = Math.round((methodSummary['Net Banking'] / methodTotal) * 100);
+                  const walPct = Math.round((methodSummary['Wallet'] / methodTotal) * 100);
+                  const othPct = Math.round((methodSummary['Others'] / methodTotal) * 100);
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                      {/* Header */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <div>
+                          <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Manual Deposits</h2>
+                          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Review and manage all manual deposit requests</p>
+                        </div>
+                      </div>
+
+                      {/* Top KPI Cards */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
+                        {/* Total Requests */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', flexShrink: 0 }}><Activity size={22} /></div>
+                          <div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Total Requests</div>
+                            <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.totalRequests}</div>
+                            <div style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280' }}>All time submissions</div>
+                          </div>
+                        </div>
+                        {/* Pending */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', flexShrink: 0 }}><Clock size={22} /></div>
+                          <div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Pending</div>
+                            <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.pendingCount}</div>
+                            <div style={{ fontSize: '11px', fontWeight: 600, color: '#3b82f6' }}>Awaiting review</div>
+                          </div>
+                        </div>
+                        {/* Approved */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ width: '48px', height: '48px', background: '#f0fdf4', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}><CheckCircle2 size={22} /></div>
+                          <div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Approved</div>
+                            <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.approvedCount}</div>
+                            <div style={{ fontSize: '11px', fontWeight: 600, color: '#10b981' }}>Credited to wallets</div>
+                          </div>
+                        </div>
+                        {/* Rejected */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ width: '48px', height: '48px', background: '#fff1f2', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', flexShrink: 0 }}><AlertCircle size={22} /></div>
+                          <div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Rejected</div>
+                            <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '2px 0' }}>{depositMetrics.rejectedCount}</div>
+                            <div style={{ fontSize: '11px', fontWeight: 600, color: '#ef4444' }}>Declined requests</div>
+                          </div>
+                        </div>
+                        {/* Total Amount */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ width: '48px', height: '48px', background: '#fdf2f8', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ec4899', flexShrink: 0 }}><CreditCard size={22} /></div>
+                          <div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Total Funded</div>
+                            <div style={{ fontSize: '18px', fontWeight: 800, color: '#111827', margin: '6px 0' }}>₹{depositMetrics.totalAmountApproved.toLocaleString('en-IN')}</div>
+                            <div style={{ fontSize: '11px', fontWeight: 600, color: '#ec4899' }}>Approved volume</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Main Grid: Table (2fr) + Sidebar (1fr) */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+
+                        {/* Left Column: Filters + Table */}
+                        <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column' }}>
+
+                          {/* Filter Bar */}
+                          <div style={{ padding: '20px', borderBottom: '1px solid #f0f0f5', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <div style={{ flex: 1, position: 'relative' }}>
+                              <Search size={16} color="#9ca3af" style={{ position: 'absolute', left: '12px', top: '10px' }} />
+                              <input
+                                type="text"
+                                value={depositSearch}
+                                onChange={(e) => { setDepositSearch(e.target.value); setDepositPage(1); }}
+                                placeholder="Search by email, name, UTR number..."
+                                style={{ width: '100%', padding: '10px 12px 10px 36px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                              />
+                            </div>
+                            <select
+                              value={depositFilterStatus}
+                              onChange={(e) => { setDepositFilterStatus(e.target.value); setDepositPage(1); }}
+                              style={{ padding: '10px 12px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '13px', color: '#4b5563', outline: 'none', cursor: 'pointer', background: '#fff' }}
+                            >
+                              <option value="All Status">All Status</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Approved">Approved</option>
+                              <option value="Rejected">Rejected</option>
+                            </select>
+                          </div>
+
+                          {/* Data Table */}
+                          <div style={{ padding: '0 20px', overflowX: 'auto' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 0', borderBottom: '1px solid #f0f0f5' }}>
+                              <CreditCard size={18} color="#4f46e5" />
+                              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#111827' }}>Deposit Requests</h3>
+                            </div>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '8px' }}>
+                              <thead>
+                                <tr>
+                                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Customer Details</th>
+                                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Transaction UTR</th>
+                                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Amount</th>
+                                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Method</th>
+                                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Requested On</th>
+                                  <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Status</th>
+                                  <th style={{ textAlign: 'center', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {manualDeposits.length > 0 ? (
+                                  manualDeposits.map(dep => {
+                                    const initials = dep.user?.name ? dep.user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : (dep.user?.email ? dep.user.email.slice(0, 2).toUpperCase() : 'U');
+                                    const reqDate = new Date(dep.createdAt);
+                                    const dateStr = reqDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                                    const timeStr = reqDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                                    let statusColor = '#3b82f6';
+                                    let statusBg = '#eff6ff';
+                                    let displayStatus = dep.status;
+                                    if (dep.status === 'Approved') {
+                                      statusColor = '#10b981';
+                                      statusBg = '#ecfdf5';
+                                    } else if (dep.status === 'Rejected') {
+                                      statusColor = '#ef4444';
+                                      statusBg = '#fef2f2';
+                                    } else if (dep.status === 'ForwardedToSuperAdmin') {
+                                      statusColor = '#8b5cf6';
+                                      statusBg = '#f5f3ff';
+                                      displayStatus = 'Forwarded';
+                                    }
+
+                                    return (
+                                      <tr key={dep.id}>
+                                        <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}>
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>{initials}</div>
+                                            <div>
+                                              <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{dep.user?.name || 'Customer'}</div>
+                                              <div style={{ fontSize: '11px', color: '#6b7280' }}>{dep.user?.email}</div>
+                                              {dep.user?.phone && <div style={{ fontSize: '11px', color: '#6b7280' }}>{dep.user.phone}</div>}
+                                            </div>
+                                          </div>
+                                        </td>
+                                        <td style={{ padding: '16px 0', fontSize: '13px', fontWeight: 500, color: '#4b5563', borderBottom: '1px solid #f9fafb' }}>{dep.utrNumber}</td>
+                                        <td style={{ padding: '16px 0', fontSize: '13px', fontWeight: 600, color: '#111827', borderBottom: '1px solid #f9fafb' }}>₹{dep.amount.toLocaleString('en-IN')}</td>
+                                        <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}><span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600 }}>{dep.paymentMethod || 'UPI'}</span></td>
+                                        <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}>
+                                          <div style={{ fontSize: '13px', fontWeight: 500, color: '#111827' }}>{dateStr}</div>
+                                          <div style={{ fontSize: '11px', color: '#6b7280' }}>{timeStr}</div>
+                                        </td>
+                                        <td style={{ padding: '16px 0', borderBottom: '1px solid #f9fafb' }}><span style={{ background: statusBg, color: statusColor, padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 600 }}>{displayStatus}</span></td>
+                                        <td style={{ padding: '16px 0', textAlign: 'center', borderBottom: '1px solid #f9fafb' }}>
+                                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
+                                            {dep.screenshotUrl && (() => {
+                                              const imgUrl = getMediaUrl(dep.screenshotUrl);
+                                              return (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                  <img
+                                                    src={imgUrl}
+                                                    alt="Receipt"
+                                                    style={{ width: '32px', height: '32px', borderRadius: '4px', objectFit: 'cover', cursor: 'pointer', border: '1px solid #d1d5db' }}
+                                                    onClick={() => setPreviewImageUrl(imgUrl)}
+                                                    title="Click to zoom screenshot"
+                                                  />
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => setPreviewImageUrl(imgUrl)}
+                                                    style={{ background: 'transparent', border: '1px solid #e5e7eb', borderRadius: '6px', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4f46e5', cursor: 'pointer' }}
+                                                    title="View Full Screenshot"
+                                                  >
+                                                    <Eye size={14} />
+                                                  </button>
+                                                </div>
+                                              );
+                                            })()}
+                                            {dep.status === 'Pending' && (
+                                              <>
+                                                <button onClick={() => handleDepositAction(dep.id, 'approve')} style={{ background: '#8b5cf6', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>Forward</button>
+                                                <button onClick={() => handleDepositAction(dep.id, 'reject')} style={{ background: '#ef4444', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '6px 10px', borderRadius: '4px', cursor: 'pointer' }}>Reject</button>
+                                              </>
+                                            )}
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })
+                                ) : (
+                                  <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center', padding: '30px 0', color: '#9ca3af', fontSize: '13px' }}>No manual deposit requests found.</td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* Pagination Footer */}
+                          <div style={{ padding: '16px 20px', borderTop: '1px solid #f0f0f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fafafa', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
+                            <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: 500 }}>
+                              Showing {manualDeposits.length > 0 ? (depositPage - 1) * depositLimit + 1 : 0} to {Math.min(depositPage * depositLimit, depositTotal)} of {depositTotal} entries
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                              <button
+                                disabled={depositPage === 1}
+                                onClick={() => setDepositPage(prev => Math.max(1, prev - 1))}
+                                style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px', cursor: depositPage === 1 ? 'not-allowed' : 'pointer', color: '#9ca3af' }}
+                              >
+                                <ChevronLeft size={16} />
+                              </button>
+                              <span style={{ fontSize: '13px', fontWeight: 600, color: '#4b5563', padding: '0 8px' }}>
+                                Page {depositPage} of {Math.ceil(depositTotal / depositLimit) || 1}
+                              </span>
+                              <button
+                                disabled={depositPage >= Math.ceil(depositTotal / depositLimit)}
+                                onClick={() => setDepositPage(prev => prev + 1)}
+                                style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px', cursor: depositPage >= Math.ceil(depositTotal / depositLimit) ? 'not-allowed' : 'pointer', color: '#4b5563' }}
+                              >
+                                <ChevronRight size={16} />
+                              </button>
+                            </div>
+                            <select
+                              value={depositLimit}
+                              onChange={(e) => { setDepositLimit(parseInt(e.target.value)); setDepositPage(1); }}
+                              style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px', color: '#4b5563', outline: 'none', cursor: 'pointer', background: '#fff' }}
+                            >
+                              <option value={5}>5 / page</option>
+                              <option value={10}>10 / page</option>
+                              <option value={20}>20 / page</option>
+                              <option value={50}>50 / page</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Right Column: Sidebar Analytics */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                          {/* Amount Summary (Today) */}
+                          <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+                            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#111827', margin: '0 0 16px 0' }}>Amount Summary (Today)</h3>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                              {/* Donut Chart */}
+                              <div style={{ position: 'relative', width: '120px', height: '120px' }}>
+                                <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
+                                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#f3f4f6" strokeWidth="6" />
+                                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#10b981" strokeWidth="6" strokeDasharray={`${appPct} ${100 - appPct}`} strokeDashoffset="0" />
+                                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#3b82f6" strokeWidth="6" strokeDasharray={`${penPct} ${100 - penPct}`} strokeDashoffset={-appPct} />
+                                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#ec4899" strokeWidth="6" strokeDasharray={`${rejPct} ${100 - rejPct}`} strokeDashoffset={-(appPct + penPct)} />
+                                </svg>
+                                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#111827', textAlign: 'center' }}>₹{depositMetrics.totalAmountApproved.toLocaleString('en-IN')}</div>
+                                  <div style={{ fontSize: '9px', color: '#6b7280', fontWeight: 500 }}>Total</div>
+                                </div>
+                              </div>
+                              {/* Legend */}
+                              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4b5563', fontWeight: 600 }}>
+                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div> Approved
                                   </div>
-                                );
-                              })
-                            ) : (
-                              <div style={{ fontSize: '12px', color: '#9ca3af', textAlign: 'center' }}>No recent activity.</div>
-                            )}
+                                  <div style={{ fontSize: '10px', color: '#6b7280', marginLeft: '14px', marginTop: '2px' }}>₹{depositMetrics.totalAmountApproved.toLocaleString('en-IN')} ({appPct}%)</div>
+                                </div>
+                                <div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4b5563', fontWeight: 600 }}>
+                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6' }}></div> Pending
+                                  </div>
+                                  <div style={{ fontSize: '10px', color: '#6b7280', marginLeft: '14px', marginTop: '2px' }}>₹{depositMetrics.totalAmountPending.toLocaleString('en-IN')} ({penPct}%)</div>
+                                </div>
+                                <div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4b5563', fontWeight: 600 }}>
+                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ec4899' }}></div> Rejected
+                                  </div>
+                                  <div style={{ fontSize: '10px', color: '#6b7280', marginLeft: '14px', marginTop: '2px' }}>₹{depositMetrics.totalAmountRejected.toLocaleString('en-IN')} ({rejPct}%)</div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
+
+                          {/* Payment Method Distribution */}
+                          <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+                            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#111827', margin: '0 0 16px 0' }}>Payment Method Distribution</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                              <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
+                                  <span>UPI</span><span>₹{methodSummary['UPI'].toLocaleString('en-IN')} ({upiPct}%)</span>
+                                </div>
+                                <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                                  <div style={{ width: `${upiPct}%`, height: '100%', background: '#7c3aed', borderRadius: '4px' }}></div>
+                                </div>
+                              </div>
+                              <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
+                                  <span>Bank Transfer</span><span>₹{methodSummary['Bank Transfer'].toLocaleString('en-IN')} ({btPct}%)</span>
+                                </div>
+                                <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                                  <div style={{ width: `${btPct}%`, height: '100%', background: '#3b82f6', borderRadius: '4px' }}></div>
+                                </div>
+                              </div>
+                              <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
+                                  <span>Net Banking</span><span>₹{methodSummary['Net Banking'].toLocaleString('en-IN')} ({nbPct}%)</span>
+                                </div>
+                                <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                                  <div style={{ width: `${nbPct}%`, height: '100%', background: '#10b981', borderRadius: '4px' }}></div>
+                                </div>
+                              </div>
+                              <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
+                                  <span>Wallet</span><span>₹{methodSummary['Wallet'].toLocaleString('en-IN')} ({walPct}%)</span>
+                                </div>
+                                <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                                  <div style={{ width: `${walPct}%`, height: '100%', background: '#f59e0b', borderRadius: '4px' }}></div>
+                                </div>
+                              </div>
+                              <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>
+                                  <span>Others</span><span>₹{methodSummary['Others'].toLocaleString('en-IN')} ({othPct}%)</span>
+                                </div>
+                                <div style={{ height: '6px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                                  <div style={{ width: `${othPct}%`, height: '100%', background: '#ef4444', borderRadius: '4px' }}></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Recent Activity */}
+                          <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+                            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#111827', margin: '0 0 16px 0' }}>Recent Activity</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                              {depositMetrics.recentActivity && depositMetrics.recentActivity.length > 0 ? (
+                                depositMetrics.recentActivity.map((act, idx) => {
+                                  const actDate = new Date(act.time);
+                                  const actTimeStr = actDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                  let actColor = '#7c3aed';
+                                  if (act.status === 'Approved') actColor = '#10b981';
+                                  else if (act.status === 'Rejected') actColor = '#ef4444';
+
+                                  return (
+                                    <div key={act.id || idx} style={{ display: 'flex', gap: '12px' }}>
+                                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: actColor, marginTop: '5px' }}></div>
+                                      <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: '12px', color: '#4b5563', lineHeight: 1.4 }}>
+                                          <span style={{ fontWeight: 600, color: '#111827' }}>{act.name}</span> deposit of <span style={{ fontWeight: 600, color: '#111827' }}>₹{act.amount.toLocaleString()}</span> is <span style={{ color: actColor, fontWeight: 600 }}>{act.status.toLowerCase()}</span>
+                                        </div>
+                                      </div>
+                                      <div style={{ fontSize: '11px', color: '#9ca3af', whiteSpace: 'nowrap' }}>{actTimeStr}</div>
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                <div style={{ fontSize: '12px', color: '#9ca3af', textAlign: 'center' }}>No recent activity.</div>
+                              )}
+                            </div>
+                          </div>
+
                         </div>
+                      </div>
+                    </div>
+                  );
+                })()}
 
+                {execTab === 'chats' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    {/* Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <div>
+                        <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Client Threads</h2>
+                        <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Manage and respond to client conversations</p>
                       </div>
                     </div>
-                  </div>
-                );
-              })()}
 
-              {execTab === 'chats' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  {/* Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div>
-                      <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Client Threads</h2>
-                      <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Manage and respond to client conversations</p>
+                    {/* Top KPI Cards */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                      {/* Total Threads */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', flexShrink: 0 }}><MessageSquare size={22} /></div>
+                        <div>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Total Threads</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{activeChats.length}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Active conversations</div>
+                        </div>
+                      </div>
+                      {/* Open */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', flexShrink: 0 }}><MessageSquare size={22} /></div>
+                        <div>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Open Threads</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{activeChats.length}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Awaiting response</div>
+                        </div>
+                      </div>
+                      {/* Callbacks */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '48px', height: '48px', background: '#fffbeb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0 }}><Phone size={22} /></div>
+                        <div>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Pending Calls</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{callRequests.filter(r => r.status === 'Pending').length}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Call requests</div>
+                        </div>
+                      </div>
+                      {/* Completed */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '48px', height: '48px', background: '#ecfdf5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}><CheckCircle2 size={22} /></div>
+                        <div>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Closed Chats</div>
+                          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{resolvedChatsCount}</div>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Resolved chats</div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Top KPI Cards */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-                    {/* Total Threads */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', flexShrink: 0 }}><MessageSquare size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Total Threads</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{activeChats.length}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Active conversations</div>
-                      </div>
-                    </div>
-                    {/* Open */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', flexShrink: 0 }}><MessageSquare size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Open Threads</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{activeChats.length}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Awaiting response</div>
-                      </div>
-                    </div>
-                    {/* Callbacks */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#fffbeb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0 }}><Phone size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Pending Calls</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{callRequests.filter(r => r.status === 'Pending').length}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Call requests</div>
-                      </div>
-                    </div>
-                    {/* Completed */}
-                    <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ width: '48px', height: '48px', background: '#ecfdf5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}><CheckCircle2 size={22} /></div>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#4b5563' }}>Closed Chats</div>
-                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', lineHeight: 1.2 }}>{resolvedChatsCount}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>Resolved chats</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 3-Column Layout */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr 320px', gap: '20px', alignItems: 'start' }}>
-                     {/* Column 1: Thread List */}
-                     <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                    {/* 3-Column Layout */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr 320px', gap: '20px', alignItems: 'start' }}>
+                      {/* Column 1: Thread List */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                         <div style={{ padding: '20px', borderBottom: '1px solid #f0f0f5' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                             <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -8763,15 +8795,15 @@ function App() {
                               const isSelected = selectedChatEmail === chat.userEmail;
                               const initials = chat.userEmail.slice(0, 2).toUpperCase();
                               return (
-                                <div 
+                                <div
                                   key={chat.userEmail}
                                   onClick={() => setSelectedChatEmail(chat.userEmail)}
-                                  style={{ 
-                                    padding: '16px 20px', 
-                                    borderLeft: `3px solid ${isSelected ? '#7c3aed' : 'transparent'}`, 
-                                    background: isSelected ? '#f9fafb' : '#ffffff', 
-                                    borderBottom: '1px solid #f0f0f5', 
-                                    cursor: 'pointer' 
+                                  style={{
+                                    padding: '16px 20px',
+                                    borderLeft: `3px solid ${isSelected ? '#7c3aed' : 'transparent'}`,
+                                    background: isSelected ? '#f9fafb' : '#ffffff',
+                                    borderBottom: '1px solid #f0f0f5',
+                                    cursor: 'pointer'
                                   }}
                                 >
                                   <div style={{ display: 'flex', gap: '12px' }}>
@@ -8803,10 +8835,10 @@ function App() {
                             </div>
                           )}
                         </div>
-                     </div>
+                      </div>
 
-                     {/* Column 2: Chat Interface */}
-                     <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', minHeight: '600px' }}>
+                      {/* Column 2: Chat Interface */}
+                      <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', minHeight: '600px' }}>
                         {selectedChatEmail ? (
                           <>
                             {/* Chat Header */}
@@ -8845,10 +8877,10 @@ function App() {
                                           if (isImg) {
                                             return (
                                               <div style={{ marginTop: '8px' }}>
-                                                <img 
-                                                  src={fullUrl} 
-                                                  alt="Attachment" 
-                                                  style={{ maxWidth: '100%', maxHeight: '220px', borderRadius: '8px', cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)', objectFit: 'cover' }} 
+                                                <img
+                                                  src={fullUrl}
+                                                  alt="Attachment"
+                                                  style={{ maxWidth: '100%', maxHeight: '220px', borderRadius: '8px', cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)', objectFit: 'cover' }}
                                                   onClick={() => setPreviewImageUrl(fullUrl)}
                                                   title="Click to zoom image"
                                                 />
@@ -8858,10 +8890,10 @@ function App() {
                                             return (
                                               <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', background: isAgent ? 'rgba(124, 58, 237, 0.08)' : 'rgba(0, 0, 0, 0.05)', padding: '8px 12px', borderRadius: '8px' }}>
                                                 <FileText size={16} color={isAgent ? '#7c3aed' : '#4b5563'} />
-                                                <a 
-                                                  href={fullUrl} 
-                                                  target="_blank" 
-                                                  rel="noopener noreferrer" 
+                                                <a
+                                                  href={fullUrl}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
                                                   style={{ fontSize: '12px', color: isAgent ? '#7c3aed' : '#374151', textDecoration: 'underline', fontWeight: 600, wordBreak: 'break-all' }}
                                                 >
                                                   {msg.mediaUrl.split('/').pop() || 'View Attachment'}
@@ -8872,7 +8904,7 @@ function App() {
                                         })()}
                                         <div style={{ fontSize: '10px', color: isAgent ? '#7c3aed' : '#6b7280', marginTop: '8px', fontWeight: 600, textAlign: isAgent ? 'right' : 'left' }}>
                                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                          {isAgent && <Check size={12} style={{ verticalAlign: 'middle', marginLeft: '4px' }}/>}
+                                          {isAgent && <Check size={12} style={{ verticalAlign: 'middle', marginLeft: '4px' }} />}
                                         </div>
                                       </div>
                                     </div>
@@ -8888,8 +8920,8 @@ function App() {
                             {/* Input Area */}
                             <div style={{ padding: '20px', borderTop: '1px solid #f0f0f5' }}>
                               <form onSubmit={handleSendExecReply} style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-                                <textarea 
-                                  placeholder="Type your reply here..." 
+                                <textarea
+                                  placeholder="Type your reply here..."
                                   value={newMessageText}
                                   onChange={(e) => setNewMessageText(e.target.value)}
                                   onKeyDown={(e) => {
@@ -8921,10 +8953,10 @@ function App() {
                             Select a chat thread to view conversation
                           </div>
                         )}
-                     </div>
+                      </div>
 
-                     {/* Column 3: Thread Details & Actions */}
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      {/* Column 3: Thread Details & Actions */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                         {/* Thread Details */}
                         <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', padding: '24px' }}>
                           <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#111827', margin: '0 0 20px 0' }}>Thread Details</h3>
@@ -8955,18 +8987,18 @@ function App() {
                           <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#111827', margin: '0 0 20px 0' }}>Quick Actions</h3>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-                            <button 
-                              disabled={!selectedChatEmail} 
+                            <button
+                              disabled={!selectedChatEmail}
                               onClick={() => {
                                 if (window.confirm("Resolve and close this conversation thread?")) {
                                   handleResolveThread(selectedChatEmail);
                                 }
-                              }} 
+                              }}
                               style={{ width: '100%', background: selectedChatEmail ? '#f0fdf4' : '#f9fafb', border: `1px solid ${selectedChatEmail ? '#bbf7d0' : '#e5e7eb'}`, color: selectedChatEmail ? '#16a34a' : '#9ca3af', padding: '10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: selectedChatEmail ? 'pointer' : 'not-allowed' }}
                             >
                               <CheckCircle2 size={14} /> Resolve Thread
                             </button>
-                            <button 
+                            <button
                               style={{ width: '100%', background: '#ffffff', border: '1px solid #e5e7eb', color: '#4b5563', padding: '10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: 'pointer' }}
                               onClick={() => {
                                 const note = window.prompt("Enter internal note:");
@@ -8981,7 +9013,7 @@ function App() {
                     </div>
                   </div>
                 )}
-            </div>
+              </div>
             )}
 
             {/* ================= REPORTS PAGE ================= */}
@@ -8992,19 +9024,19 @@ function App() {
                 trend: Array.from({ length: 7 }, (_, i) => ({ date: '--', calls: 0, chats: 0, deposits: 0, attended: 0 })),
                 activityDistribution: { calls: 25, chats: 25, deposits: 25, attendance: 25 }
               };
-              
+
               const totalActivities = rep.kpis.callsResponded + rep.kpis.chatsClosed + rep.kpis.depositsClosed + rep.kpis.attendedDays;
-              
+
               // Calculate Line Chart SVG parameters
               const maxValue = Math.max(...rep.trend.map(t => Math.max(t.calls, t.chats, t.deposits, t.attended)), 5);
               const getX = (idx) => idx * 100;
               const getY = (val) => 180 - (val / maxValue) * 150;
-              
+
               const callsPath = rep.trend.map((t, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(t.calls)}`).join(' ');
               const chatsPath = rep.trend.map((t, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(t.chats)}`).join(' ');
               const depositsPath = rep.trend.map((t, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(t.deposits)}`).join(' ');
               const attendedPath = rep.trend.map((t, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(t.attended)}`).join(' ');
-              
+
               // Calculate Gauge parameter
               const circ = Math.PI * 80; // 251.3
               const pctTime = Math.max(0, Math.min(100, ((rep.kpis.avgRespSecs || 60) / 300) * 100));
@@ -9139,7 +9171,7 @@ function App() {
                           {/* Attended (Orange) */}
                           <path d={attendedPath} fill="none" stroke="#f59e0b" strokeWidth="2.5" />
                           {rep.trend.map((t, idx) => <circle key={`att-${idx}`} cx={getX(idx)} cy={getY(t.attended)} r="4.5" fill="#f59e0b" stroke="#fff" strokeWidth="1.5" />)}
-                          
+
                           {/* Calls (Purple) */}
                           <path d={callsPath} fill="none" stroke="#7c3aed" strokeWidth="2.5" />
                           {rep.trend.map((t, idx) => <circle key={`call-${idx}`} cx={getX(idx)} cy={getY(t.calls)} r="4.5" fill="#7c3aed" stroke="#fff" strokeWidth="1.5" />)}
@@ -9160,17 +9192,17 @@ function App() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 800, color: '#111827', marginBottom: '24px' }}>
                         <Activity size={18} color="#7c3aed" /> Response Time
                       </div>
-                      
+
                       {/* SVG Gauge */}
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                         <div style={{ position: 'relative', width: '220px', height: '110px' }}>
                           <svg viewBox="0 0 200 100" style={{ width: '100%', height: '100%' }}>
                             <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#f3f4f6" strokeWidth="16" strokeLinecap="round" />
-                            <path 
-                              d="M 20 90 A 80 80 0 0 1 180 90" 
-                              fill="none" 
-                              stroke="#7c3aed" 
-                              strokeWidth="16" 
+                            <path
+                              d="M 20 90 A 80 80 0 0 1 180 90"
+                              fill="none"
+                              stroke="#7c3aed"
+                              strokeWidth="16"
                               strokeLinecap="round"
                               strokeDasharray={circ}
                               strokeDashoffset={offsetTime}
@@ -9240,7 +9272,7 @@ function App() {
                     {/* Activity Donut */}
                     <div style={{ background: '#ffffff', borderRadius: '16px', padding: '24px', border: '1px solid #f0f0f5', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column' }}>
                       <div style={{ fontSize: '16px', fontWeight: 800, color: '#111827', marginBottom: '24px' }}>Activity Distribution</div>
-                      
+
                       <div style={{ display: 'flex', alignItems: 'center', gap: '30px', flex: 1 }}>
                         {/* SVG Donut */}
                         <div style={{ position: 'relative', width: '150px', height: '150px' }}>
@@ -9291,72 +9323,72 @@ function App() {
 
             {/* Bottom Row: Stat Cards */}
             {(execTab === 'dashboard') && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
-              <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
-                  <div style={{ background: '#f3e8ff', color: '#7c3aed', padding: '4px', borderRadius: '6px' }}><Phone size={14} /></div>
-                  Total Callbacks
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <div>
-                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>{callRequests.length}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280' }}>Today</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+                <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
+                    <div style={{ background: '#f3e8ff', color: '#7c3aed', padding: '4px', borderRadius: '6px' }}><Phone size={14} /></div>
+                    Total Callbacks
                   </div>
-                  <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 20C10 20 15 5 25 10C35 15 40 20 45 20C50 20 55 5 58 5" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </div>
-              </div>
-
-              <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
-                  <div style={{ background: '#e0f2fe', color: '#0ea5e9', padding: '4px', borderRadius: '6px' }}><CreditCard size={14} /></div>
-                  Manual Deposits
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <div>
-                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>{pendingDeposits.length}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280' }}>Pending</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div>
+                      <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>{callRequests.length}</div>
+                      <div style={{ fontSize: '11px', color: '#6b7280' }}>Today</div>
+                    </div>
+                    <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 20C10 20 15 5 25 10C35 15 40 20 45 20C50 20 55 5 58 5" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
                   </div>
-                  <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 18C10 18 15 22 25 22C35 22 40 10 45 10C50 10 55 5 58 5" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
                 </div>
-              </div>
 
-              <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
-                  <div style={{ background: '#dcfce7', color: '#16a34a', padding: '4px', borderRadius: '6px' }}><MessageSquare size={14} /></div>
-                  Chats Handled
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <div>
-                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>{activeChats.length}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280' }}>Today</div>
+                <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
+                    <div style={{ background: '#e0f2fe', color: '#0ea5e9', padding: '4px', borderRadius: '6px' }}><CreditCard size={14} /></div>
+                    Manual Deposits
                   </div>
-                  <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 22C10 22 15 15 25 20C35 25 40 10 45 10C50 10 55 5 58 5" stroke="#16a34a" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </div>
-              </div>
-
-              <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
-                  <div style={{ background: '#ffedd5', color: '#ea580c', padding: '4px', borderRadius: '6px' }}><Calendar size={14} /></div>
-                  Attendance
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <div>
-                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>100%</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280' }}>This Month</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div>
+                      <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>{pendingDeposits.length}</div>
+                      <div style={{ fontSize: '11px', color: '#6b7280' }}>Pending</div>
+                    </div>
+                    <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 18C10 18 15 22 25 22C35 22 40 10 45 10C50 10 55 5 58 5" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
                   </div>
-                  <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 20C10 20 15 10 25 15C35 20 40 15 45 15C50 15 55 5 58 5" stroke="#ea580c" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
                 </div>
-              </div>
 
-            </div>
+                <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
+                    <div style={{ background: '#dcfce7', color: '#16a34a', padding: '4px', borderRadius: '6px' }}><MessageSquare size={14} /></div>
+                    Chats Handled
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div>
+                      <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>{activeChats.length}</div>
+                      <div style={{ fontSize: '11px', color: '#6b7280' }}>Today</div>
+                    </div>
+                    <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 22C10 22 15 15 25 20C35 25 40 10 45 10C50 10 55 5 58 5" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4b5563', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>
+                    <div style={{ background: '#ffedd5', color: '#ea580c', padding: '4px', borderRadius: '6px' }}><Calendar size={14} /></div>
+                    Attendance
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div>
+                      <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}>100%</div>
+                      <div style={{ fontSize: '11px', color: '#6b7280' }}>This Month</div>
+                    </div>
+                    <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 20C10 20 15 10 25 15C35 20 40 15 45 15C50 15 55 5 58 5" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                </div>
+
+              </div>
             )}
 
             {/* Settings Tab Content */}
@@ -9368,7 +9400,7 @@ function App() {
                     <h2 style={{ fontSize: '22px', fontWeight: 800, color: themeText, margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>Settings</h2>
                     <p style={{ fontSize: '14px', color: themeSubText, margin: 0, fontWeight: 500 }}>Manage your account settings and preferences</p>
                   </div>
-                  <button 
+                  <button
                     onClick={handleSaveSettings}
                     style={{ background: '#7c3aed', color: '#ffffff', border: 'none', borderRadius: '10px', padding: '10px 20px', fontSize: '14px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)' }}
                   >
@@ -9378,10 +9410,10 @@ function App() {
 
                 {/* 2-Column Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '24px', alignItems: 'start' }}>
-                  
+
                   {/* Left Column: Forms */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    
+
                     {/* Profile Settings Card */}
                     <div style={{ background: themeCardBg, borderRadius: '16px', padding: '24px', border: themeCardBorder, boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '6px' }}>
@@ -9395,38 +9427,38 @@ function App() {
                         <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                             <label style={{ fontSize: '12px', fontWeight: 600, color: themeSubText }}>Full Name</label>
-                            <input 
-                              type="text" 
-                              value={settingsName} 
-                              onChange={(e) => setSettingsName(e.target.value)} 
+                            <input
+                              type="text"
+                              value={settingsName}
+                              onChange={(e) => setSettingsName(e.target.value)}
                               onBlur={() => saveSettingItem({ name: settingsName })}
                               style={{ padding: '10px 14px', borderRadius: '8px', border: themeInputBorder, background: themeInputBg, fontSize: '13px', color: themeInputColor, outline: 'none' }}
                             />
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                             <label style={{ fontSize: '12px', fontWeight: 600, color: themeSubText }}>Email Address</label>
-                            <input 
-                              type="email" 
-                              readOnly 
-                              value={execProfile?.email || ''} 
+                            <input
+                              type="email"
+                              readOnly
+                              value={execProfile?.email || ''}
                               style={{ padding: '10px 14px', borderRadius: '8px', border: themeInputBorder, background: themeInputReadOnlyBg, fontSize: '13px', color: themeSubText, cursor: 'not-allowed', outline: 'none' }}
                             />
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                             <label style={{ fontSize: '12px', fontWeight: 600, color: themeSubText }}>Phone Number</label>
-                            <input 
-                              type="text" 
-                              value={settingsPhone} 
-                              onChange={(e) => setSettingsPhone(e.target.value)} 
+                            <input
+                              type="text"
+                              value={settingsPhone}
+                              onChange={(e) => setSettingsPhone(e.target.value)}
                               onBlur={() => saveSettingItem({ phone: settingsPhone })}
                               style={{ padding: '10px 14px', borderRadius: '8px', border: themeInputBorder, background: themeInputBg, fontSize: '13px', color: themeInputColor, outline: 'none' }}
                             />
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                             <label style={{ fontSize: '12px', fontWeight: 600, color: themeSubText }}>Preferred Language</label>
-                            <select 
-                              value={settingsPrefLang} 
-                              onChange={(e) => { const val = e.target.value; setSettingsPrefLang(val); saveSettingItem({ preferredLanguage: val }); }} 
+                            <select
+                              value={settingsPrefLang}
+                              onChange={(e) => { const val = e.target.value; setSettingsPrefLang(val); saveSettingItem({ preferredLanguage: val }); }}
                               style={{ padding: '10px 14px', borderRadius: '8px', border: themeInputBorder, background: themeInputBg, fontSize: '13px', color: themeInputColor, outline: 'none', cursor: 'pointer' }}
                             >
                               <option value="English">English</option>
@@ -9437,9 +9469,9 @@ function App() {
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', gridColumn: 'span 2' }}>
                             <label style={{ fontSize: '12px', fontWeight: 600, color: themeSubText }}>Timezone</label>
-                            <select 
-                              value={settingsTimezone} 
-                              onChange={(e) => { const val = e.target.value; setSettingsTimezone(val); saveSettingItem({ timezone: val }); }} 
+                            <select
+                              value={settingsTimezone}
+                              onChange={(e) => { const val = e.target.value; setSettingsTimezone(val); saveSettingItem({ timezone: val }); }}
                               style={{ padding: '10px 14px', borderRadius: '8px', border: themeInputBorder, background: themeInputBg, fontSize: '13px', color: themeInputColor, outline: 'none', cursor: 'pointer' }}
                             >
                               <option value="(GMT+05:30) Asia/Kolkata">(GMT+05:30) Asia/Kolkata</option>
@@ -9461,10 +9493,10 @@ function App() {
                           <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '14px', borderRadius: '10px', border: '1.5px dashed #7c3aed', background: isDarkTheme ? 'rgba(124, 58, 237, 0.05)' : '#fbfbfe', cursor: 'pointer', width: '100%', boxSizing: 'border-box' }} title="Upload profile photo">
                             <Upload size={16} color="#7c3aed" />
                             <span style={{ fontSize: '11px', fontWeight: 700, color: '#7c3aed' }}>Upload Photo</span>
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              style={{ display: 'none' }} 
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
                               onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (!file) return;
@@ -9488,7 +9520,7 @@ function App() {
                                 } catch (err) {
                                   alert("Error uploading photo: " + err.message);
                                 }
-                              }} 
+                              }}
                             />
                           </label>
                           <span style={{ fontSize: '9px', color: '#9ca3af', marginTop: '8px', fontWeight: 600 }}>JPG, PNG or GIF. Max 2MB</span>
@@ -9577,7 +9609,7 @@ function App() {
                             <div style={{ fontSize: '13px', fontWeight: 700, color: themeText }}>Change Password</div>
                             <div style={{ fontSize: '11px', color: themeSubText, fontWeight: 500, marginTop: '2px' }}>Update your password regularly for better security</div>
                           </div>
-                          <button 
+                          <button
                             onClick={handleChangePasswordClick}
                             style={{ background: 'transparent', border: '1px solid #7c3aed', color: '#7c3aed', padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                           >
@@ -9590,7 +9622,7 @@ function App() {
                             <div style={{ fontSize: '13px', fontWeight: 700, color: themeText }}>Two-Factor Authentication</div>
                             <div style={{ fontSize: '11px', color: themeSubText, fontWeight: 500, marginTop: '2px' }}>Add an extra layer of security to your account</div>
                           </div>
-                          <button 
+                          <button
                             onClick={() => alert("2FA configuration is currently disabled.")}
                             style={{ background: 'transparent', border: '1px solid #7c3aed', color: '#7c3aed', padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                           >
@@ -9603,7 +9635,7 @@ function App() {
 
                   {/* Right Column: Info & Details */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    
+
                     {/* Quick Settings */}
                     <div style={{ background: themeCardBg, borderRadius: '16px', padding: '24px', border: themeCardBorder, boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '6px' }}>
@@ -9620,8 +9652,8 @@ function App() {
                           { label: 'Account Activity', action: () => setExecTab('dashboard'), isRed: false },
                           { label: 'Delete Account', action: () => { if (window.confirm("Are you sure you want to delete your executive account?")) alert("Contact administrator to delete account."); }, isRed: true }
                         ].map((item, idx) => (
-                          <div 
-                            key={idx} 
+                          <div
+                            key={idx}
                             onClick={item.action}
                             style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: idx < 4 ? themeCardBorder : 'none', cursor: 'pointer' }}
                           >
@@ -9688,19 +9720,19 @@ function App() {
                         ].map(theme => {
                           const isSelected = themePref === theme.key;
                           return (
-                            <div 
+                            <div
                               key={theme.key}
                               onClick={() => { setThemePref(theme.key); saveSettingItem({ themePref: theme.key }); }}
-                              style={{ 
-                                display: 'flex', 
-                                flexDirection: 'column', 
-                                alignItems: 'center', 
-                                gap: '8px', 
-                                padding: '14px 10px', 
-                                borderRadius: '10px', 
-                                border: `1.5px solid ${isSelected ? '#7c3aed' : (isDarkTheme ? 'rgba(255,255,255,0.1)' : '#e5e7eb')}`, 
-                                background: isSelected ? (isDarkTheme ? 'rgba(124, 58, 237, 0.15)' : '#fbfbfe') : 'transparent', 
-                                color: isSelected ? '#7c3aed' : themeSubText, 
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '14px 10px',
+                                borderRadius: '10px',
+                                border: `1.5px solid ${isSelected ? '#7c3aed' : (isDarkTheme ? 'rgba(255,255,255,0.1)' : '#e5e7eb')}`,
+                                background: isSelected ? (isDarkTheme ? 'rgba(124, 58, 237, 0.15)' : '#fbfbfe') : 'transparent',
+                                color: isSelected ? '#7c3aed' : themeSubText,
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
                                 fontWeight: 700,
@@ -9722,7 +9754,7 @@ function App() {
 
           </div>
         </main>
-        
+
         <footer style={{ padding: '20px', textAlign: 'center', fontSize: '12px', color: '#6b7280', marginTop: 'auto' }}>
           © 2026 Investhour. All rights reserved.
         </footer>
@@ -9730,7 +9762,7 @@ function App() {
     );
   }
   if (view === 'dashboard') {
-    if (successfulReferralsCount < 1 && !isUnlocked) {
+    if (false && dashTab !== 'devices' && successfulReferralsCount < 1 && !isUnlocked) {
       return (
         <div id="root" className="dashboard-page-view admin-dashboard animate-fade-in" style={{ background: '#0e041b', color: '#ffffff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
           <header className="header" style={{ borderBottom: '1px solid rgba(217, 175, 86, 0.15)', background: '#120524' }}>
@@ -9743,13 +9775,13 @@ function App() {
           </header>
 
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-            <div style={{ 
-              background: 'linear-gradient(145deg, #120524 0%, #17092c 100%)', 
-              border: '1px solid rgba(217, 175, 86, 0.25)', 
-              padding: '40px', 
-              borderRadius: '24px', 
-              maxWidth: '850px', 
-              width: '100%', 
+            <div style={{
+              background: 'linear-gradient(145deg, #120524 0%, #17092c 100%)',
+              border: '1px solid rgba(217, 175, 86, 0.25)',
+              padding: '40px',
+              borderRadius: '24px',
+              maxWidth: '850px',
+              width: '100%',
               boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
               display: 'flex',
               flexDirection: 'column',
@@ -9764,23 +9796,23 @@ function App() {
               </p>
 
               {/* Two Column Layout */}
-              <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '24px', 
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '24px',
                 width: '100%',
                 justifyContent: 'center'
               }}>
                 {/* Option 1: Referral */}
-                <div style={{ 
-                  flex: '1 1 350px', 
+                <div style={{
+                  flex: '1 1 350px',
                   minWidth: '280px',
-                  background: 'rgba(255, 255, 255, 0.02)', 
-                  border: '1px solid rgba(255, 255, 255, 0.06)', 
-                  borderRadius: '16px', 
-                  padding: '28px', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  display: 'flex',
+                  flexDirection: 'column',
                   justifyContent: 'space-between',
                   boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
                 }}>
@@ -9793,13 +9825,13 @@ function App() {
 
                     <div style={{ background: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px dashed rgba(217, 175, 86, 0.2)' }}>
                       <span style={{ display: 'block', fontSize: '10px', color: '#9c93a8', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '1px' }}>Your Referral Link</span>
-                      <input 
-                        type="text" 
-                        readOnly 
-                        value={`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`} 
+                      <input
+                        type="text"
+                        readOnly
+                        value={`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`}
                         style={{ width: '100%', background: 'transparent', border: 'none', color: '#d9af56', fontSize: '12px', textAlign: 'center', outline: 'none', marginBottom: '10px', fontFamily: 'monospace' }}
                       />
-                      <button 
+                      <button
                         onClick={() => {
                           navigator.clipboard.writeText(`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`);
                           setCopiedReferralLink(true);
@@ -9817,7 +9849,7 @@ function App() {
                       <span style={{ color: '#9c93a8' }}>Referrals Completed:</span>
                       <strong style={{ color: '#f43f5e', fontSize: '15px' }}>{successfulReferralsCount} / 1</strong>
                     </div>
-                    <button 
+                    <button
                       onClick={() => window.location.reload()}
                       style={{ background: 'transparent', color: '#9c93a8', border: 'none', textDecoration: 'underline', fontSize: '11px', cursor: 'pointer' }}
                     >
@@ -9827,15 +9859,15 @@ function App() {
                 </div>
 
                 {/* Option 2: Payment */}
-                <div style={{ 
-                  flex: '1 1 350px', 
+                <div style={{
+                  flex: '1 1 350px',
                   minWidth: '280px',
-                  background: 'rgba(255, 255, 255, 0.03)', 
-                  border: '1px solid rgba(217, 175, 86, 0.15)', 
-                  borderRadius: '16px', 
-                  padding: '28px', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(217, 175, 86, 0.15)',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  display: 'flex',
+                  flexDirection: 'column',
                   justifyContent: 'space-between',
                   boxShadow: '0 4px 25px rgba(217, 175, 86, 0.05)'
                 }}>
@@ -9854,47 +9886,47 @@ function App() {
                   </div>
 
                   <div>
-                      <button
-                        type="button"
-                        disabled={hasPendingUnlockDeposit}
-                        onClick={() => {
-                          setDepositAmount('10');
-                          setShowManualDepositModal(true);
-                        }}
-                        style={{
-                          background: hasPendingUnlockDeposit ? 'linear-gradient(135deg, #4b5563 0%, #374151 100%)' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                          border: 'none',
-                          padding: '16px',
-                          width: '100%',
-                          borderRadius: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '8px',
-                          fontWeight: 'bold',
-                          color: '#fff',
-                          cursor: hasPendingUnlockDeposit ? 'not-allowed' : 'pointer',
-                          boxShadow: hasPendingUnlockDeposit ? 'none' : '0 4px 14px rgba(16, 185, 129, 0.3)',
-                          transition: 'all 0.3s ease-in-out',
-                          opacity: hasPendingUnlockDeposit ? 0.7 : 1
-                        }}
-                      >
-                        {hasPendingUnlockDeposit ? (
-                          <>
-                            <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                            <span>Verifying...</span>
-                          </>
-                        ) : (
-                          'Pay ₹10 & Submit UTR'
-                        )}
-                      </button>
-                  </div>
+                    <button
+                      type="button"
+                      disabled={hasPendingUnlockDeposit}
+                      onClick={() => {
+                        setDepositAmount('10');
+                        setShowManualDepositModal(true);
+                      }}
+                      style={{
+                        background: hasPendingUnlockDeposit ? 'linear-gradient(135deg, #4b5563 0%, #374151 100%)' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        border: 'none',
+                        padding: '16px',
+                        width: '100%',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        fontWeight: 'bold',
+                        color: '#fff',
+                        cursor: hasPendingUnlockDeposit ? 'not-allowed' : 'pointer',
+                        boxShadow: hasPendingUnlockDeposit ? 'none' : '0 4px 14px rgba(16, 185, 129, 0.3)',
+                        transition: 'all 0.3s ease-in-out',
+                        opacity: hasPendingUnlockDeposit ? 0.7 : 1
+                      }}
+                    >
+                      {hasPendingUnlockDeposit ? (
+                        <>
+                          <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                          <span>Verifying...</span>
+                        </>
+                      ) : (
+                        'Pay ₹10 & Submit UTR'
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-            {renderManualDepositModal()}
           </div>
+          {renderManualDepositModal()}
+        </div>
       );
     }
     let totalValuationOfMetals = 0;
@@ -9911,8 +9943,8 @@ function App() {
       if (weight > 0) {
         const pctChange = rates[m.assetId]?.pct || 0;
         const assetTxs = (transactions || []).filter(
-          tx => (tx.type === 'buy' || tx.type === 'METAL_BUY') && 
-                tx.asset?.toLowerCase() === m.assetId.toLowerCase()
+          tx => (tx.type === 'buy' || tx.type === 'METAL_BUY') &&
+            tx.asset?.toLowerCase() === m.assetId.toLowerCase()
         );
         let cb = 0;
         if (assetTxs.length > 0) {
@@ -9968,72 +10000,78 @@ function App() {
             <div className="logo-section">
               <InvesthourLogoText />
             </div>
-            
-            <button 
-              type="button" 
-              className="hamburger-btn" 
+
+            <button
+              type="button"
+              className="hamburger-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle Menu"
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            
+
             <nav className={`nav-menu dashboard-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-              <button 
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('home'); setIsMobileMenuOpen(false); }}
               >
                 <Home size={16} /> Home
               </button>
-              <button 
+              <button
                 className={`dash-nav-item ${dashTab === 'portfolio' ? 'active' : ''}`}
                 onClick={() => { setDashTab('portfolio'); setIsMobileMenuOpen(false); }}
               >
                 <Briefcase size={16} /> Portfolio
               </button>
-              <button 
+              <button
                 className={`dash-nav-item ${dashTab === 'investment' ? 'active' : ''}`}
                 onClick={() => { setDashTab('investment'); setIsMobileMenuOpen(false); }}
               >
                 <TrendingUp size={16} /> Investment
               </button>
-              <button 
+              <button
                 className={`dash-nav-item ${dashTab === 'trade' ? 'active' : ''}`}
                 onClick={() => { setDashTab('trade'); setIsMobileMenuOpen(false); }}
               >
                 <ArrowRightLeft size={16} /> Trade
               </button>
-              <button 
+              <button
                 className={`dash-nav-item ${dashTab === 'wallet' ? 'active' : ''}`}
                 onClick={() => { setDashTab('wallet'); setIsMobileMenuOpen(false); }}
               >
                 <Wallet size={16} /> Wallet
               </button>
-              <button 
+              <button
                 className={`dash-nav-item ${dashTab === 'contest' ? 'active' : ''}`}
                 onClick={() => { setDashTab('contest'); setIsMobileMenuOpen(false); }}
               >
                 <Star size={16} /> Contest Awards
               </button>
-              <button 
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
               >
                 <Gem size={16} /> Explore Elements
               </button>
-              <button 
+              <button
+                className={`dash-nav-item ${dashTab === 'devices' ? 'active' : ''}`}
+                onClick={() => { setDashTab('devices'); setIsMobileMenuOpen(false); }}
+              >
+                <Smartphone size={16} /> Device Exchange
+              </button>
+              <button
                 className={`dash-nav-item ${dashTab === 'referral' ? 'active' : ''}`}
                 onClick={() => { setDashTab('referral'); setIsMobileMenuOpen(false); }}
               >
                 <Gift size={16} /> Referral Program
               </button>
-              <button 
+              <button
                 className={`dash-nav-item ${dashTab === 'profile' ? 'active' : ''}`}
                 onClick={() => { setDashTab('profile'); setIsMobileMenuOpen(false); }}
               >
                 <User size={16} /> Vault Profile
               </button>
-              {user && (
+              {user ? (
                 <div className="mobile-user-badge">
                   <div className="user-info-text">
                     <span className="user-email-text">{user.email}</span>
@@ -10043,18 +10081,35 @@ function App() {
                     <LogOut size={16} /> Sign Out
                   </button>
                 </div>
+              ) : (
+                <div className="mobile-user-badge" style={{ padding: '12px 0' }}>
+                  <button
+                    type="button"
+                    className="btn-signin"
+                    style={{ width: '100%' }}
+                    onClick={() => { setView('auth'); setAuthRole('client'); setIsMobileMenuOpen(false); }}
+                  >
+                    Sign In / Sign Up
+                  </button>
+                </div>
               )}
             </nav>
-            
-            <div className="dash-user-badge">
-              <div className="user-info-text">
-                <span className="user-email-text">{user?.email || 'vault.holder@example.com'}</span>
-                <span className="kyc-badge">KYC SECURED</span>
+
+            {user ? (
+              <div className="dash-user-badge">
+                <div className="user-info-text">
+                  <span className="user-email-text">{user.email}</span>
+                  <span className="kyc-badge">{user.email === 'sandeepkumar.pikili@vrpigroup.co.in' ? 'ADMIN' : 'KYC SECURED'}</span>
+                </div>
+                <button className="btn-sec-signout" onClick={handleSignOut} title="Secure Sign Out">
+                  <LogOut size={16} />
+                </button>
               </div>
-              <button className="btn-sec-signout" onClick={handleSignOut} title="Secure Sign Out">
-                <LogOut size={16} />
+            ) : (
+              <button type="button" className="btn-signin" onClick={() => { setView('auth'); setAuthRole('client'); }}>
+                Sign In / Sign Up
               </button>
-            </div>
+            )}
           </div>
         </header>
 
@@ -10143,10 +10198,10 @@ function App() {
                     <div className="alloc-bar-container">
                       {activeAllocations.map(alloc => (
                         alloc.value > 0 && (
-                          <div 
-                            key={alloc.id} 
-                            className={`alloc-segment ${alloc.colorClass}`} 
-                            style={{ width: `${alloc.pct}%` }} 
+                          <div
+                            key={alloc.id}
+                            className={`alloc-segment ${alloc.colorClass}`}
+                            style={{ width: `${alloc.pct}%` }}
                             title={alloc.name}
                           ></div>
                         )
@@ -10156,7 +10211,7 @@ function App() {
                       {activeAllocations.map(alloc => (
                         alloc.value > 0 && (
                           <div key={alloc.id} className="legend-item">
-                            <span className={`dot ${alloc.colorClass}`}></span> 
+                            <span className={`dot ${alloc.colorClass}`}></span>
                             {alloc.name}: {alloc.pct.toFixed(1)}%
                           </div>
                         )
@@ -10178,8 +10233,8 @@ function App() {
 
                   // Calculate Live P&L Amount & Percentage
                   const assetTxs = (transactions || []).filter(
-                    tx => (tx.type === 'buy' || tx.type === 'METAL_BUY') && 
-                          tx.asset?.toLowerCase() === metal.assetId.toLowerCase()
+                    tx => (tx.type === 'buy' || tx.type === 'METAL_BUY') &&
+                      tx.asset?.toLowerCase() === metal.assetId.toLowerCase()
                   );
                   let costBasis = 0;
                   if (assetTxs.length > 0) {
@@ -10190,7 +10245,7 @@ function App() {
                       costBasis = weight * avgPrice;
                     }
                   }
-                  
+
                   // Fallback to live rate % change if no explicit buy transaction cost basis exists
                   if (costBasis <= 0 && weight > 0 && price > 0) {
                     const prevPrice = price / (1 + (pctChange / 100));
@@ -10221,14 +10276,14 @@ function App() {
                       </div>
                       <div className="holding-pnl-indicator" style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '4px 0 10px 0' }}>
                         <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: '600' }}>Live P&L:</span>
-                        <span 
-                          style={{ 
-                            fontSize: '11.5px', 
-                            fontWeight: '700', 
-                            color: isProfit ? '#10b981' : '#ef4444', 
-                            background: isProfit ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)', 
+                        <span
+                          style={{
+                            fontSize: '11.5px',
+                            fontWeight: '700',
+                            color: isProfit ? '#10b981' : '#ef4444',
+                            background: isProfit ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
                             border: `1px solid ${isProfit ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
-                            padding: '2px 8px', 
+                            padding: '2px 8px',
                             borderRadius: '6px',
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -10241,8 +10296,8 @@ function App() {
                       </div>
                       <div className="holding-action-row">
                         <span className="live-pricing-indicator">₹{price.toFixed(2)}/g</span>
-                        <button 
-                          className="btn-card-action" 
+                        <button
+                          className="btn-card-action"
                           onClick={() => {
                             const currentWeight = holdings?.[metal.assetId] || 0;
                             const currentPrice = rates[metal.assetId]?.price || 0;
@@ -10301,17 +10356,17 @@ function App() {
                         <tr key={tx.id}>
                           <td className="tx-id-col">{tx.id}</td>
                           <td>
-                             <span className={`tx-type-tag ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>
-                               {tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'referral' ? (
-                                 <ArrowDownLeft size={12} />
-                               ) : tx.type === 'sell' ? (
-                                 <Plus size={12} />
-                               ) : (
-                                 <Minus size={12} />
-                               )}
-                               {tx.type === 'refund' ? 'rejected' : tx.type}
-                             </span>
-                           </td>
+                            <span className={`tx-type-tag ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>
+                              {tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'referral' ? (
+                                <ArrowDownLeft size={12} />
+                              ) : tx.type === 'sell' ? (
+                                <Plus size={12} />
+                              ) : (
+                                <Minus size={12} />
+                              )}
+                              {tx.type === 'refund' ? 'rejected' : tx.type}
+                            </span>
+                          </td>
                           <td>{getAssetLabel(tx.asset)}</td>
                           <td>{tx.weight > 0 ? `${tx.weight.toFixed(4)} g` : '-'}</td>
                           <td className={`tx-amt-col ${tx.type}`}>
@@ -10335,7 +10390,7 @@ function App() {
                   <TrendingUp size={16} style={{ color: '#d9af56' }} />
                   <h2 style={{ fontSize: '15px', fontWeight: 'bold', color: '#e2e8f0', margin: 0, letterSpacing: '0.5px' }}>Investment Opportunities</h2>
                 </div>
-                
+
                 <p className="premium-animated-text investment-title-mobile" style={{ whiteSpace: 'normal', wordWrap: 'break-word', display: 'block', width: '100%', maxWidth: '100%', textAlign: 'center', marginBottom: '4px' }}>
                   Build Your Business While Sleeping
                 </p>
@@ -10370,7 +10425,7 @@ function App() {
                     </span>
                   </div>
                 )}
-                
+
                 <div className="investment-dashboard-bar" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
                   {/* Column 1 */}
                   <div className="dashboard-bar-section col-wallet">
@@ -10388,12 +10443,12 @@ function App() {
                   <div className="dashboard-bar-section">
                     <span className="dashboard-bar-label">Invest Amount</span>
                     <div className="invest-input-row" style={{ flexWrap: 'wrap', justifyContent: 'center', width: '100%', boxSizing: 'border-box' }}>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         min="1"
                         step="any"
-                        className="invest-input" 
-                        placeholder="Enter amount (₹)" 
+                        className="invest-input"
+                        placeholder="Enter amount (₹)"
                         value={investInputValue}
                         onChange={(e) => setInvestInputValue(e.target.value)}
                         style={{ maxWidth: '100%', boxSizing: 'border-box', flex: '1 1 120px' }}
@@ -10412,13 +10467,13 @@ function App() {
                     <span className="dashboard-bar-sublabel">Active Investments</span>
                   </div>
                 </div>
-                
+
                 <div style={{ marginTop: '30px', marginBottom: '40px', width: '100%', maxWidth: '1000px', margin: '30px auto', boxSizing: 'border-box' }}>
                   <div className="investment-details-header" style={{ padding: '16px 24px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px 12px 0 0', border: '1px solid rgba(255, 255, 255, 0.08)', borderBottom: 'none', boxSizing: 'border-box' }}>
                     <span style={{ color: '#8b8098', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>Investment Details</span>
                     <span className="live-earnings-text" style={{ color: '#8b8098', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'right' }}>Live Earnings</span>
                   </div>
-                  
+
                   <div style={{ background: 'rgba(18, 12, 28, 0.7)', borderRadius: '0 0 12px 12px', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', flexDirection: 'column' }}>
                     {investments.map((inv, index) => (
                       <InvestmentRow
@@ -10450,7 +10505,7 @@ function App() {
                   Past performance in paper trading does not guarantee future results in real trading. Users are solely responsible for their investment and trading decisions. This platform does not provide financial, investment, or legal advice. This is completely based on your technical knowledge and only for practice session.
                 </p>
                 {!disclaimerAccepted ? (
-                  <button 
+                  <button
                     onClick={() => {
                       setDisclaimerAccepted(true);
                       localStorage.setItem('vb_disclaimer_accepted', 'true');
@@ -10473,7 +10528,7 @@ function App() {
                     I Accept
                   </button>
                 ) : (
-                  <button 
+                  <button
                     onClick={() => {
                       setDisclaimerAccepted(false);
                       localStorage.removeItem('vb_disclaimer_accepted');
@@ -10503,9 +10558,9 @@ function App() {
                 )}
               </div>
               <div className="trade-chart-container">
-                <LiveChartWidget 
-                  user={user} 
-                  withdrawableBalance={withdrawableBalance} 
+                <LiveChartWidget
+                  user={user}
+                  withdrawableBalance={withdrawableBalance}
                   walletBalance={walletBalance}
                   setWalletBalance={setWalletBalance}
                 />
@@ -10538,30 +10593,30 @@ function App() {
                           <span className="currency-symbol">{'\u20b9'}</span>
                           <input type="number" placeholder="Enter amount (min 100)" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
                         </div>
-                          <button 
-                            type="button" 
-                            disabled={hasPendingDeposit}
-                            onClick={() => {
-                              const val = parseFloat(depositAmount);
-                              if (!val || val < 100) {
-                                alert("Minimum deposit amount is ₹100");
-                                return;
-                              }
-                              setShowManualDepositModal(true);
-                            }} 
-                            style={{ 
-                              marginTop: '15px', width: '100%', padding: '16px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: '#fff', border: 'none', borderRadius: '12px', cursor: hasPendingDeposit ? 'not-allowed' : 'pointer', fontWeight: 'bold', transition: 'all 0.3s',
-                              boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
-                              opacity: hasPendingDeposit ? 0.7 : 1
-                            }}
-                          >
-                            {hasPendingDeposit ? 'Verifying...' : 'Proceed to Deposit'}
-                          </button>
+                        <button
+                          type="button"
+                          disabled={hasPendingDeposit}
+                          onClick={() => {
+                            const val = parseFloat(depositAmount);
+                            if (!val || val < 100) {
+                              alert("Minimum deposit amount is ₹100");
+                              return;
+                            }
+                            setShowManualDepositModal(true);
+                          }}
+                          style={{
+                            marginTop: '15px', width: '100%', padding: '16px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: '#fff', border: 'none', borderRadius: '12px', cursor: hasPendingDeposit ? 'not-allowed' : 'pointer', fontWeight: 'bold', transition: 'all 0.3s',
+                            boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
+                            opacity: hasPendingDeposit ? 0.7 : 1
+                          }}
+                        >
+                          {hasPendingDeposit ? 'Verifying...' : 'Proceed to Deposit'}
+                        </button>
                       </div>
                       <div className="funding-input-group" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <button 
+                        <button
                           type="button"
-                          className="btn-modal-confirm" 
+                          className="btn-modal-confirm"
                           disabled={hasPendingWithdrawal}
                           style={{ marginTop: 'auto', background: 'linear-gradient(135deg, #1f1f2e 0%, #0f0f1a 100%)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '16px', borderRadius: '12px', cursor: hasPendingWithdrawal ? 'not-allowed' : 'pointer', fontWeight: 'bold', opacity: hasPendingWithdrawal ? 0.7 : 1 }}
                           onClick={() => setShowWithdrawModal(true)}
@@ -10577,36 +10632,36 @@ function App() {
                   <div className="full-ledger-scrollable">
                     {transactions.filter(tx => ['deposit', 'withdrawal', 'refund', 'buy', 'sell', 'referral'].includes(tx.type)).map((tx) => (
                       <React.Fragment key={tx.id}>
-                      <div className="ledger-card-item">
-                        <div className="ledger-item-left">
-                          <div className={`ledger-type-circle ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>
-                            {tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'referral' ? (
-                              <ArrowDownLeft size={16} />
-                            ) : tx.type === 'withdrawal' ? (
-                              <ArrowUpRight size={16} />
-                            ) : tx.type === 'buy' ? (
-                              <Minus size={16} />
-                            ) : (
-                              <Plus size={16} />
-                            )}
-                          </div>
-                          <div>
-                            <div className="ledger-item-title">
-                              {tx.type === 'deposit' ? 'Added Funds' : tx.type === 'refund' ? 'Rejected' : tx.type === 'withdrawal' ? 'Withdrew Cash' : tx.type === 'buy' ? `Purchased ${getAssetLabel(tx.asset)}` : tx.type === 'referral' ? 'Referral Reward' : `Sold ${getAssetLabel(tx.asset)}`}
+                        <div className="ledger-card-item">
+                          <div className="ledger-item-left">
+                            <div className={`ledger-type-circle ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>
+                              {tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'referral' ? (
+                                <ArrowDownLeft size={16} />
+                              ) : tx.type === 'withdrawal' ? (
+                                <ArrowUpRight size={16} />
+                              ) : tx.type === 'buy' ? (
+                                <Minus size={16} />
+                              ) : (
+                                <Plus size={16} />
+                              )}
                             </div>
-                            <div className="ledger-item-date">{tx.date} {'\u2022'} ID: {tx.id}</div>
+                            <div>
+                              <div className="ledger-item-title">
+                                {tx.type === 'deposit' ? 'Added Funds' : tx.type === 'refund' ? 'Rejected' : tx.type === 'withdrawal' ? 'Withdrew Cash' : tx.type === 'buy' ? `Purchased ${getAssetLabel(tx.asset)}` : tx.type === 'referral' ? 'Referral Reward' : `Sold ${getAssetLabel(tx.asset)}`}
+                              </div>
+                              <div className="ledger-item-date">{tx.date} {'\u2022'} ID: {tx.id}</div>
+                            </div>
+                          </div>
+                          <div className="ledger-item-right">
+                            <div className={`ledger-item-amount ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>{tx.type === 'buy' || tx.type === 'withdrawal' ? '-' : '+'}{'\u20b9'}{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                            {tx.weight > 0 && <div className="ledger-item-weight">{tx.weight.toFixed(4)} g</div>}
                           </div>
                         </div>
-                        <div className="ledger-item-right">
-                          <div className={`ledger-item-amount ${tx.type === 'refund' ? 'withdrawal' : tx.type}`}>{tx.type === 'buy' || tx.type === 'withdrawal' ? '-' : '+'}{'\u20b9'}{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-                          {tx.weight > 0 && <div className="ledger-item-weight">{tx.weight.toFixed(4)} g</div>}
-                        </div>
-                      </div>
-                      {tx.details && (
-                        <div style={{ padding: '0 16px 12px 52px', fontSize: '12px', color: '#9ca3af', marginTop: '-8px' }}>
-                          <span style={{ fontWeight: 600 }}>Info:</span> {tx.details}
-                        </div>
-                      )}
+                        {tx.details && (
+                          <div style={{ padding: '0 16px 12px 52px', fontSize: '12px', color: '#9ca3af', marginTop: '-8px' }}>
+                            <span style={{ fontWeight: 600 }}>Info:</span> {tx.details}
+                          </div>
+                        )}
                       </React.Fragment>
                     ))}
                     {transactions.filter(tx => ['deposit', 'withdrawal', 'refund', 'buy', 'sell', 'referral'].includes(tx.type)).length === 0 && (
@@ -10622,11 +10677,11 @@ function App() {
 
           {dashTab === 'contest' && (
             <div className="tab-pane-view contest-view animate-fade-in">
-              <ContestAwards 
-                user={user} 
-                rates={rates} 
+              <ContestAwards
+                user={user}
+                rates={rates}
                 walletBalance={walletBalance}
-                onTradeRedirect={() => setDashTab('trade')} 
+                onTradeRedirect={() => setDashTab('trade')}
               />
             </div>
           )}
@@ -10650,886 +10705,886 @@ function App() {
                   {/* Left Column: Shield/Badge/Status Card & Broker Live Earnings Hub */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {currentKycStatus === 'Verified' ? (
-                    <div className="profile-security-badge-card">
-                      <div className="security-icon-shield"><Shield size={42} className="shield-glow" /></div>
-                      <h3>Verified Vault Account</h3>
-                      <p className="profile-desc-p">Your digital assets are 100% physically stored in hyper-secure vaults and backed by a 1-to-1 ratio.</p>
-                      <div className="security-credentials-list">
-                        <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
-                        <div className="cred-row"><span>KYC Verification Status</span><strong className="positive-text"><Check size={12} /> SECURED & VERIFIED</strong></div>
-                        <div className="cred-row"><span>Security Standard</span><strong>Mandatory OTP Login Enabled</strong></div>
-                        <div className="cred-row"><span>Physical Vault Storage</span><strong>Brink&apos;s & Sequel London</strong></div>
-                      </div>
-                    </div>
-                  ) : currentKycStatus === 'Submitted' ? (
-                    <div className="profile-security-badge-card">
-                      <div className="kyc-scanner-container">
-                        <div className="kyc-scanner-line"></div>
-                        <Shield size={42} style={{ color: '#f59e0b', filter: 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.4))' }} />
-                      </div>
-                      <h3>Verification In Progress</h3>
-                      <p className="profile-desc-p">Our compliance team is verifying your details. This process typically takes between 2 to 4 hours.</p>
-                      <div className="security-credentials-list">
-                        <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
-                        <div className="cred-row"><span>KYC Verification Status</span><strong style={{ color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}><RefreshCw size={12} className="animate-spin" /> UNDER REVIEW</strong></div>
-                        <div className="cred-row"><span>Uploaded Document</span><strong>{cRecord.kycDocument?.type || 'ID Card'}</strong></div>
-                        <div className="cred-row"><span>Physical Vault Storage</span><strong>Brink&apos;s & Sequel London</strong></div>
-                      </div>
-                    </div>
-                  ) : currentKycStatus === 'Rejected' ? (
-                    <div className="profile-security-badge-card">
-                      <div className="security-icon-shield" style={{ backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
-                        <AlertTriangle size={42} style={{ color: '#ef4444', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))' }} />
-                      </div>
-                      <h3 style={{ color: '#ef4444' }}>Verification Failed</h3>
-                      <p className="profile-desc-p">We were unable to verify your identity documents. Please review the reason below and submit again.</p>
-                      
-                      <div className="kyc-rejection-reason">
-                        <strong>Rejection Reason:</strong>
-                        <p style={{ margin: '4px 0 0 0', color: 'rgba(255, 255, 255, 0.8)' }}>
-                          {cRecord.kycRejectionReason || 'Uploaded document details could not be verified. Please ensure the image is clear and not cropped.'}
-                        </p>
-                      </div>
-
-                      <button 
-                        type="button" 
-                        className="btn-kyc-submit" 
-                        onClick={handleKycRestart}
-                        style={{ marginTop: '20px' }}
-                      >
-                        Restart Verification
-                      </button>
-                    </div>
-                  ) : (
-                    /* Pending State */
-                    <div className="profile-security-badge-card">
-                      <div className="security-icon-shield" style={{ backgroundColor: 'rgba(168, 85, 247, 0.04)', borderColor: 'rgba(168, 85, 247, 0.1)' }}>
-                        <Lock size={36} style={{ color: '#a855f7' }} />
-                      </div>
-                      <h3>Secure Your Vault</h3>
-                      <p className="profile-desc-p">Complete your Know Your Customer (KYC) check to activate secure physical storage and enable full trading capabilities.</p>
-                      <div className="security-credentials-list">
-                        <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
-                        <div className="cred-row"><span>KYC Verification Status</span><strong style={{ color: '#9c93a8' }}>UNVERIFIED</strong></div>
-                        <div className="cred-row"><span>Requirements</span><strong>Aadhaar / PAN Card</strong></div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Broker Status & Live Earnings Hub */}
-                  {isUserBroker ? (
-                    <div className="profile-security-badge-card" style={{
-                      background: 'linear-gradient(145deg, rgba(30, 11, 54, 0.95) 0%, rgba(14, 4, 28, 0.98) 100%)',
-                      border: '1px solid rgba(217, 175, 86, 0.4)',
-                      boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(217, 175, 86, 0.15)',
-                      padding: '24px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '10px',
-                            background: 'linear-gradient(135deg, #a855f7, #d9af56)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#0b0318',
-                            boxShadow: '0 0 16px rgba(217, 175, 86, 0.3)'
-                          }}>
-                            <Briefcase size={22} />
-                          </div>
-                          <div>
-                            <h3 style={{ margin: 0, fontSize: '16px', color: '#ffffff', fontWeight: 800 }}>
-                              Institutional Broker Partner
-                            </h3>
-                            <span style={{ fontSize: '11px', color: '#d9af56', fontWeight: 700 }}>
-                              Lifetime Subscription (₹1,000) Active
-                            </span>
-                          </div>
+                      <div className="profile-security-badge-card">
+                        <div className="security-icon-shield"><Shield size={42} className="shield-glow" /></div>
+                        <h3>Verified Vault Account</h3>
+                        <p className="profile-desc-p">Your digital assets are 100% physically stored in hyper-secure vaults and backed by a 1-to-1 ratio.</p>
+                        <div className="security-credentials-list">
+                          <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
+                          <div className="cred-row"><span>KYC Verification Status</span><strong className="positive-text"><Check size={12} /> SECURED & VERIFIED</strong></div>
+                          <div className="cred-row"><span>Security Standard</span><strong>Mandatory OTP Login Enabled</strong></div>
+                          <div className="cred-row"><span>Physical Vault Storage</span><strong>Brink&apos;s & Sequel London</strong></div>
                         </div>
-                        <span style={{
-                          padding: '4px 10px',
-                          borderRadius: '20px',
-                          background: 'rgba(217, 175, 86, 0.15)',
-                          border: '1px solid rgba(217, 175, 86, 0.4)',
-                          color: '#f7df94',
-                          fontSize: '11px',
-                          fontWeight: 800,
-                          fontFamily: 'monospace'
-                        }}>
-                          {displayCustomerId}
-                        </span>
                       </div>
+                    ) : currentKycStatus === 'Submitted' ? (
+                      <div className="profile-security-badge-card">
+                        <div className="kyc-scanner-container">
+                          <div className="kyc-scanner-line"></div>
+                          <Shield size={42} style={{ color: '#f59e0b', filter: 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.4))' }} />
+                        </div>
+                        <h3>Verification In Progress</h3>
+                        <p className="profile-desc-p">Our compliance team is verifying your details. This process typically takes between 2 to 4 hours.</p>
+                        <div className="security-credentials-list">
+                          <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
+                          <div className="cred-row"><span>KYC Verification Status</span><strong style={{ color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}><RefreshCw size={12} className="animate-spin" /> UNDER REVIEW</strong></div>
+                          <div className="cred-row"><span>Uploaded Document</span><strong>{cRecord.kycDocument?.type || 'ID Card'}</strong></div>
+                          <div className="cred-row"><span>Physical Vault Storage</span><strong>Brink&apos;s & Sequel London</strong></div>
+                        </div>
+                      </div>
+                    ) : currentKycStatus === 'Rejected' ? (
+                      <div className="profile-security-badge-card">
+                        <div className="security-icon-shield" style={{ backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+                          <AlertTriangle size={42} style={{ color: '#ef4444', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))' }} />
+                        </div>
+                        <h3 style={{ color: '#ef4444' }}>Verification Failed</h3>
+                        <p className="profile-desc-p">We were unable to verify your identity documents. Please review the reason below and submit again.</p>
 
-                      <p style={{ fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 16px', lineHeight: 1.5 }}>
-                        As an approved Broker, you earn a Superadmin-allotted <strong style={{ color: '#10b981' }}>{brokerCommissionRate || 7.5}% commission</strong> per transaction whenever users registered under your referral link spend on trading, invest in elements (Gold, Silver & metals), or place investments!
-                      </p>
+                        <div className="kyc-rejection-reason">
+                          <strong>Rejection Reason:</strong>
+                          <p style={{ margin: '4px 0 0 0', color: 'rgba(255, 255, 255, 0.8)' }}>
+                            {cRecord.kycRejectionReason || 'Uploaded document details could not be verified. Please ensure the image is clear and not cropped.'}
+                          </p>
+                        </div>
 
-                      {/* Broker Referral Share Bar */}
-                      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-                        <input
-                          type="text"
-                          readOnly
-                          value={`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`}
-                          style={{
-                            flex: 1,
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(217, 175, 86, 0.3)',
-                            borderRadius: '8px',
-                            padding: '8px 12px',
-                            fontSize: '12px',
-                            color: '#f7df94',
-                            outline: 'none',
-                            fontFamily: 'monospace'
-                          }}
-                        />
                         <button
                           type="button"
-                          onClick={() => {
-                            const link = `${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`;
-                            navigator.clipboard.writeText(link);
-                            setCopiedReferralLink(true);
-                            setTimeout(() => setCopiedReferralLink(false), 2000);
-                          }}
-                          style={{
-                            background: copiedReferralLink ? '#10b981' : 'linear-gradient(135deg, #d9af56, #b8860b)',
-                            color: '#000000',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '8px 14px',
-                            fontSize: '12px',
-                            fontWeight: 800,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            whiteSpace: 'nowrap'
-                          }}
+                          className="btn-kyc-submit"
+                          onClick={handleKycRestart}
+                          style={{ marginTop: '20px' }}
                         >
-                          {copiedReferralLink ? <Check size={14} /> : <Copy size={14} />}
-                          <span>{copiedReferralLink ? 'Copied!' : 'Copy Referral Link'}</span>
+                          Restart Verification
                         </button>
                       </div>
-
-                      {/* Live Earnings Metrics Grid */}
-                      <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
-                        gap: '12px',
-                        marginBottom: '16px'
-                      }}>
-                        <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Guaranteed Profit Rate</span>
-                          <strong style={{ fontSize: '16px', color: '#f7df94' }}>{brokerCommissionRate || 7.5}%</strong>
-                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>Admin Decided & Controlled</span>
+                    ) : (
+                      /* Pending State */
+                      <div className="profile-security-badge-card">
+                        <div className="security-icon-shield" style={{ backgroundColor: 'rgba(168, 85, 247, 0.04)', borderColor: 'rgba(168, 85, 247, 0.1)' }}>
+                          <Lock size={36} style={{ color: '#a855f7' }} />
                         </div>
-
-                        <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                          <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Referral Volume Spent</span>
-                          <strong style={{ fontSize: '16px', color: '#ffffff' }}>₹{totalBrokerSpent.toFixed(2)}</strong>
-                          <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>From Referral Candidates</span>
-                        </div>
-
-                        <div style={{
-                          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(217, 175, 86, 0.12))',
-                          padding: '12px',
-                          borderRadius: '10px',
-                          border: '1px solid rgba(16, 185, 129, 0.3)',
-                          gridColumn: 'span 2'
-                        }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                              <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                                Live Unclaimed Broker Earnings
-                              </span>
-                              <strong style={{ fontSize: '24px', color: '#10b981', fontWeight: 800, textShadow: '0 0 12px rgba(16, 185, 129, 0.3)' }}>
-                                ₹{brokerEarnings.toFixed(2)}
-                              </strong>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                              <span style={{ fontSize: '10.5px', color: '#9c93a8', display: 'block' }}>Total Claimed</span>
-                              <strong style={{ fontSize: '13px', color: '#ffffff' }}>₹{totalBrokerClaimed.toFixed(2)}</strong>
-                            </div>
-                          </div>
+                        <h3>Secure Your Vault</h3>
+                        <p className="profile-desc-p">Complete your Know Your Customer (KYC) check to activate secure physical storage and enable full trading capabilities.</p>
+                        <div className="security-credentials-list">
+                          <div className="cred-row"><span>Vault Identifier</span><strong style={{ color: isUserBroker ? '#f7df94' : '#ffffff' }}>{displayCustomerId}</strong></div>
+                          <div className="cred-row"><span>KYC Verification Status</span><strong style={{ color: '#9c93a8' }}>UNVERIFIED</strong></div>
+                          <div className="cred-row"><span>Requirements</span><strong>Aadhaar / PAN Card</strong></div>
                         </div>
                       </div>
+                    )}
 
-                      {/* Action Buttons */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <button
-                          type="button"
-                          disabled={brokerEarnings <= 0 || claimLoading}
-                          onClick={handleClaimBrokerEarnings}
-                          style={{
-                            width: '100%',
+                    {/* Broker Status & Live Earnings Hub */}
+                    {isUserBroker ? (
+                      <div className="profile-security-badge-card" style={{
+                        background: 'linear-gradient(145deg, rgba(30, 11, 54, 0.95) 0%, rgba(14, 4, 28, 0.98) 100%)',
+                        border: '1px solid rgba(217, 175, 86, 0.4)',
+                        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(217, 175, 86, 0.15)',
+                        padding: '24px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '10px',
+                              background: 'linear-gradient(135deg, #a855f7, #d9af56)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#0b0318',
+                              boxShadow: '0 0 16px rgba(217, 175, 86, 0.3)'
+                            }}>
+                              <Briefcase size={22} />
+                            </div>
+                            <div>
+                              <h3 style={{ margin: 0, fontSize: '16px', color: '#ffffff', fontWeight: 800 }}>
+                                Institutional Broker Partner
+                              </h3>
+                              <span style={{ fontSize: '11px', color: '#d9af56', fontWeight: 700 }}>
+                                Lifetime Subscription (₹1,000) Active
+                              </span>
+                            </div>
+                          </div>
+                          <span style={{
+                            padding: '4px 10px',
+                            borderRadius: '20px',
+                            background: 'rgba(217, 175, 86, 0.15)',
+                            border: '1px solid rgba(217, 175, 86, 0.4)',
+                            color: '#f7df94',
+                            fontSize: '11px',
+                            fontWeight: 800,
+                            fontFamily: 'monospace'
+                          }}>
+                            {displayCustomerId}
+                          </span>
+                        </div>
+
+                        <p style={{ fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 16px', lineHeight: 1.5 }}>
+                          As an approved Broker, you earn a Superadmin-allotted <strong style={{ color: '#10b981' }}>{brokerCommissionRate || 7.5}% commission</strong> per transaction whenever users registered under your referral link spend on trading, invest in elements (Gold, Silver & metals), or place investments!
+                        </p>
+
+                        {/* Broker Referral Share Bar */}
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                          <input
+                            type="text"
+                            readOnly
+                            value={`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`}
+                            style={{
+                              flex: 1,
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              border: '1px solid rgba(217, 175, 86, 0.3)',
+                              borderRadius: '8px',
+                              padding: '8px 12px',
+                              fontSize: '12px',
+                              color: '#f7df94',
+                              outline: 'none',
+                              fontFamily: 'monospace'
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const link = `${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`;
+                              navigator.clipboard.writeText(link);
+                              setCopiedReferralLink(true);
+                              setTimeout(() => setCopiedReferralLink(false), 2000);
+                            }}
+                            style={{
+                              background: copiedReferralLink ? '#10b981' : 'linear-gradient(135deg, #d9af56, #b8860b)',
+                              color: '#000000',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '8px 14px',
+                              fontSize: '12px',
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            {copiedReferralLink ? <Check size={14} /> : <Copy size={14} />}
+                            <span>{copiedReferralLink ? 'Copied!' : 'Copy Referral Link'}</span>
+                          </button>
+                        </div>
+
+                        {/* Live Earnings Metrics Grid */}
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '12px',
+                          marginBottom: '16px'
+                        }}>
+                          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                            <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Guaranteed Profit Rate</span>
+                            <strong style={{ fontSize: '16px', color: '#f7df94' }}>{brokerCommissionRate || 7.5}%</strong>
+                            <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>Admin Decided & Controlled</span>
+                          </div>
+
+                          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                            <span style={{ fontSize: '11px', color: '#9c93a8', display: 'block' }}>Referral Volume Spent</span>
+                            <strong style={{ fontSize: '16px', color: '#ffffff' }}>₹{totalBrokerSpent.toFixed(2)}</strong>
+                            <span style={{ fontSize: '10px', color: '#9c93a8', display: 'block', marginTop: '2px' }}>From Referral Candidates</span>
+                          </div>
+
+                          <div style={{
+                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(217, 175, 86, 0.12))',
                             padding: '12px',
                             borderRadius: '10px',
-                            background: brokerEarnings > 0 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'rgba(255, 255, 255, 0.05)',
-                            border: brokerEarnings > 0 ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
-                            color: brokerEarnings > 0 ? '#ffffff' : '#6b7280',
-                            fontWeight: 800,
-                            fontSize: '13px',
-                            cursor: brokerEarnings > 0 ? 'pointer' : 'not-allowed',
-                            boxShadow: brokerEarnings > 0 ? '0 4px 16px rgba(16, 185, 129, 0.3)' : 'none',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px',
-                            transition: 'all 0.2s'
-                          }}
-                        >
-                          {claimLoading ? (
-                            <>
-                              <RefreshCw size={16} className="animate-spin" /> Transferring to Wallet...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles size={16} /> Transfer Live Earnings to Wallet (₹{brokerEarnings.toFixed(2)})
-                            </>
-                          )}
-                        </button>
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            gridColumn: 'span 2'
+                          }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div>
+                                <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
+                                  Live Unclaimed Broker Earnings
+                                </span>
+                                <strong style={{ fontSize: '24px', color: '#10b981', fontWeight: 800, textShadow: '0 0 12px rgba(16, 185, 129, 0.3)' }}>
+                                  ₹{brokerEarnings.toFixed(2)}
+                                </strong>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <span style={{ fontSize: '10.5px', color: '#9c93a8', display: 'block' }}>Total Claimed</span>
+                                <strong style={{ fontSize: '13px', color: '#ffffff' }}>₹{totalBrokerClaimed.toFixed(2)}</strong>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
+                        {/* Action Buttons */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <button
+                            type="button"
+                            disabled={brokerEarnings <= 0 || claimLoading}
+                            onClick={handleClaimBrokerEarnings}
+                            style={{
+                              width: '100%',
+                              padding: '12px',
+                              borderRadius: '10px',
+                              background: brokerEarnings > 0 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'rgba(255, 255, 255, 0.05)',
+                              border: brokerEarnings > 0 ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
+                              color: brokerEarnings > 0 ? '#ffffff' : '#6b7280',
+                              fontWeight: 800,
+                              fontSize: '13px',
+                              cursor: brokerEarnings > 0 ? 'pointer' : 'not-allowed',
+                              boxShadow: brokerEarnings > 0 ? '0 4px 16px rgba(16, 185, 129, 0.3)' : 'none',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '8px',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            {claimLoading ? (
+                              <>
+                                <RefreshCw size={16} className="animate-spin" /> Transferring to Wallet...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles size={16} /> Transfer Live Earnings to Wallet (₹{brokerEarnings.toFixed(2)})
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setDashTab('wallet')}
+                            style={{
+                              width: '100%',
+                              padding: '10px',
+                              borderRadius: '10px',
+                              background: 'rgba(255, 255, 255, 0.04)',
+                              border: '1px solid rgba(255, 255, 255, 0.12)',
+                              color: '#ffffff',
+                              fontWeight: 700,
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px'
+                            }}
+                          >
+                            <DollarSign size={14} style={{ color: '#d9af56' }} />
+                            Go to Wallet & Request Withdrawal
+                          </button>
+                        </div>
+
+                        <div style={{ marginTop: '12px', padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.04)', fontSize: '11px', color: '#9c93a8', lineHeight: 1.4 }}>
+                          💡 <strong>Real-time Profit Guarantee:</strong> Earn guaranteed {brokerCommissionRate || 7.5}% on every rupee spent on trades, plus guaranteed {brokerCommissionRate || 7.5}% profit sharing strictly on all 7-day investment returns (payout on returns, not principal).
+                        </div>
+                      </div>
+                    ) : brokerStatus === 'Pending' ? (
+                      <div className="profile-security-badge-card" style={{
+                        background: 'rgba(245, 158, 11, 0.04)',
+                        borderColor: 'rgba(245, 158, 11, 0.25)',
+                        padding: '22px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                          <RefreshCw size={20} className="animate-spin" style={{ color: '#f59e0b' }} />
+                          <h4 style={{ margin: 0, fontSize: '15px', color: '#f59e0b', fontWeight: 800 }}>
+                            Broker Application Pending Approval
+                          </h4>
+                        </div>
+                        <p style={{ fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 12px', lineHeight: 1.5 }}>
+                          Your broker subscription request (Fee ₹1,000) for <strong style={{ color: '#f7df94' }}>{displayCustomerId}</strong> has been notified to the Super Admin in the <strong>💼 Broker Requests</strong> tab.
+                        </p>
+                        <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px', fontSize: '11.5px', color: '#9c93a8' }}>
+                          ⏳ Once accepted, your ID will upgrade to <strong style={{ color: '#d9af56', fontFamily: 'monospace' }}>{displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}</strong> and your 5%–10% guaranteed live profits on every spent rupee will be activated!
+                        </div>
+                      </div>
+                    ) : brokerStatus === 'Cancelled' ? (
+                      <div className="profile-security-badge-card" style={{
+                        background: 'rgba(239, 68, 68, 0.05)',
+                        borderColor: 'rgba(239, 68, 68, 0.3)',
+                        padding: '22px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                          <AlertCircle size={20} style={{ color: '#ef4444' }} />
+                          <h4 style={{ margin: 0, fontSize: '15px', color: '#f87171', fontWeight: 800 }}>
+                            Broker Subscription Revoked / Cancelled by Admin
+                          </h4>
+                        </div>
+                        <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 14px', lineHeight: 1.5 }}>
+                          Your broker partnership subscription has been cancelled by the Administrator. Your account status has been reverted to standard customer (<strong style={{ color: '#d9af56' }}>{displayCustomerId}</strong>). You may submit a new application to re-subscribe if desired.
+                        </p>
                         <button
                           type="button"
-                          onClick={() => setDashTab('wallet')}
-                          style={{
-                            width: '100%',
-                            padding: '10px',
-                            borderRadius: '10px',
-                            background: 'rgba(255, 255, 255, 0.04)',
-                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                            color: '#ffffff',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '6px'
+                          className="btn-partner-action"
+                          onClick={() => {
+                            setPartnerSubmitted(false);
+                            setShowPartnerModal(true);
                           }}
                         >
-                          <DollarSign size={14} style={{ color: '#d9af56' }} />
-                          Go to Wallet & Request Withdrawal
+                          <Briefcase size={16} />
+                          <span>Re-apply for Broker Partnership (₹1,000)</span>
                         </button>
                       </div>
-
-                      <div style={{ marginTop: '12px', padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.04)', fontSize: '11px', color: '#9c93a8', lineHeight: 1.4 }}>
-                        💡 <strong>Real-time Profit Guarantee:</strong> Earn guaranteed {brokerCommissionRate || 7.5}% on every rupee spent on trades, plus guaranteed {brokerCommissionRate || 7.5}% profit sharing strictly on all 7-day investment returns (payout on returns, not principal).
+                    ) : (
+                      <div className="profile-security-badge-card" style={{
+                        background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(217, 175, 86, 0.08) 100%)',
+                        borderColor: 'rgba(217, 175, 86, 0.3)',
+                        padding: '22px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                          <Sparkles size={20} style={{ color: '#d9af56' }} />
+                          <h4 style={{ margin: 0, fontSize: '15px', color: '#ffffff', fontWeight: 800 }}>
+                            Become a Broker Partner
+                          </h4>
+                        </div>
+                        <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 14px', lineHeight: 1.5 }}>
+                          Pay a one-time subscription fee of ₹1,000 and earn <strong style={{ color: '#f7df94' }}>5%–10% guaranteed commission/profit</strong> on every rupee spent. Upgrade to a <strong style={{ color: '#d9af56' }}>CUST-B-</strong> VIP ID with instant 1-click transfer to wallet!
+                        </p>
+                        <button
+                          type="button"
+                          className="btn-partner-action"
+                          onClick={() => {
+                            setPartnerSubmitted(false);
+                            setShowPartnerModal(true);
+                          }}
+                        >
+                          <Briefcase size={16} />
+                          <span>Apply to Become a Partner (₹1,000 Fee)</span>
+                        </button>
                       </div>
-                    </div>
-                  ) : brokerStatus === 'Pending' ? (
-                    <div className="profile-security-badge-card" style={{
-                      background: 'rgba(245, 158, 11, 0.04)',
-                      borderColor: 'rgba(245, 158, 11, 0.25)',
-                      padding: '22px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                        <RefreshCw size={20} className="animate-spin" style={{ color: '#f59e0b' }} />
-                        <h4 style={{ margin: 0, fontSize: '15px', color: '#f59e0b', fontWeight: 800 }}>
-                          Broker Application Pending Approval
-                        </h4>
-                      </div>
-                      <p style={{ fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 12px', lineHeight: 1.5 }}>
-                        Your broker subscription request (Fee ₹1,000) for <strong style={{ color: '#f7df94' }}>{displayCustomerId}</strong> has been notified to the Super Admin in the <strong>💼 Broker Requests</strong> tab.
-                      </p>
-                      <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px', fontSize: '11.5px', color: '#9c93a8' }}>
-                        ⏳ Once accepted, your ID will upgrade to <strong style={{ color: '#d9af56', fontFamily: 'monospace' }}>{displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}</strong> and your 5%–10% guaranteed live profits on every spent rupee will be activated!
-                      </div>
-                    </div>
-                  ) : brokerStatus === 'Cancelled' ? (
-                    <div className="profile-security-badge-card" style={{
-                      background: 'rgba(239, 68, 68, 0.05)',
-                      borderColor: 'rgba(239, 68, 68, 0.3)',
-                      padding: '22px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                        <AlertCircle size={20} style={{ color: '#ef4444' }} />
-                        <h4 style={{ margin: 0, fontSize: '15px', color: '#f87171', fontWeight: 800 }}>
-                          Broker Subscription Revoked / Cancelled by Admin
-                        </h4>
-                      </div>
-                      <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 14px', lineHeight: 1.5 }}>
-                        Your broker partnership subscription has been cancelled by the Administrator. Your account status has been reverted to standard customer (<strong style={{ color: '#d9af56' }}>{displayCustomerId}</strong>). You may submit a new application to re-subscribe if desired.
-                      </p>
-                      <button
-                        type="button"
-                        className="btn-partner-action"
-                        onClick={() => {
-                          setPartnerSubmitted(false);
-                          setShowPartnerModal(true);
-                        }}
-                      >
-                        <Briefcase size={16} />
-                        <span>Re-apply for Broker Partnership (₹1,000)</span>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="profile-security-badge-card" style={{
-                      background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(217, 175, 86, 0.08) 100%)',
-                      borderColor: 'rgba(217, 175, 86, 0.3)',
-                      padding: '22px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                        <Sparkles size={20} style={{ color: '#d9af56' }} />
-                        <h4 style={{ margin: 0, fontSize: '15px', color: '#ffffff', fontWeight: 800 }}>
-                          Become a Broker Partner
-                        </h4>
-                      </div>
-                      <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', margin: '0 0 14px', lineHeight: 1.5 }}>
-                        Pay a one-time subscription fee of ₹1,000 and earn <strong style={{ color: '#f7df94' }}>5%–10% guaranteed commission/profit</strong> on every rupee spent. Upgrade to a <strong style={{ color: '#d9af56' }}>CUST-B-</strong> VIP ID with instant 1-click transfer to wallet!
-                      </p>
-                      <button
-                        type="button"
-                        className="btn-partner-action"
-                        onClick={() => {
-                          setPartnerSubmitted(false);
-                          setShowPartnerModal(true);
-                        }}
-                      >
-                        <Briefcase size={16} />
-                        <span>Apply to Become a Partner (₹1,000 Fee)</span>
-                      </button>
-                    </div>
-                  )}
+                    )}
 
                   </div>
 
                   {/* Right Column: Settings or Upload widget */}
                   <div className="profile-right-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {currentKycStatus === 'Verified' || currentKycStatus === 'Submitted' ? (
-                    <div className="profile-details-settings-card">
-                      <h3>Account Settings</h3>
-                      <div className="profile-settings-grid">
-                        <div className="p-setting-item">
-                          <label>Vault Email Address</label>
-                          <input type="text" readOnly value={user?.email || ''} className="profile-readonly-input" />
+                      <div className="profile-details-settings-card">
+                        <h3>Account Settings</h3>
+                        <div className="profile-settings-grid">
+                          <div className="p-setting-item">
+                            <label>Vault Email Address</label>
+                            <input type="text" readOnly value={user?.email || ''} className="profile-readonly-input" />
+                          </div>
+                          <div className="p-setting-item">
+                            <label>Vault Registered Date</label>
+                            <input type="text" readOnly value="May 18, 2026" className="profile-readonly-input" />
+                          </div>
+                          <div className="p-setting-item">
+                            <label>Account Class</label>
+                            <input type="text" readOnly value={isUserBroker ? `VIP Institutional Broker Partner (${displayCustomerId})` : brokerStatus === 'Pending' ? 'Broker Application Pending Review' : 'Premium Institutional Bullion Vault'} className="profile-readonly-input" />
+                          </div>
+                          <div className="p-setting-item">
+                            <label>Active Client Session ID</label>
+                            <input type="text" readOnly value="IH-SESSION-73019A" className="profile-readonly-input" />
+                          </div>
                         </div>
-                        <div className="p-setting-item">
-                          <label>Vault Registered Date</label>
-                          <input type="text" readOnly value="May 18, 2026" className="profile-readonly-input" />
-                        </div>
-                        <div className="p-setting-item">
-                          <label>Account Class</label>
-                          <input type="text" readOnly value={isUserBroker ? `VIP Institutional Broker Partner (${displayCustomerId})` : brokerStatus === 'Pending' ? 'Broker Application Pending Review' : 'Premium Institutional Bullion Vault'} className="profile-readonly-input" />
-                        </div>
-                        <div className="p-setting-item">
-                          <label>Active Client Session ID</label>
-                          <input type="text" readOnly value="IH-SESSION-73019A" className="profile-readonly-input" />
-                        </div>
-                      </div>
 
-                      {(currentKycStatus === 'Submitted' || currentKycStatus === 'Verified') && cRecord.kycDocument && (
-                        <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '20px' }}>
-                          <h4 style={{ fontSize: '13px', color: '#ffffff', marginBottom: '12px', fontWeight: 700 }}>
-                            {currentKycStatus === 'Verified' ? 'Verified Document Details' : 'Pending Document Details'}
-                          </h4>
-                          <div className="kyc-file-preview" style={{ marginTop: 0 }}>
-                            <div className="kyc-file-details">
-                              <FileText size={20} className="kyc-upload-icon" style={{ margin: 0 }} />
-                              <div className="kyc-file-info">
-                                <span className="kyc-file-name">{cRecord.kycDocument.fileName}</span>
-                                <span className="kyc-file-size">{cRecord.kycDocument.type} • {cRecord.kycDocument.fileSize} • Uploaded at {cRecord.kycDocument.uploadedAt}</span>
+                        {(currentKycStatus === 'Submitted' || currentKycStatus === 'Verified') && cRecord.kycDocument && (
+                          <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '20px' }}>
+                            <h4 style={{ fontSize: '13px', color: '#ffffff', marginBottom: '12px', fontWeight: 700 }}>
+                              {currentKycStatus === 'Verified' ? 'Verified Document Details' : 'Pending Document Details'}
+                            </h4>
+                            <div className="kyc-file-preview" style={{ marginTop: 0 }}>
+                              <div className="kyc-file-details">
+                                <FileText size={20} className="kyc-upload-icon" style={{ margin: 0 }} />
+                                <div className="kyc-file-info">
+                                  <span className="kyc-file-name">{cRecord.kycDocument.fileName}</span>
+                                  <span className="kyc-file-size">{cRecord.kycDocument.type} • {cRecord.kycDocument.fileSize} • Uploaded at {cRecord.kycDocument.uploadedAt}</span>
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span style={{ fontSize: '11px', color: currentKycStatus === 'Verified' ? '#10b981' : '#f59e0b', fontWeight: 800 }}>
+                                  {currentKycStatus === 'Verified' ? 'VERIFIED' : 'PENDING REVIEW'}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={handleKycDelete}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#ef4444',
+                                    cursor: 'pointer',
+                                    padding: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'color 0.2s',
+                                  }}
+                                  title="Delete document"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
                               </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span style={{ fontSize: '11px', color: currentKycStatus === 'Verified' ? '#10b981' : '#f59e0b', fontWeight: 800 }}>
-                                {currentKycStatus === 'Verified' ? 'VERIFIED' : 'PENDING REVIEW'}
-                              </span>
-                              <button 
-                                type="button"
-                                onClick={handleKycDelete}
-                                style={{
-                                  background: 'transparent',
-                                  border: 'none',
-                                  color: '#ef4444',
-                                  cursor: 'pointer',
-                                  padding: '4px',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  transition: 'color 0.2s',
-                                }}
-                                title="Delete document"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      <div className="profile-quick-actions-row" style={{ marginTop: '20px' }}>
-                        <button 
-                          type="button" 
-                          className="btn-profile-secondary" 
-                          disabled={currentKycStatus !== 'Verified'}
-                          style={{ opacity: currentKycStatus === 'Verified' ? 1 : 0.5, cursor: currentKycStatus === 'Verified' ? 'pointer' : 'not-allowed' }}
-                          onClick={() => alert('Downloading Vault Asset Certification PDF...')}
-                        >
-                          <Download size={14} /> Download Vault Certificate
-                        </button>
-                        <button 
-                          type="button" 
-                          className="btn-profile-secondary" 
-                          disabled={currentKycStatus !== 'Verified'}
-                          style={{ opacity: currentKycStatus === 'Verified' ? 1 : 0.5, cursor: currentKycStatus === 'Verified' ? 'pointer' : 'not-allowed' }}
-                          onClick={() => alert('Exporting all transaction logs as CSV...')}
-                        >
-                          <Download size={14} /> Export Vault Ledger (CSV)
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Pending & Rejected: Show Upload Widget */
-                    <div className="profile-details-settings-card">
-                      <h3>KYC Document Upload Center</h3>
-                      
-                      {/* Document Selector Tabs */}
-                      <div className="kyc-doc-tabs">
-                        <button 
-                          type="button" 
-                          className={`kyc-doc-tab ${kycDocType === 'Aadhaar' ? 'active' : ''}`}
-                          onClick={() => setKycDocType('Aadhaar')}
-                        >
-                          Aadhaar Card
-                        </button>
-                        <button 
-                          type="button" 
-                          className={`kyc-doc-tab ${kycDocType === 'PAN' ? 'active' : ''}`}
-                          onClick={() => setKycDocType('PAN')}
-                        >
-                          PAN Card
-                        </button>
-                      </div>
-
-                      {/* Dropzone Area */}
-                      {!kycFile && !kycUploading && (
-                        <div 
-                          className={`kyc-upload-dropzone ${kycDragging ? 'dragging' : ''}`}
-                          onDragOver={(e) => { e.preventDefault(); setKycDragging(true); }}
-                          onDragLeave={() => setKycDragging(false)}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            setKycDragging(false);
-                            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                              handleKycFileSelect(e.dataTransfer.files[0]);
-                            }
-                          }}
-                          onClick={() => document.getElementById('kyc-file-input').click()}
-                        >
-                          <Upload size={28} className="kyc-upload-icon" />
-                          <span className="kyc-upload-title">Drag & drop your document here, or <span style={{ color: '#a855f7', textDecoration: 'underline' }}>browse files</span></span>
-                          <span className="kyc-upload-subtitle">Supports PDF, PNG, JPG (Max 5MB)</span>
-                          <input 
-                            id="kyc-file-input" 
-                            type="file" 
-                            style={{ display: 'none' }} 
-                            accept=".pdf,image/png,image/jpeg"
-                            onChange={(e) => {
-                              if (e.target.files && e.target.files[0]) {
-                                handleKycFileSelect(e.target.files[0]);
-                              }
-                            }}
-                          />
-                        </div>
-                      )}
-
-                      {/* Upload Progress Bar */}
-                      {kycUploading && (
-                        <div className="kyc-progress-container">
-                          <div className="kyc-progress-status">
-                            <span>{kycUploadStatusText}</span>
-                            <span>{kycUploadProgress}%</span>
-                          </div>
-                          <div className="kyc-progress-bg">
-                            <div className="kyc-progress-bar" style={{ width: `${kycUploadProgress}%` }}></div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* File Uploaded Preview */}
-                      {kycFile && !kycUploading && (
-                        <div className="kyc-file-preview">
-                          <div className="kyc-file-details">
-                            <FileText size={22} className="kyc-upload-icon" style={{ margin: 0 }} />
-                            <div className="kyc-file-info">
-                              <span className="kyc-file-name">{kycFile.name}</span>
-                              <span className="kyc-file-size">{(kycFile.size / 1024).toFixed(1)} KB</span>
-                            </div>
-                          </div>
-                          <button 
-                            type="button" 
-                            className="kyc-btn-delete"
-                            onClick={() => setKycFile(null)}
+                        <div className="profile-quick-actions-row" style={{ marginTop: '20px' }}>
+                          <button
+                            type="button"
+                            className="btn-profile-secondary"
+                            disabled={currentKycStatus !== 'Verified'}
+                            style={{ opacity: currentKycStatus === 'Verified' ? 1 : 0.5, cursor: currentKycStatus === 'Verified' ? 'pointer' : 'not-allowed' }}
+                            onClick={() => alert('Downloading Vault Asset Certification PDF...')}
                           >
-                            <Trash2 size={16} />
+                            <Download size={14} /> Download Vault Certificate
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-profile-secondary"
+                            disabled={currentKycStatus !== 'Verified'}
+                            style={{ opacity: currentKycStatus === 'Verified' ? 1 : 0.5, cursor: currentKycStatus === 'Verified' ? 'pointer' : 'not-allowed' }}
+                            onClick={() => alert('Exporting all transaction logs as CSV...')}
+                          >
+                            <Download size={14} /> Export Vault Ledger (CSV)
                           </button>
                         </div>
-                      )}
+                      </div>
+                    ) : (
+                      /* Pending & Rejected: Show Upload Widget */
+                      <div className="profile-details-settings-card">
+                        <h3>KYC Document Upload Center</h3>
 
-                      <button 
-                        type="button" 
-                        className="btn-kyc-submit" 
-                        disabled={!kycFile || kycUploading}
-                        onClick={handleKycSubmit}
-                      >
-                        Submit KYC Verification
-                      </button>
-                    </div>
-                  )}
+                        {/* Document Selector Tabs */}
+                        <div className="kyc-doc-tabs">
+                          <button
+                            type="button"
+                            className={`kyc-doc-tab ${kycDocType === 'Aadhaar' ? 'active' : ''}`}
+                            onClick={() => setKycDocType('Aadhaar')}
+                          >
+                            Aadhaar Card
+                          </button>
+                          <button
+                            type="button"
+                            className={`kyc-doc-tab ${kycDocType === 'PAN' ? 'active' : ''}`}
+                            onClick={() => setKycDocType('PAN')}
+                          >
+                            PAN Card
+                          </button>
+                        </div>
 
-                  {/* Danger Zone Card */}
-                  <div className="profile-security-badge-card" style={{ 
-                    marginTop: '0px', 
-                    background: 'rgba(220, 38, 38, 0.03)', 
-                    borderColor: 'rgba(220, 38, 38, 0.2)',
-                    padding: '24px',
-                    borderRadius: '16px',
-                    border: '1px solid rgba(220, 38, 38, 0.2)'
-                  }}>
-                    <h3 style={{ color: '#ef4444', fontSize: '16px', margin: '0 0 8px 0', fontWeight: 800 }}>⚠️ Danger Zone</h3>
-                    <p className="profile-desc-p" style={{ margin: '0 0 16px 0', fontSize: '13px' }}>
-                      Permanently delete your account and all associated trading data. This action is irreversible.
-                    </p>
-                    <button 
-                      type="button" 
-                      onClick={handleDeleteAccount}
-                      style={{ 
-                        width: '100%', 
-                        background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)', 
-                        border: 'none', 
-                        color: '#ffffff', 
-                        padding: '12px', 
-                        borderRadius: '8px', 
-                        fontWeight: 700, 
-                        fontSize: '13px', 
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 4px 12px rgba(220, 38, 38, 0.2)'
-                      }}
-                    >
-                      Delete Total Account
-                    </button>
-                  </div>
-                </div>
+                        {/* Dropzone Area */}
+                        {!kycFile && !kycUploading && (
+                          <div
+                            className={`kyc-upload-dropzone ${kycDragging ? 'dragging' : ''}`}
+                            onDragOver={(e) => { e.preventDefault(); setKycDragging(true); }}
+                            onDragLeave={() => setKycDragging(false)}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              setKycDragging(false);
+                              if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                                handleKycFileSelect(e.dataTransfer.files[0]);
+                              }
+                            }}
+                            onClick={() => document.getElementById('kyc-file-input').click()}
+                          >
+                            <Upload size={28} className="kyc-upload-icon" />
+                            <span className="kyc-upload-title">Drag & drop your document here, or <span style={{ color: '#a855f7', textDecoration: 'underline' }}>browse files</span></span>
+                            <span className="kyc-upload-subtitle">Supports PDF, PNG, JPG (Max 5MB)</span>
+                            <input
+                              id="kyc-file-input"
+                              type="file"
+                              style={{ display: 'none' }}
+                              accept=".pdf,image/png,image/jpeg"
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  handleKycFileSelect(e.target.files[0]);
+                                }
+                              }}
+                            />
+                          </div>
+                        )}
 
-                {/* Partner Application Modal */}
-                {showPartnerModal && (
-                  <div className="modal-overlay" style={{
-                    position: 'fixed',
-                    inset: 0,
-                    zIndex: 99999,
-                    background: 'rgba(5, 2, 12, 0.82)',
-                    backdropFilter: 'blur(8px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '20px'
-                  }}>
-                    <div className="modal-content" style={{
-                      maxWidth: '560px',
-                      width: '100%',
-                      maxHeight: '90vh',
-                      overflowY: 'auto',
-                      background: 'linear-gradient(145deg, #160a2b 0%, #0b0318 100%)',
-                      border: '1px solid rgba(168, 85, 247, 0.35)',
-                      borderRadius: '24px',
-                      padding: '30px',
-                      boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(168, 85, 247, 0.15)',
-                      position: 'relative'
+                        {/* Upload Progress Bar */}
+                        {kycUploading && (
+                          <div className="kyc-progress-container">
+                            <div className="kyc-progress-status">
+                              <span>{kycUploadStatusText}</span>
+                              <span>{kycUploadProgress}%</span>
+                            </div>
+                            <div className="kyc-progress-bg">
+                              <div className="kyc-progress-bar" style={{ width: `${kycUploadProgress}%` }}></div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* File Uploaded Preview */}
+                        {kycFile && !kycUploading && (
+                          <div className="kyc-file-preview">
+                            <div className="kyc-file-details">
+                              <FileText size={22} className="kyc-upload-icon" style={{ margin: 0 }} />
+                              <div className="kyc-file-info">
+                                <span className="kyc-file-name">{kycFile.name}</span>
+                                <span className="kyc-file-size">{(kycFile.size / 1024).toFixed(1)} KB</span>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="kyc-btn-delete"
+                              onClick={() => setKycFile(null)}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          className="btn-kyc-submit"
+                          disabled={!kycFile || kycUploading}
+                          onClick={handleKycSubmit}
+                        >
+                          Submit KYC Verification
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Danger Zone Card */}
+                    <div className="profile-security-badge-card" style={{
+                      marginTop: '0px',
+                      background: 'rgba(220, 38, 38, 0.03)',
+                      borderColor: 'rgba(220, 38, 38, 0.2)',
+                      padding: '24px',
+                      borderRadius: '16px',
+                      border: '1px solid rgba(220, 38, 38, 0.2)'
                     }}>
+                      <h3 style={{ color: '#ef4444', fontSize: '16px', margin: '0 0 8px 0', fontWeight: 800 }}>⚠️ Danger Zone</h3>
+                      <p className="profile-desc-p" style={{ margin: '0 0 16px 0', fontSize: '13px' }}>
+                        Permanently delete your account and all associated trading data. This action is irreversible.
+                      </p>
                       <button
                         type="button"
-                        onClick={() => setShowPartnerModal(false)}
+                        onClick={handleDeleteAccount}
                         style={{
-                          position: 'absolute',
-                          top: '20px',
-                          right: '20px',
-                          background: 'rgba(255, 255, 255, 0.06)',
+                          width: '100%',
+                          background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
                           border: 'none',
-                          color: '#9c93a8',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          color: '#ffffff',
+                          padding: '12px',
+                          borderRadius: '8px',
+                          fontWeight: 700,
+                          fontSize: '13px',
                           cursor: 'pointer',
-                          transition: 'all 0.2s'
+                          transition: 'all 0.2s',
+                          boxShadow: '0 4px 12px rgba(220, 38, 38, 0.2)'
                         }}
                       >
-                        <X size={18} />
+                        Delete Total Account
                       </button>
+                    </div>
+                  </div>
 
-                      {partnerSubmitted ? (
-                        <div style={{ textAlign: 'center', padding: '24px 12px' }}>
-                          <div style={{
-                            width: '68px',
-                            height: '68px',
+                  {/* Partner Application Modal */}
+                  {showPartnerModal && (
+                    <div className="modal-overlay" style={{
+                      position: 'fixed',
+                      inset: 0,
+                      zIndex: 99999,
+                      background: 'rgba(5, 2, 12, 0.82)',
+                      backdropFilter: 'blur(8px)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '20px'
+                    }}>
+                      <div className="modal-content" style={{
+                        maxWidth: '560px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        background: 'linear-gradient(145deg, #160a2b 0%, #0b0318 100%)',
+                        border: '1px solid rgba(168, 85, 247, 0.35)',
+                        borderRadius: '24px',
+                        padding: '30px',
+                        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(168, 85, 247, 0.15)',
+                        position: 'relative'
+                      }}>
+                        <button
+                          type="button"
+                          onClick={() => setShowPartnerModal(false)}
+                          style={{
+                            position: 'absolute',
+                            top: '20px',
+                            right: '20px',
+                            background: 'rgba(255, 255, 255, 0.06)',
+                            border: 'none',
+                            color: '#9c93a8',
+                            width: '32px',
+                            height: '32px',
                             borderRadius: '50%',
-                            background: 'rgba(16, 185, 129, 0.12)',
-                            border: '2px solid rgba(16, 185, 129, 0.3)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            margin: '0 auto 18px',
-                            color: '#10b981',
-                            boxShadow: '0 0 24px rgba(16, 185, 129, 0.25)'
-                          }}>
-                            <CheckCircle2 size={40} />
-                          </div>
-                          <h3 style={{ color: '#ffffff', fontSize: '22px', fontWeight: 800, margin: '0 0 8px' }}>
-                            Broker Request Dispatched to Admin!
-                          </h3>
-                          <p style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '13.5px', lineHeight: 1.6, margin: '0 0 20px' }}>
-                            Your application for Customer ID <strong style={{ color: '#f7df94' }}>{displayCustomerId}</strong> has been transmitted to the Super Admin in the <strong>💼 Broker Requests</strong> tab.
-                          </p>
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          <X size={18} />
+                        </button>
 
-                          <div style={{
-                            background: 'rgba(168, 85, 247, 0.08)',
-                            border: '1px solid rgba(168, 85, 247, 0.25)',
-                            borderRadius: '14px',
-                            padding: '16px',
-                            textAlign: 'left',
-                            marginBottom: '24px',
-                            fontSize: '12.5px'
-                          }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                              <span style={{ color: '#9c93a8' }}>Applicant Name:</span>
-                              <strong style={{ color: '#ffffff' }}>{partnerForm.name}</strong>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                              <span style={{ color: '#9c93a8' }}>Contact Mobile:</span>
-                              <strong style={{ color: '#ffffff' }}>{partnerForm.phone}</strong>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                              <span style={{ color: '#9c93a8' }}>Notification Email:</span>
-                              <strong style={{ color: '#ffffff' }}>{user?.email}</strong>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                              <span style={{ color: '#9c93a8' }}>Subscription Fee:</span>
-                              <strong style={{ color: '#10b981' }}>₹1,000 (One-Time)</strong>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '8px', marginTop: '8px' }}>
-                              <span style={{ color: '#9c93a8' }}>New Upgraded ID:</span>
-                              <strong style={{ color: '#d9af56', fontFamily: 'monospace' }}>
-                                {displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}
-                              </strong>
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            className="btn-kyc-submit"
-                            style={{ marginTop: '0', width: '100%' }}
-                            onClick={() => setShowPartnerModal(false)}
-                          >
-                            Understood, Return to Profile
-                          </button>
-                        </div>
-                      ) : (
-                        <form onSubmit={handleSubmitPartnerRequest}>
-                          {/* Header */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                        {partnerSubmitted ? (
+                          <div style={{ textAlign: 'center', padding: '24px 12px' }}>
                             <div style={{
-                              width: '46px',
-                              height: '46px',
-                              borderRadius: '12px',
-                              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(217, 175, 86, 0.25))',
-                              border: '1px solid rgba(217, 175, 86, 0.4)',
+                              width: '68px',
+                              height: '68px',
+                              borderRadius: '50%',
+                              background: 'rgba(16, 185, 129, 0.12)',
+                              border: '2px solid rgba(16, 185, 129, 0.3)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              color: '#f7df94',
-                              boxShadow: '0 0 16px rgba(217, 175, 86, 0.2)'
+                              margin: '0 auto 18px',
+                              color: '#10b981',
+                              boxShadow: '0 0 24px rgba(16, 185, 129, 0.25)'
                             }}>
-                              <Briefcase size={24} />
+                              <CheckCircle2 size={40} />
                             </div>
-                            <div>
-                              <h3 style={{ color: '#ffffff', fontSize: '19px', fontWeight: 800, margin: 0 }}>
-                                Partner with InvestHour
-                              </h3>
-                              <p style={{ color: '#d9af56', fontSize: '12.5px', fontWeight: 600, margin: '2px 0 0' }}>
-                                ₹1,000 Subscription Fee • 5%–10% Guaranteed Profit
-                              </p>
-                            </div>
-                          </div>
+                            <h3 style={{ color: '#ffffff', fontSize: '22px', fontWeight: 800, margin: '0 0 8px' }}>
+                              Broker Request Dispatched to Admin!
+                            </h3>
+                            <p style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '13.5px', lineHeight: 1.6, margin: '0 0 20px' }}>
+                              Your application for Customer ID <strong style={{ color: '#f7df94' }}>{displayCustomerId}</strong> has been transmitted to the Super Admin in the <strong>💼 Broker Requests</strong> tab.
+                            </p>
 
-                          {/* Benefits Showcase Box */}
-                          <div style={{
-                            background: 'rgba(217, 175, 86, 0.05)',
-                            border: '1px solid rgba(217, 175, 86, 0.25)',
-                            borderRadius: '14px',
-                            padding: '16px',
-                            marginBottom: '18px'
-                          }}>
-                            <h4 style={{ color: '#ffffff', fontSize: '13px', fontWeight: 700, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <Sparkles size={14} style={{ color: '#d9af56' }} />
-                              Partner Privileges & Guaranteed Benefits:
-                            </h4>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', fontSize: '12px', color: 'rgba(255, 255, 255, 0.85)' }}>
-                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
-                                <div><strong style={{ color: '#ffffff' }}>₹1,000 One-time Subscription Fee:</strong> Lifetime broker accreditation and guaranteed payout privileges.</div>
+                            <div style={{
+                              background: 'rgba(168, 85, 247, 0.08)',
+                              border: '1px solid rgba(168, 85, 247, 0.25)',
+                              borderRadius: '14px',
+                              padding: '16px',
+                              textAlign: 'left',
+                              marginBottom: '24px',
+                              fontSize: '12.5px'
+                            }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                <span style={{ color: '#9c93a8' }}>Applicant Name:</span>
+                                <strong style={{ color: '#ffffff' }}>{partnerForm.name}</strong>
                               </div>
-                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
-                                <div><strong style={{ color: '#f7df94' }}>5%–10% Guaranteed Commission / Profit:</strong> Earn guaranteed profit on every single rupee spent in trading (e.g. spend ₹10 on trade stake, earn 5%–10% return decided & distributed by Admin).</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                <span style={{ color: '#9c93a8' }}>Contact Mobile:</span>
+                                <strong style={{ color: '#ffffff' }}>{partnerForm.phone}</strong>
                               </div>
-                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
-                                <div><strong style={{ color: '#ffffff' }}>VIP ID Upgrade (CUST-B-):</strong> Once admin accepts, &apos;B&apos; is inserted into your customer identifier (<span style={{ color: '#d9af56', fontFamily: 'monospace' }}>{displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}</span>).</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                <span style={{ color: '#9c93a8' }}>Notification Email:</span>
+                                <strong style={{ color: '#ffffff' }}>{user?.email}</strong>
                               </div>
-                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
-                                <div><strong style={{ color: '#ffffff' }}>Live Earnings & 1-Click Wallet Payout:</strong> Live profit accumulates in real-time. Transfer to trading wallet anytime and withdraw directly to your bank account!</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                <span style={{ color: '#9c93a8' }}>Subscription Fee:</span>
+                                <strong style={{ color: '#10b981' }}>₹1,000 (One-Time)</strong>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '8px', marginTop: '8px' }}>
+                                <span style={{ color: '#9c93a8' }}>New Upgraded ID:</span>
+                                <strong style={{ color: '#d9af56', fontFamily: 'monospace' }}>
+                                  {displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}
+                                </strong>
                               </div>
                             </div>
-                          </div>
 
-                          {/* Form Fields: Details Forwarded to Admin */}
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                            <button
+                              type="button"
+                              className="btn-kyc-submit"
+                              style={{ marginTop: '0', width: '100%' }}
+                              onClick={() => setShowPartnerModal(false)}
+                            >
+                              Understood, Return to Profile
+                            </button>
+                          </div>
+                        ) : (
+                          <form onSubmit={handleSubmitPartnerRequest}>
+                            {/* Header */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                              <div style={{
+                                width: '46px',
+                                height: '46px',
+                                borderRadius: '12px',
+                                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(217, 175, 86, 0.25))',
+                                border: '1px solid rgba(217, 175, 86, 0.4)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#f7df94',
+                                boxShadow: '0 0 16px rgba(217, 175, 86, 0.2)'
+                              }}>
+                                <Briefcase size={24} />
+                              </div>
+                              <div>
+                                <h3 style={{ color: '#ffffff', fontSize: '19px', fontWeight: 800, margin: 0 }}>
+                                  Partner with InvestHour
+                                </h3>
+                                <p style={{ color: '#d9af56', fontSize: '12.5px', fontWeight: 600, margin: '2px 0 0' }}>
+                                  ₹1,000 Subscription Fee • 5%–10% Guaranteed Profit
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Benefits Showcase Box */}
+                            <div style={{
+                              background: 'rgba(217, 175, 86, 0.05)',
+                              border: '1px solid rgba(217, 175, 86, 0.25)',
+                              borderRadius: '14px',
+                              padding: '16px',
+                              marginBottom: '18px'
+                            }}>
+                              <h4 style={{ color: '#ffffff', fontSize: '13px', fontWeight: 700, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Sparkles size={14} style={{ color: '#d9af56' }} />
+                                Partner Privileges & Guaranteed Benefits:
+                              </h4>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', fontSize: '12px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                  <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                  <div><strong style={{ color: '#ffffff' }}>₹1,000 One-time Subscription Fee:</strong> Lifetime broker accreditation and guaranteed payout privileges.</div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                  <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                  <div><strong style={{ color: '#f7df94' }}>5%–10% Guaranteed Commission / Profit:</strong> Earn guaranteed profit on every single rupee spent in trading (e.g. spend ₹10 on trade stake, earn 5%–10% return decided & distributed by Admin).</div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                  <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                  <div><strong style={{ color: '#ffffff' }}>VIP ID Upgrade (CUST-B-):</strong> Once admin accepts, &apos;B&apos; is inserted into your customer identifier (<span style={{ color: '#d9af56', fontFamily: 'monospace' }}>{displayCustomerId.startsWith('CUST-B-') ? displayCustomerId : displayCustomerId.replace(/^CUST-/, 'CUST-B-')}</span>).</div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                  <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                                  <div><strong style={{ color: '#ffffff' }}>Live Earnings & 1-Click Wallet Payout:</strong> Live profit accumulates in real-time. Transfer to trading wallet anytime and withdraw directly to your bank account!</div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Form Fields: Details Forwarded to Admin */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                <div>
+                                  <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                    Customer Vault ID
+                                  </label>
+                                  <input
+                                    type="text"
+                                    readOnly
+                                    value={displayCustomerId}
+                                    style={{
+                                      width: '100%',
+                                      padding: '10px 12px',
+                                      borderRadius: '10px',
+                                      background: 'rgba(255, 255, 255, 0.04)',
+                                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                                      color: '#ffffff',
+                                      fontSize: '12.5px',
+                                      fontFamily: 'monospace',
+                                      cursor: 'not-allowed'
+                                    }}
+                                  />
+                                </div>
+                                <div>
+                                  <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                    Subscription Fee
+                                  </label>
+                                  <input
+                                    type="text"
+                                    readOnly
+                                    value="₹1,000 (One-Time)"
+                                    style={{
+                                      width: '100%',
+                                      padding: '10px 12px',
+                                      borderRadius: '10px',
+                                      background: 'rgba(16, 185, 129, 0.08)',
+                                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                                      color: '#10b981',
+                                      fontWeight: 700,
+                                      fontSize: '12.5px',
+                                      cursor: 'not-allowed'
+                                    }}
+                                  />
+                                </div>
+                              </div>
+
                               <div>
                                 <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
-                                  Customer Vault ID
+                                  Registered Notification Email
                                 </label>
                                 <input
-                                  type="text"
+                                  type="email"
                                   readOnly
-                                  value={displayCustomerId}
+                                  value={user?.email || ''}
                                   style={{
                                     width: '100%',
                                     padding: '10px 12px',
                                     borderRadius: '10px',
                                     background: 'rgba(255, 255, 255, 0.04)',
                                     border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    color: '#ffffff',
+                                    color: '#d9af56',
                                     fontSize: '12.5px',
-                                    fontFamily: 'monospace',
                                     cursor: 'not-allowed'
                                   }}
                                 />
                               </div>
+
                               <div>
                                 <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
-                                  Subscription Fee
+                                  Full Legal Name <span style={{ color: '#ef4444' }}>*</span>
                                 </label>
                                 <input
                                   type="text"
-                                  readOnly
-                                  value="₹1,000 (One-Time)"
+                                  required
+                                  placeholder="Enter your full name"
+                                  value={partnerForm.name}
+                                  onChange={(e) => setPartnerForm(prev => ({ ...prev, name: e.target.value }))}
                                   style={{
                                     width: '100%',
                                     padding: '10px 12px',
                                     borderRadius: '10px',
-                                    background: 'rgba(16, 185, 129, 0.08)',
-                                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                                    color: '#10b981',
-                                    fontWeight: 700,
-                                    fontSize: '12.5px',
-                                    cursor: 'not-allowed'
+                                    background: 'rgba(255, 255, 255, 0.07)',
+                                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                                    color: '#ffffff',
+                                    fontSize: '13px',
+                                    outline: 'none'
+                                  }}
+                                />
+                              </div>
+
+                              <div>
+                                <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
+                                  Mobile Phone Number <span style={{ color: '#ef4444' }}>*</span>
+                                </label>
+                                <input
+                                  type="tel"
+                                  required
+                                  placeholder="Enter 10-digit mobile number"
+                                  value={partnerForm.phone}
+                                  onChange={(e) => setPartnerForm(prev => ({ ...prev, phone: e.target.value }))}
+                                  style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    borderRadius: '10px',
+                                    background: 'rgba(255, 255, 255, 0.07)',
+                                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                                    color: '#ffffff',
+                                    fontSize: '13px',
+                                    outline: 'none'
                                   }}
                                 />
                               </div>
                             </div>
 
-                            <div>
-                              <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
-                                Registered Notification Email
-                              </label>
-                              <input
-                                type="email"
-                                readOnly
-                                value={user?.email || ''}
-                                style={{
-                                  width: '100%',
-                                  padding: '10px 12px',
-                                  borderRadius: '10px',
-                                  background: 'rgba(255, 255, 255, 0.04)',
-                                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                                  color: '#d9af56',
-                                  fontSize: '12.5px',
-                                  cursor: 'not-allowed'
-                                }}
-                              />
-                            </div>
-
-                            <div>
-                              <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
-                                Full Legal Name <span style={{ color: '#ef4444' }}>*</span>
-                              </label>
-                              <input
-                                type="text"
-                                required
-                                placeholder="Enter your full name"
-                                value={partnerForm.name}
-                                onChange={(e) => setPartnerForm(prev => ({ ...prev, name: e.target.value }))}
-                                style={{
-                                  width: '100%',
-                                  padding: '10px 12px',
-                                  borderRadius: '10px',
-                                  background: 'rgba(255, 255, 255, 0.07)',
-                                  border: '1px solid rgba(168, 85, 247, 0.3)',
-                                  color: '#ffffff',
-                                  fontSize: '13px',
-                                  outline: 'none'
-                                }}
-                              />
-                            </div>
-
-                            <div>
-                              <label style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 600, display: 'block', marginBottom: '5px' }}>
-                                Mobile Phone Number <span style={{ color: '#ef4444' }}>*</span>
-                              </label>
-                              <input
-                                type="tel"
-                                required
-                                placeholder="Enter 10-digit mobile number"
-                                value={partnerForm.phone}
-                                onChange={(e) => setPartnerForm(prev => ({ ...prev, phone: e.target.value }))}
-                                style={{
-                                  width: '100%',
-                                  padding: '10px 12px',
-                                  borderRadius: '10px',
-                                  background: 'rgba(255, 255, 255, 0.07)',
-                                  border: '1px solid rgba(168, 85, 247, 0.3)',
-                                  color: '#ffffff',
-                                  fontSize: '13px',
-                                  outline: 'none'
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          {/* Submit Action */}
-                          <button
-                            type="submit"
-                            disabled={partnerSubmitting}
-                            className="btn-kyc-submit"
-                            style={{
-                              marginTop: '0',
-                              background: 'linear-gradient(135deg, #a855f7 0%, #d9af56 100%)',
-                              color: '#ffffff',
-                              fontWeight: 800,
-                              fontSize: '13.5px',
-                              boxShadow: '0 4px 18px rgba(168, 85, 247, 0.4)'
-                            }}
-                          >
-                            {partnerSubmitting ? (
-                              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                <RefreshCw size={16} className="animate-spin" /> Submitting Request to Admin...
-                              </span>
-                            ) : (
-                              "Pay ₹1,000 Fee & Submit Broker Request"
-                            )}
-                          </button>
-                        </form>
-                      )}
+                            {/* Submit Action */}
+                            <button
+                              type="submit"
+                              disabled={partnerSubmitting}
+                              className="btn-kyc-submit"
+                              style={{
+                                marginTop: '0',
+                                background: 'linear-gradient(135deg, #a855f7 0%, #d9af56 100%)',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                fontSize: '13.5px',
+                                boxShadow: '0 4px 18px rgba(168, 85, 247, 0.4)'
+                              }}
+                            >
+                              {partnerSubmitting ? (
+                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                  <RefreshCw size={16} className="animate-spin" /> Submitting Request to Admin...
+                                </span>
+                              ) : (
+                                "Pay ₹1,000 Fee & Submit Broker Request"
+                              )}
+                            </button>
+                          </form>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 </div>
               </div>
@@ -11545,7 +11600,7 @@ function App() {
                   </div>
                   <h2>Invite & Accumulate Gold</h2>
                   <p>
-                    Accumulate real wealth together. Get <strong>Gold bonus</strong> credited instantly to your vault for every friend who registers and verifies their account. 
+                    Accumulate real wealth together. Get <strong>Gold bonus</strong> credited instantly to your vault for every friend who registers and verifies their account.
                     <br />
                     <span className="milestone-highlight">Milestone Reward: Refer 1,500 successful friends to claim <strong>1 Gram of Physical Gold</strong> delivered to your doorstep!</span>
                   </p>
@@ -11571,7 +11626,7 @@ function App() {
                       <div className="progress-bar-fill" style={{ width: `${Math.min(100, (successfulReferralsCount / 1500) * 100)}%` }}></div>
                     </div>
                     <p className="progress-tip">
-                      {successfulReferralsCount >= 1500 
+                      {successfulReferralsCount >= 1500
                         ? "🎉 Congratulations! You have unlocked your 1 Gram Physical Gold coin! Contact support to claim shipping."
                         : `Need ${1500 - successfulReferralsCount} more referrals to unlock your 1 Gram Physical Gold coin!`
                       }
@@ -11582,16 +11637,16 @@ function App() {
                 <div className="referral-share-card">
                   <h3>Share Your Invitation Link</h3>
                   <p className="share-desc">Send this unique link to your network. Rewards are processed automatically in real-time.</p>
-                  
+
                   <div className="referral-link-wrapper">
-                    <input 
-                      type="text" 
-                      readOnly 
-                      value={`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`} 
+                    <input
+                      type="text"
+                      readOnly
+                      value={`${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`}
                       className="referral-link-input"
                     />
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className={`btn-copy-link ${copiedReferralLink ? 'copied' : ''}`}
                       onClick={() => {
                         const link = `${window.location.origin}?ref=IH-${user?.email?.split('@')[0].toUpperCase() || 'USER'}`;
@@ -11625,6 +11680,32 @@ function App() {
 
             </div>
           )}
+
+          {dashTab === 'devices' && (
+            <div className="tab-pane-view devices-view animate-fade-in">
+              <DeviceExchange
+                user={user}
+                walletBalance={walletBalance}
+                setWalletBalance={setWalletBalance}
+                setTransactions={setTransactions}
+              />
+            </div>
+          )}
+
+          {(!VALID_DASH_TABS.includes(dashTab)) && (
+            <div className="tab-pane-view portfolio-view animate-fade-in">
+              <div style={{ textAlign: 'center', padding: '40px', color: '#9c93a8' }}>
+                <p>Loading view...</p>
+                <button
+                  type="button"
+                  onClick={() => setDashTab('portfolio')}
+                  style={{ background: '#d9af56', color: '#060309', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', marginTop: '12px' }}
+                >
+                  Return to Portfolio
+                </button>
+              </div>
+            </div>
+          )}
         </main>
 
         <footer style={{ background: '#120524', borderTop: '1px solid rgba(255,255,255,0.05)', padding: '15px', textAlign: 'center', fontSize: '12px', color: '#9c93a8', marginTop: 'auto' }}>
@@ -11644,24 +11725,24 @@ function App() {
                       {assignedAgentName ? `${assignedAgentName} (Advisor)` : 'Investhour Advisor'}
                     </div>
                     <div style={{ fontSize: '11px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={chatOnlineDotStyle}></span> 
+                      <span style={chatOnlineDotStyle}></span>
                       {assignedAgentName ? 'Assigned to your chat' : 'Online Help Desk'}
                     </div>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {user && !user.isExecutive && (
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={handleRequestCallback}
-                      style={{ 
-                        background: 'rgba(217, 175, 86, 0.15)', 
-                        color: '#d9af56', 
-                        border: '1px solid rgba(217, 175, 86, 0.25)', 
-                        fontSize: '11px', 
-                        fontWeight: 700, 
-                        padding: '4px 10px', 
-                        borderRadius: '6px', 
+                      style={{
+                        background: 'rgba(217, 175, 86, 0.15)',
+                        color: '#d9af56',
+                        border: '1px solid rgba(217, 175, 86, 0.25)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        padding: '4px 10px',
+                        borderRadius: '6px',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -11677,15 +11758,15 @@ function App() {
               </div>
               <div style={chatBodyStyle}>
                 {assignedAgentName && (
-                  <div style={{ 
-                    background: 'rgba(168, 85, 247, 0.12)', 
-                    border: '1px solid rgba(168, 85, 247, 0.25)', 
-                    color: '#d8b4fe', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '11px', 
+                  <div style={{
+                    background: 'rgba(168, 85, 247, 0.12)',
+                    border: '1px solid rgba(168, 85, 247, 0.25)',
+                    color: '#d8b4fe',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    fontSize: '11px',
                     fontWeight: 'bold',
-                    textAlign: 'center', 
+                    textAlign: 'center',
                     marginBottom: '16px',
                     display: 'flex',
                     alignItems: 'center',
@@ -11706,10 +11787,10 @@ function App() {
                         if (isImg) {
                           return (
                             <div style={{ marginTop: '8px' }}>
-                              <img 
-                                src={fullUrl} 
-                                alt="Attachment" 
-                                style={{ maxWidth: '100%', maxHeight: '180px', borderRadius: '6px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }} 
+                              <img
+                                src={fullUrl}
+                                alt="Attachment"
+                                style={{ maxWidth: '100%', maxHeight: '180px', borderRadius: '6px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }}
                                 onClick={() => window.open(fullUrl, '_blank')}
                               />
                             </div>
@@ -11718,10 +11799,10 @@ function App() {
                           return (
                             <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.1)', padding: '6px 10px', borderRadius: '6px' }}>
                               <FileText size={14} color="#ffffff" />
-                              <a 
-                                href={fullUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
+                              <a
+                                href={fullUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 style={{ fontSize: '11px', color: '#ffffff', textDecoration: 'underline', fontWeight: 600, wordBreak: 'break-all' }}
                               >
                                 {msg.mediaUrl.split('/').pop() || 'View Attachment'}
@@ -11755,7 +11836,7 @@ function App() {
               </div>
               <div className="modal-body" style={{ padding: '20px', gap: '14px' }}>
                 <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', margin: '0 0 4px', textAlign: 'center' }}>Securely withdraw your wallet balance to your bank account.</p>
-                
+
                 {/* Compact Balance Display */}
                 <div style={{
                   background: 'rgba(217, 175, 86, 0.04)',
@@ -11777,11 +11858,11 @@ function App() {
                   </div>
                   <div className="premium-amount-wrapper">
                     <span className="premium-input-icon" style={{ fontSize: '16px', fontWeight: 'bold' }}>₹</span>
-                    <input 
-                      type="number" 
-                      placeholder="0" 
-                      value={withdrawAmount} 
-                      onChange={(e) => setWithdrawAmount(e.target.value)} 
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
                     />
                   </div>
                 </div>
@@ -11815,11 +11896,11 @@ function App() {
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>Account Holder</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <User size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="Holder Name" 
-                          value={accountHolderName} 
-                          onChange={(e) => setAccountHolderName(e.target.value)} 
+                        <input
+                          type="text"
+                          placeholder="Holder Name"
+                          value={accountHolderName}
+                          onChange={(e) => setAccountHolderName(e.target.value)}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
@@ -11828,27 +11909,27 @@ function App() {
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>Bank Name</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <Building size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="Bank Name" 
-                          value={bankName} 
-                          onChange={(e) => setBankName(e.target.value)} 
+                        <input
+                          type="text"
+                          placeholder="Bank Name"
+                          value={bankName}
+                          onChange={(e) => setBankName(e.target.value)}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
                     </div>
                   </div>
-                  
+
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <div style={{ flex: 1 }}>
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>Account Number</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <CreditCard size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="Account Number" 
-                          value={accountNumber} 
-                          onChange={(e) => setAccountNumber(e.target.value)} 
+                        <input
+                          type="text"
+                          placeholder="Account Number"
+                          value={accountNumber}
+                          onChange={(e) => setAccountNumber(e.target.value)}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
@@ -11857,12 +11938,12 @@ function App() {
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>IFSC Code</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <Hash size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="IFSC" 
-                          value={ifscCode} 
-                          onChange={(e) => setIfscCode(e.target.value)} 
-                          style={{ textTransform: 'uppercase' }} 
+                        <input
+                          type="text"
+                          placeholder="IFSC"
+                          value={ifscCode}
+                          onChange={(e) => setIfscCode(e.target.value)}
+                          style={{ textTransform: 'uppercase' }}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
@@ -11918,7 +11999,7 @@ function App() {
                     <div className="modal-detail-row"><span className="modal-detail-label">Asset type</span><span className="modal-detail-val gold">{getAssetLabel(modalData.asset)}</span></div>
                     <div className="modal-detail-row"><span className="modal-detail-label">Transaction category</span><span className="modal-detail-val" style={{ textTransform: 'uppercase' }}>{modalType === 'sip' ? 'Daily SIP' : modalData.action}</span></div>
                     <div className="modal-detail-row"><span className="modal-detail-label">Live rate per gram</span><span className="modal-detail-val">{'\u20b9'}{modalData.rate?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                    
+
                     {modalData.action === 'sell' ? (
                       <div style={{ background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(217, 175, 86, 0.2)', margin: '10px 0 14px 0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -12109,8 +12190,8 @@ function App() {
                   />
                   <button type="button" className="password-eye-toggle" onClick={() => setResetShowPassword(!resetShowPassword)}>
                     {resetShowPassword
-                      ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                      : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
+                      : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                     }
                   </button>
                 </div>
@@ -12161,7 +12242,7 @@ function App() {
               margin: '0 auto 20px'
             }}>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
             <h2 style={{ color: '#22c55e', marginBottom: '8px' }}>Password Updated!</h2>
@@ -12224,8 +12305,8 @@ function App() {
                       margin: '0 auto 20px'
                     }}>
                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f0b429" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                        <polyline points="22,6 12,13 2,6"/>
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
                       </svg>
                     </div>
                     <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.6, margin: '0 0 8px' }}>
@@ -12283,16 +12364,16 @@ function App() {
                 <div className="auth-input-group">
                   <label>Password</label>
                   <div className="password-input-wrapper">
-                    <input 
-                      type={showPassword ? "text" : "password"} 
-                      required 
-                      placeholder="••••••••" 
-                      value={authForm.password || ''} 
-                      onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })} 
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      placeholder="••••••••"
+                      value={authForm.password || ''}
+                      onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
                     />
-                    <button 
-                      type="button" 
-                      className="password-eye-toggle" 
+                    <button
+                      type="button"
+                      className="password-eye-toggle"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -12301,10 +12382,10 @@ function App() {
                 </div>
                 <div className="auth-actions-row">
                   <label className="auth-checkbox"><input type="checkbox" /> Keep me signed in</label>
-                  <button 
-                    type="button" 
-                    className="forgot-password" 
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} 
+                  <button
+                    type="button"
+                    className="forgot-password"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     onClick={() => { setAuthTab('forgot'); setForgotStep('request'); }}
                   >
                     Forgot Password?
@@ -12330,16 +12411,16 @@ function App() {
                 <div className="auth-input-group">
                   <label>Vault Password</label>
                   <div className="password-input-wrapper">
-                    <input 
-                      type={showPassword ? "text" : "password"} 
-                      required 
-                      placeholder="Create secure password" 
-                      value={authForm.password || ''} 
-                      onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })} 
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      placeholder="Create secure password"
+                      value={authForm.password || ''}
+                      onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
                     />
-                    <button 
-                      type="button" 
-                      className="password-eye-toggle" 
+                    <button
+                      type="button"
+                      className="password-eye-toggle"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -12361,14 +12442,14 @@ function App() {
                 </div>
                 <div className="auth-input-group">
                   <label>Verification Code</label>
-                  <input 
-                    type="text" 
-                    maxLength={6} 
-                    required 
-                    placeholder="XXX-XXX" 
-                    value={signupOtp} 
-                    onChange={(e) => setSignupOtp(e.target.value)} 
-                    style={{ textAlign: 'center', letterSpacing: '8px', fontSize: '20px', fontWeight: 'bold' }} 
+                  <input
+                    type="text"
+                    maxLength={6}
+                    required
+                    placeholder="XXX-XXX"
+                    value={signupOtp}
+                    onChange={(e) => setSignupOtp(e.target.value)}
+                    style={{ textAlign: 'center', letterSpacing: '8px', fontSize: '20px', fontWeight: 'bold' }}
                   />
                 </div>
                 <button type="submit" className="btn-auth-submit" disabled={otpSending}>
@@ -12393,67 +12474,73 @@ function App() {
             <div className="logo-section" onClick={() => setView('home')} style={{ cursor: 'pointer' }}>
               <InvesthourLogoText />
             </div>
-            
-            <button 
-              type="button" 
-              className="hamburger-btn" 
+
+            <button
+              type="button"
+              className="hamburger-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle Menu"
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            
+
             {user && (
               <nav className={`nav-menu dashboard-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('home'); setIsMobileMenuOpen(false); }}
                 >
                   <Home size={16} /> Home
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('portfolio'); setIsMobileMenuOpen(false); }}
                 >
                   <Briefcase size={16} /> Portfolio
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('investment'); setIsMobileMenuOpen(false); }}
                 >
                   <TrendingUp size={16} /> Investment
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
                 >
                   <ArrowRightLeft size={16} /> Trade
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('wallet'); setIsMobileMenuOpen(false); }}
                 >
                   <Wallet size={16} /> Wallet
                 </button>
-                <button 
+                <button
                   className="dash-nav-item active"
                   onClick={() => { setView('dashboard'); setDashTab('contest'); setIsMobileMenuOpen(false); }}
                 >
                   <Star size={16} /> Contest Awards
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
                 >
                   <Gem size={16} /> Explore Elements
                 </button>
-                <button 
+                <button
+                  className="dash-nav-item"
+                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+                >
+                  <Smartphone size={16} /> Device Exchange
+                </button>
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('referral'); setIsMobileMenuOpen(false); }}
                 >
                   <Gift size={16} /> Referral Program
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('profile'); setIsMobileMenuOpen(false); }}
                 >
@@ -12478,11 +12565,12 @@ function App() {
                 <a href="#home" className="nav-item" onClick={(e) => { e.preventDefault(); setView('home'); setIsMobileMenuOpen(false); }}>Home</a>
                 <a href="#contest" className="nav-item active" onClick={(e) => { e.preventDefault(); setView('contest-awards'); setIsMobileMenuOpen(false); }}>Contest Awards</a>
                 <a href="#about" className="nav-item" onClick={(e) => { e.preventDefault(); setView('about'); setIsMobileMenuOpen(false); }}>Explore Elements</a>
+                <a href="#devices" className="nav-item" onClick={(e) => { e.preventDefault(); setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}>Device Exchange</a>
                 <a href="#referral" className="nav-item" onClick={(e) => { e.preventDefault(); setView('referral-program'); setIsMobileMenuOpen(false); }}>Referral Program</a>
                 <a href="#support-login" className="nav-item" onClick={(e) => { e.preventDefault(); setView('auth'); setAuthRole('support'); setAuthTab('login'); setIsMobileMenuOpen(false); }}>Support Login</a>
               </nav>
             )}
-            
+
             {user ? (
               <div className="dash-user-badge">
                 <div className="user-info-text">
@@ -12498,11 +12586,11 @@ function App() {
             )}
           </div>
         </header>
-        
+
         <main className="container" style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '30px' }}>
-          <ContestAwards 
-            user={user} 
-            rates={rates} 
+          <ContestAwards
+            user={user}
+            rates={rates}
             walletBalance={walletBalance}
             onTradeRedirect={() => {
               if (user) {
@@ -12512,7 +12600,7 @@ function App() {
                 setView('auth');
                 setAuthRole('client');
               }
-            }} 
+            }}
           />
         </main>
       </div>
@@ -12527,67 +12615,73 @@ function App() {
             <div className="logo-section" onClick={() => setView('home')} style={{ cursor: 'pointer' }}>
               <InvesthourLogoText />
             </div>
-            
-            <button 
-              type="button" 
-              className="hamburger-btn" 
+
+            <button
+              type="button"
+              className="hamburger-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle Menu"
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            
+
             {user && (
               <nav className={`nav-menu dashboard-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('home'); setIsMobileMenuOpen(false); }}
                 >
                   <Home size={16} /> Home
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('portfolio'); setIsMobileMenuOpen(false); }}
                 >
                   <Briefcase size={16} /> Portfolio
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('investment'); setIsMobileMenuOpen(false); }}
                 >
                   <TrendingUp size={16} /> Investment
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
                 >
                   <ArrowRightLeft size={16} /> Trade
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('wallet'); setIsMobileMenuOpen(false); }}
                 >
                   <Wallet size={16} /> Wallet
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('contest'); setIsMobileMenuOpen(false); }}
                 >
                   <Star size={16} /> Contest Awards
                 </button>
-                <button 
+                <button
                   className="dash-nav-item active"
                   onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
                 >
                   <Gem size={16} /> Explore Elements
                 </button>
-                <button 
+                <button
+                  className="dash-nav-item"
+                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+                >
+                  <Smartphone size={16} /> Device Exchange
+                </button>
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('referral'); setIsMobileMenuOpen(false); }}
                 >
                   <Gift size={16} /> Referral Program
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('profile'); setIsMobileMenuOpen(false); }}
                 >
@@ -12612,11 +12706,12 @@ function App() {
                 <a href="#home" className="nav-item" onClick={(e) => { e.preventDefault(); setView('home'); setIsMobileMenuOpen(false); }}>Home</a>
                 <a href="#contest" className="nav-item" onClick={(e) => { e.preventDefault(); setView('contest-awards'); setIsMobileMenuOpen(false); }}>Contest Awards</a>
                 <a href="#about" className="nav-item active" onClick={(e) => { e.preventDefault(); setView('about'); setIsMobileMenuOpen(false); }}>Explore Elements</a>
+                <a href="#devices" className="nav-item" onClick={(e) => { e.preventDefault(); setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}>Device Exchange</a>
                 <a href="#referral" className="nav-item" onClick={(e) => { e.preventDefault(); setView('referral-program'); setIsMobileMenuOpen(false); }}>Referral Program</a>
                 <a href="#support-login" className="nav-item" onClick={(e) => { e.preventDefault(); setView('auth'); setAuthRole('support'); setAuthTab('login'); setIsMobileMenuOpen(false); }}>Support Login</a>
               </nav>
             )}
-            
+
             {user ? (
               <div className="dash-user-badge">
                 <div className="user-info-text">
@@ -12632,15 +12727,15 @@ function App() {
             )}
           </div>
         </header>
-        <AboutUs 
-          rates={rates} 
-          holdings={holdings} 
-          walletBalance={walletBalance} 
-          withdrawableBalance={withdrawableBalance} 
-          isLoggedIn={!!user} 
-          onRequireAuth={() => { setView('auth'); setAuthRole('client'); }} 
-          onTradeRequest={handleAboutTradeRequest} 
-          onExplore={() => { setDashTab('trade'); setView('dashboard'); }} 
+        <AboutUs
+          rates={rates}
+          holdings={holdings}
+          walletBalance={walletBalance}
+          withdrawableBalance={withdrawableBalance}
+          isLoggedIn={!!user}
+          onRequireAuth={() => { setView('auth'); setAuthRole('client'); }}
+          onTradeRequest={handleAboutTradeRequest}
+          onExplore={() => { setDashTab('trade'); setView('dashboard'); }}
           initialSelectedMetalId={aboutInitialMetalId}
           initialActionType={aboutInitialAction}
           onClearInitialTrading={() => {
@@ -12657,7 +12752,7 @@ function App() {
               </div>
               <div className="modal-body" style={{ padding: '20px', gap: '14px' }}>
                 <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', margin: '0 0 4px', textAlign: 'center' }}>Securely withdraw your wallet balance to your bank account.</p>
-                
+
                 {/* Compact Balance Display */}
                 <div style={{
                   background: 'rgba(217, 175, 86, 0.04)',
@@ -12679,11 +12774,11 @@ function App() {
                   </div>
                   <div className="premium-amount-wrapper">
                     <span className="premium-input-icon" style={{ fontSize: '16px', fontWeight: 'bold' }}>₹</span>
-                    <input 
-                      type="number" 
-                      placeholder="0" 
-                      value={withdrawAmount} 
-                      onChange={(e) => setWithdrawAmount(e.target.value)} 
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
                     />
                   </div>
                 </div>
@@ -12717,11 +12812,11 @@ function App() {
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>Account Holder</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <User size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="Holder Name" 
-                          value={accountHolderName} 
-                          onChange={(e) => setAccountHolderName(e.target.value)} 
+                        <input
+                          type="text"
+                          placeholder="Holder Name"
+                          value={accountHolderName}
+                          onChange={(e) => setAccountHolderName(e.target.value)}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
@@ -12730,27 +12825,27 @@ function App() {
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>Bank Name</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <Building size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="Bank Name" 
-                          value={bankName} 
-                          onChange={(e) => setBankName(e.target.value)} 
+                        <input
+                          type="text"
+                          placeholder="Bank Name"
+                          value={bankName}
+                          onChange={(e) => setBankName(e.target.value)}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
                     </div>
                   </div>
-                  
+
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <div style={{ flex: 1 }}>
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>Account Number</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <CreditCard size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="Account Number" 
-                          value={accountNumber} 
-                          onChange={(e) => setAccountNumber(e.target.value)} 
+                        <input
+                          type="text"
+                          placeholder="Account Number"
+                          value={accountNumber}
+                          onChange={(e) => setAccountNumber(e.target.value)}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
@@ -12759,12 +12854,12 @@ function App() {
                       <label style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', fontWeight: 'bold' }}>IFSC Code</label>
                       <div className={`premium-input-wrapper ${lockedBankDetails ? 'locked' : ''}`}>
                         <Hash size={13} className="premium-input-icon" />
-                        <input 
-                          type="text" 
-                          placeholder="IFSC" 
-                          value={ifscCode} 
-                          onChange={(e) => setIfscCode(e.target.value)} 
-                          style={{ textTransform: 'uppercase' }} 
+                        <input
+                          type="text"
+                          placeholder="IFSC"
+                          value={ifscCode}
+                          onChange={(e) => setIfscCode(e.target.value)}
+                          style={{ textTransform: 'uppercase' }}
                           readOnly={!!lockedBankDetails}
                         />
                       </div>
@@ -12852,67 +12947,73 @@ function App() {
             <div className="logo-section" onClick={() => setView('home')} style={{ cursor: 'pointer' }}>
               <InvesthourLogoText />
             </div>
-            
-            <button 
-              type="button" 
-              className="hamburger-btn" 
+
+            <button
+              type="button"
+              className="hamburger-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle Menu"
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            
+
             {user && (
               <nav className={`nav-menu dashboard-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('home'); setIsMobileMenuOpen(false); }}
                 >
                   <Home size={16} /> Home
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('portfolio'); setIsMobileMenuOpen(false); }}
                 >
                   <Briefcase size={16} /> Portfolio
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('investment'); setIsMobileMenuOpen(false); }}
                 >
                   <TrendingUp size={16} /> Investment
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
                 >
                   <ArrowRightLeft size={16} /> Trade
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('wallet'); setIsMobileMenuOpen(false); }}
                 >
                   <Wallet size={16} /> Wallet
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('contest'); setIsMobileMenuOpen(false); }}
                 >
                   <Star size={16} /> Contest Awards
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
                 >
                   <Gem size={16} /> Explore Elements
                 </button>
-                <button 
+                <button
+                  className="dash-nav-item"
+                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+                >
+                  <Smartphone size={16} /> Device Exchange
+                </button>
+                <button
                   className="dash-nav-item active"
                   onClick={() => { setView('referral-program'); setIsMobileMenuOpen(false); }}
                 >
                   <Gift size={16} /> Referral Program
                 </button>
-                <button 
+                <button
                   className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('profile'); setIsMobileMenuOpen(false); }}
                 >
@@ -12937,11 +13038,12 @@ function App() {
                 <a href="#home" className="nav-item" onClick={(e) => { e.preventDefault(); setView('home'); setIsMobileMenuOpen(false); }}>Home</a>
                 <a href="#contest" className="nav-item" onClick={(e) => { e.preventDefault(); setView('contest-awards'); setIsMobileMenuOpen(false); }}>Contest Awards</a>
                 <a href="#about" className="nav-item" onClick={(e) => { e.preventDefault(); setView('about'); setIsMobileMenuOpen(false); }}>Explore Elements</a>
+                <a href="#devices" className="nav-item" onClick={(e) => { e.preventDefault(); setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}>Device Exchange</a>
                 <a href="#referral" className="nav-item active" onClick={(e) => { e.preventDefault(); setView('referral-program'); setIsMobileMenuOpen(false); }}>Referral Program</a>
                 <a href="#support-login" className="nav-item" onClick={(e) => { e.preventDefault(); setView('auth'); setAuthRole('support'); setAuthTab('login'); setIsMobileMenuOpen(false); }}>Support Login</a>
               </nav>
             )}
-            
+
             {user ? (
               <div className="dash-user-badge">
                 <div className="user-info-text">
@@ -12957,10 +13059,10 @@ function App() {
             )}
           </div>
         </header>
-        <ReferralProgramPage 
-          rates={rates} 
-          isLoggedIn={!!user} 
-          onRequireAuth={() => { setView('auth'); setAuthRole('client'); }} 
+        <ReferralProgramPage
+          rates={rates}
+          isLoggedIn={!!user}
+          onRequireAuth={() => { setView('auth'); setAuthRole('client'); }}
           onGoToDashboard={() => {
             setDashTab('referral');
             setView('dashboard');
@@ -13017,67 +13119,73 @@ function App() {
           <div className="logo-section">
             <InvesthourLogoText />
           </div>
-          
-          <button 
-            type="button" 
-            className="hamburger-btn" 
+
+          <button
+            type="button"
+            className="hamburger-btn"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle Menu"
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          
+
           {user ? (
             <nav className={`nav-menu dashboard-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-              <button 
+              <button
                 className="dash-nav-item active"
                 onClick={() => { setView('home'); setIsMobileMenuOpen(false); }}
               >
                 <Home size={16} /> Home
               </button>
-              <button 
-                  className="dash-nav-item"
-                  onClick={() => { setView('dashboard'); setDashTab('portfolio'); setIsMobileMenuOpen(false); }}
-                >
-                  <Briefcase size={16} /> Portfolio
-                </button>
-                <button 
-                  className="dash-nav-item"
-                  onClick={() => { setView('dashboard'); setDashTab('investment'); setIsMobileMenuOpen(false); }}
-                >
-                  <TrendingUp size={16} /> Investment
-                </button>
-              <button 
+              <button
+                className="dash-nav-item"
+                onClick={() => { setView('dashboard'); setDashTab('portfolio'); setIsMobileMenuOpen(false); }}
+              >
+                <Briefcase size={16} /> Portfolio
+              </button>
+              <button
+                className="dash-nav-item"
+                onClick={() => { setView('dashboard'); setDashTab('investment'); setIsMobileMenuOpen(false); }}
+              >
+                <TrendingUp size={16} /> Investment
+              </button>
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
               >
                 <ArrowRightLeft size={16} /> Trade
               </button>
-              <button 
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('dashboard'); setDashTab('wallet'); setIsMobileMenuOpen(false); }}
               >
                 <Wallet size={16} /> Wallet
               </button>
-              <button 
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('dashboard'); setDashTab('contest'); setIsMobileMenuOpen(false); }}
               >
                 <Star size={16} /> Contest
               </button>
-              <button 
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
               >
                 <Gem size={16} /> Explore Elements
               </button>
-              <button 
+              <button
+                className="dash-nav-item"
+                onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+              >
+                <Smartphone size={16} /> Device Exchange
+              </button>
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('dashboard'); setDashTab('referral'); setIsMobileMenuOpen(false); }}
               >
                 <Gift size={16} /> Referral Program
               </button>
-              <button 
+              <button
                 className="dash-nav-item"
                 onClick={() => { setView('dashboard'); setDashTab('profile'); setIsMobileMenuOpen(false); }}
               >
@@ -13100,6 +13208,7 @@ function App() {
               <a href="#home" className="nav-item active" onClick={(e) => { e.preventDefault(); setIsMobileMenuOpen(false); }}>Home</a>
               <a href="#contest" className="nav-item" onClick={(e) => { e.preventDefault(); setView('contest-awards'); setIsMobileMenuOpen(false); }}>Contest Awards</a>
               <a href="#about" className="nav-item" onClick={(e) => { e.preventDefault(); setView('about'); setIsMobileMenuOpen(false); }}>Explore Elements</a>
+              <a href="#devices" className="nav-item" onClick={(e) => { e.preventDefault(); setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}>Device Exchange</a>
               <a href="#referral" className="nav-item" onClick={(e) => { e.preventDefault(); setView('referral-program'); setIsMobileMenuOpen(false); }}>Referral Program</a>
               <a href="#support-login" className="nav-item" onClick={(e) => { e.preventDefault(); setView('auth'); setAuthRole('support'); setAuthTab('login'); setIsMobileMenuOpen(false); }}>Support Login</a>
             </nav>
@@ -13198,7 +13307,7 @@ function App() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }} className="grid-2col-winners">
-            
+
             {/* Monthly Winners */}
             <div style={{ background: 'linear-gradient(135deg, rgba(29,13,53,0.3) 0%, rgba(12,6,21,0.5) 100%)', border: '1px solid rgba(217,175,86,0.15)', borderRadius: '16px', padding: '30px' }}>
               <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#d9af56', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -13210,8 +13319,8 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '700', color: '#fff' }}>{realtimeWinners[0]?.name || 'Position Open'}</div>
                     <div style={{ fontSize: '12px', color: '#9c93a8' }}>
-                      {realtimeWinners[0] 
-                        ? `Success Rate: ${realtimeWinners[0].successRate}% (₹1,00,000 Cash Winner)` 
+                      {realtimeWinners[0]
+                        ? `Success Rate: ${realtimeWinners[0].successRate}% (₹1,00,000 Cash Winner)`
                         : 'Join the contest to claim this rank!'}
                     </div>
                   </div>
@@ -13221,8 +13330,8 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '700', color: '#fff' }}>{realtimeWinners[1]?.name || 'Position Open'}</div>
                     <div style={{ fontSize: '12px', color: '#9c93a8' }}>
-                      {realtimeWinners[1] 
-                        ? `Success Rate: ${realtimeWinners[1].successRate}% (₹50,000 Cash Winner)` 
+                      {realtimeWinners[1]
+                        ? `Success Rate: ${realtimeWinners[1].successRate}% (₹50,000 Cash Winner)`
                         : 'Join the contest to claim this rank!'}
                     </div>
                   </div>
@@ -13232,8 +13341,8 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '700', color: '#fff' }}>{realtimeWinners[2]?.name || 'Position Open'}</div>
                     <div style={{ fontSize: '12px', color: '#9c93a8' }}>
-                      {realtimeWinners[2] 
-                        ? `Success Rate: ${realtimeWinners[2].successRate}% (₹25,000 Cash Winner)` 
+                      {realtimeWinners[2]
+                        ? `Success Rate: ${realtimeWinners[2].successRate}% (₹25,000 Cash Winner)`
                         : 'Join the contest to claim this rank!'}
                     </div>
                   </div>
@@ -13252,8 +13361,8 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '700', color: '#fff' }}>{realtimeWinners[3]?.name || 'Position Open'}</div>
                     <div style={{ fontSize: '12px', color: '#9c93a8' }}>
-                      {realtimeWinners[3] 
-                        ? `Success Rate: ${realtimeWinners[3].successRate}% (Gaming Laptop Winner)` 
+                      {realtimeWinners[3]
+                        ? `Success Rate: ${realtimeWinners[3].successRate}% (Gaming Laptop Winner)`
                         : 'Join the contest to claim this rank!'}
                     </div>
                   </div>
@@ -13263,8 +13372,8 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '700', color: '#fff' }}>{realtimeWinners[4]?.name || 'Position Open'}</div>
                     <div style={{ fontSize: '12px', color: '#9c93a8' }}>
-                      {realtimeWinners[4] 
-                        ? `Success Rate: ${realtimeWinners[4].successRate}% (Smart Mobile Winner)` 
+                      {realtimeWinners[4]
+                        ? `Success Rate: ${realtimeWinners[4].successRate}% (Smart Mobile Winner)`
                         : 'Join the contest to claim this rank!'}
                     </div>
                   </div>
@@ -13274,8 +13383,8 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '700', color: '#fff' }}>{realtimeWinners[5]?.name || 'Position Open'}</div>
                     <div style={{ fontSize: '12px', color: '#9c93a8' }}>
-                      {realtimeWinners[5] 
-                        ? `Success Rate: ${realtimeWinners[5].successRate}% (Smart Watch Winner)` 
+                      {realtimeWinners[5]
+                        ? `Success Rate: ${realtimeWinners[5].successRate}% (Smart Watch Winner)`
                         : 'Join the contest to claim this rank!'}
                     </div>
                   </div>
@@ -13291,7 +13400,7 @@ function App() {
       <section className="home-about-section" style={{ padding: '80px 24px', background: '#060309', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div className="grid-2col-about" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>
-            
+
             {/* Left: Beautiful brand presentation */}
             <div>
               <span style={{ color: '#d9af56', fontSize: '13px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>🔍 About Investhour</span>
@@ -13351,24 +13460,24 @@ function App() {
                     {assignedAgentName ? `${assignedAgentName} (Advisor)` : 'Investhour Advisor'}
                   </div>
                   <div style={{ fontSize: '11px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={chatOnlineDotStyle}></span> 
+                    <span style={chatOnlineDotStyle}></span>
                     {assignedAgentName ? 'Assigned to your chat' : 'Online Help Desk'}
                   </div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {user && !user.isExecutive && (
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={handleRequestCallback}
-                    style={{ 
-                      background: 'rgba(217, 175, 86, 0.15)', 
-                      color: '#d9af56', 
-                      border: '1px solid rgba(217, 175, 86, 0.25)', 
-                      fontSize: '11px', 
-                      fontWeight: 700, 
-                      padding: '4px 10px', 
-                      borderRadius: '6px', 
+                    style={{
+                      background: 'rgba(217, 175, 86, 0.15)',
+                      color: '#d9af56',
+                      border: '1px solid rgba(217, 175, 86, 0.25)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      padding: '4px 10px',
+                      borderRadius: '6px',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -13384,15 +13493,15 @@ function App() {
             </div>
             <div style={chatBodyStyle}>
               {assignedAgentName && (
-                <div style={{ 
-                  background: 'rgba(168, 85, 247, 0.12)', 
-                  border: '1px solid rgba(168, 85, 247, 0.25)', 
-                  color: '#d8b4fe', 
-                  padding: '8px 12px', 
-                  borderRadius: '8px', 
-                  fontSize: '11px', 
+                <div style={{
+                  background: 'rgba(168, 85, 247, 0.12)',
+                  border: '1px solid rgba(168, 85, 247, 0.25)',
+                  color: '#d8b4fe',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  fontSize: '11px',
                   fontWeight: 'bold',
-                  textAlign: 'center', 
+                  textAlign: 'center',
                   marginBottom: '16px',
                   display: 'flex',
                   alignItems: 'center',
@@ -13413,10 +13522,10 @@ function App() {
                       if (isImg) {
                         return (
                           <div style={{ marginTop: '8px' }}>
-                            <img 
-                              src={fullUrl} 
-                              alt="Attachment" 
-                              style={{ maxWidth: '100%', maxHeight: '180px', borderRadius: '6px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }} 
+                            <img
+                              src={fullUrl}
+                              alt="Attachment"
+                              style={{ maxWidth: '100%', maxHeight: '180px', borderRadius: '6px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }}
                               onClick={() => setPreviewImageUrl(fullUrl)}
                               title="Click to zoom image"
                             />
@@ -13426,10 +13535,10 @@ function App() {
                         return (
                           <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.1)', padding: '6px 10px', borderRadius: '6px' }}>
                             <FileText size={14} color="#ffffff" />
-                            <a 
-                              href={fullUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
+                            <a
+                              href={fullUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               style={{ fontSize: '11px', color: '#ffffff', textDecoration: 'underline', fontWeight: 600, wordBreak: 'break-all' }}
                             >
                               {msg.mediaUrl.split('/').pop() || 'View Attachment'}
@@ -13456,20 +13565,20 @@ function App() {
 
       {/* CENTERED PROFESSIONAL PARTNER ADVERTISEMENT MODAL ON WEBSITE OPENING */}
       {showPartnerAd ? (
-        <div 
-          className="partner-center-ad-overlay" 
-          role="dialog" 
+        <div
+          className="partner-center-ad-overlay"
+          role="dialog"
           aria-label="Partner with InvestHour Ad"
           onClick={() => setShowPartnerAd(false)}
         >
-          <div 
-            className="partner-center-ad-card" 
+          <div
+            className="partner-center-ad-card"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Countdown progress bar */}
             <div className="partner-ad-progress-bar-bg">
-              <div 
-                className="partner-ad-progress-bar-fill" 
+              <div
+                className="partner-ad-progress-bar-fill"
                 style={{ width: `${Math.max(0, ((AD_TOTAL_DURATION_SEC - adSkipCountdown) / AD_TOTAL_DURATION_SEC) * 100)}%` }}
               />
             </div>
@@ -13497,14 +13606,14 @@ function App() {
             </div>
 
             {/* Cleaned Banner Image (Watermark Removed) */}
-            <div 
-              className="partner-ad-img-box" 
-              onClick={handlePartnerAdClick} 
+            <div
+              className="partner-ad-img-box"
+              onClick={handlePartnerAdClick}
               title="Click to become a partner (Redirects to Login if not logged in, or opens Partner Window)"
             >
-              <img 
-                src={becomePartnerBanner} 
-                alt="Become an InvestHour Partner - Earn profit sharing on every rupee spent" 
+              <img
+                src={becomePartnerBanner}
+                alt="Become an InvestHour Partner - Earn profit sharing on every rupee spent"
               />
             </div>
 
@@ -13559,7 +13668,7 @@ function App() {
 
       {/* GLOBAL IMAGE PREVIEW MODAL */}
       {previewImageUrl && (
-        <div 
+        <div
           style={{
             position: 'fixed', inset: 0, zIndex: 9999999,
             backgroundColor: 'rgba(0, 0, 0, 0.85)', backdropFilter: 'blur(8px)',
@@ -13568,7 +13677,7 @@ function App() {
           }}
           onClick={() => setPreviewImageUrl(null)}
         >
-          <div 
+          <div
             style={{
               position: 'relative', maxWidth: '90vw', maxHeight: '90vh',
               background: '#120524', border: '1px solid rgba(255,255,255,0.15)',
@@ -13582,15 +13691,15 @@ function App() {
                 📷 Image Viewer
               </span>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <a 
-                  href={previewImageUrl} 
-                  target="_blank" 
+                <a
+                  href={previewImageUrl}
+                  target="_blank"
                   rel="noopener noreferrer"
                   style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}
                 >
                   Open Original ↗
                 </a>
-                <button 
+                <button
                   onClick={() => setPreviewImageUrl(null)}
                   style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}
                 >
@@ -13599,10 +13708,10 @@ function App() {
               </div>
             </div>
             <div style={{ padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'auto', background: '#0e041b' }}>
-              <img 
-                src={previewImageUrl} 
-                alt="Enlarged Preview" 
-                style={{ maxWidth: '100%', maxHeight: '75vh', objectFit: 'contain', borderRadius: '8px' }} 
+              <img
+                src={previewImageUrl}
+                alt="Enlarged Preview"
+                style={{ maxWidth: '100%', maxHeight: '75vh', objectFit: 'contain', borderRadius: '8px' }}
               />
             </div>
           </div>
