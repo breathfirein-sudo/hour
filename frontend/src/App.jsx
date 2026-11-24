@@ -1031,16 +1031,18 @@ function App() {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '5px 0' }}>
                   <div style={{
                     background: '#fff',
-                    padding: '0',
+                    padding: '8px',
                     borderRadius: '16px',
                     boxShadow: '0 8px 30px rgba(16, 185, 129, 0.15)',
                     border: '2px solid rgba(16, 185, 129, 0.3)',
-                    display: 'inline-block',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     overflow: 'hidden',
                     width: '160px',
                     height: '160px'
                   }}>
-                    <img src="/deposit-qr.jpg" alt="Deposit QR Code" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', transform: 'scale(1.25) translateY(-4%)' }} />
+                    <img src="/deposit-qr.jpg" alt="Deposit QR Code" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain' }} />
                   </div>
                   <span style={{ fontSize: '11px', color: '#9c93a8', fontWeight: 500, textAlign: 'center', maxWidth: '300px', lineHeight: '1.4' }}>
                     Scan QR code using PhonePe, Paytm, GooglePay or any UPI application.
@@ -10030,6 +10032,12 @@ function App() {
                 <TrendingUp size={16} /> Investment
               </button>
               <button
+                className={`dash-nav-item ${dashTab === 'devices' ? 'active' : ''}`}
+                onClick={() => { setDashTab('devices'); setIsMobileMenuOpen(false); }}
+              >
+                <Smartphone size={16} /> Device Exchange
+              </button>
+              <button
                 className={`dash-nav-item ${dashTab === 'trade' ? 'active' : ''}`}
                 onClick={() => { setDashTab('trade'); setIsMobileMenuOpen(false); }}
               >
@@ -10052,12 +10060,6 @@ function App() {
                 onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
               >
                 <Gem size={16} /> Explore Elements
-              </button>
-              <button
-                className={`dash-nav-item ${dashTab === 'devices' ? 'active' : ''}`}
-                onClick={() => { setDashTab('devices'); setIsMobileMenuOpen(false); }}
-              >
-                <Smartphone size={16} /> Device Exchange
               </button>
               <button
                 className={`dash-nav-item ${dashTab === 'referral' ? 'active' : ''}`}
@@ -12506,6 +12508,12 @@ function App() {
                 </button>
                 <button
                   className="dash-nav-item"
+                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+                >
+                  <Smartphone size={16} /> Device Exchange
+                </button>
+                <button
+                  className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
                 >
                   <ArrowRightLeft size={16} /> Trade
@@ -12527,12 +12535,6 @@ function App() {
                   onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
                 >
                   <Gem size={16} /> Explore Elements
-                </button>
-                <button
-                  className="dash-nav-item"
-                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
-                >
-                  <Smartphone size={16} /> Device Exchange
                 </button>
                 <button
                   className="dash-nav-item"
@@ -12647,6 +12649,12 @@ function App() {
                 </button>
                 <button
                   className="dash-nav-item"
+                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+                >
+                  <Smartphone size={16} /> Device Exchange
+                </button>
+                <button
+                  className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
                 >
                   <ArrowRightLeft size={16} /> Trade
@@ -12668,12 +12676,6 @@ function App() {
                   onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
                 >
                   <Gem size={16} /> Explore Elements
-                </button>
-                <button
-                  className="dash-nav-item"
-                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
-                >
-                  <Smartphone size={16} /> Device Exchange
                 </button>
                 <button
                   className="dash-nav-item"
@@ -12979,6 +12981,12 @@ function App() {
                 </button>
                 <button
                   className="dash-nav-item"
+                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+                >
+                  <Smartphone size={16} /> Device Exchange
+                </button>
+                <button
+                  className="dash-nav-item"
                   onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
                 >
                   <ArrowRightLeft size={16} /> Trade
@@ -13000,12 +13008,6 @@ function App() {
                   onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
                 >
                   <Gem size={16} /> Explore Elements
-                </button>
-                <button
-                  className="dash-nav-item"
-                  onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
-                >
-                  <Smartphone size={16} /> Device Exchange
                 </button>
                 <button
                   className="dash-nav-item active"
@@ -13151,6 +13153,12 @@ function App() {
               </button>
               <button
                 className="dash-nav-item"
+                onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
+              >
+                <Smartphone size={16} /> Device Exchange
+              </button>
+              <button
+                className="dash-nav-item"
                 onClick={() => { setView('dashboard'); setDashTab('trade'); setIsMobileMenuOpen(false); }}
               >
                 <ArrowRightLeft size={16} /> Trade
@@ -13172,12 +13180,6 @@ function App() {
                 onClick={() => { setView('about'); setIsMobileMenuOpen(false); }}
               >
                 <Gem size={16} /> Explore Elements
-              </button>
-              <button
-                className="dash-nav-item"
-                onClick={() => { setView('dashboard'); setDashTab('devices'); setIsMobileMenuOpen(false); }}
-              >
-                <Smartphone size={16} /> Device Exchange
               </button>
               <button
                 className="dash-nav-item"
